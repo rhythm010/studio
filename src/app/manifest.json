@@ -8,13 +8,13 @@
   "theme_color": "#008080",
   "icons": [
     {
-      "src": "/icon-192x192.png",
+      "src": "https://firebasestorage.googleapis.com/v0/b/pagepilot-pwa.firebasestorage.app/o/Screenshot%202025-04-14%20at%206.56.19%E2%80%AFAM.png?alt=media&token=9a233189-6a06-40ec-b95a-048acf43df36",
       "sizes": "192x192",
       "type": "image/png"
     },
     {
-      "src": "/icon-512x512.png",
-      "sizes": "512x512",
+      "src": "https://firebasestorage.googleapis.com/v0/b/pagepilot-pwa.firebasestorage.app/o/Screenshot%202025-04-14%20at%206.56.19%E2%80%AFAM.png?alt=media&token=9a233189-6a06-40ec-b95a-048acf43df36",
+      "sizes": "512x512", 
       "type": "image/png"
     }
   ]

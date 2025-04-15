@@ -7,11 +7,6 @@ const Home = () => {
       <p className="text-gray-700 mt-4">
         This is the home page of our PWA 3. Feel free to navigate to the About and Contact pages.
       </p>
-      <img
-        src="https://picsum.photos/800/400"
-        alt="Placeholder Image"
-        className="mt-6 rounded-lg shadow-md"
-      />
     </div>
   );
 };
