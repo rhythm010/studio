@@ -49,7 +49,7 @@ export default function RootLayout({
               <li>
                 <Link href="/contact" className="flex items-center space-x-2 hover:text-accent">
                   <Mail className="h-5 w-5" />
-                  <span>Contact</span>
+                  <span>Contact in ril</span>
                 </Link>
               </li>
             </ul>
