@@ -1,11 +1,11 @@
 import React from 'react';
 
-const Home = () => {
+const Contact = () => {
   return (
     <div className="container mx-auto p-4">
-      <h1 className="text-3xl font-bold text-primary">Welcome to PagePilot!</h1>
+      <h1 className="text-3xl font-bold text-primary">Contact Us</h1>
       <p className="text-gray-700 mt-4">
-        This is the home page of our PWA. Feel free to navigate to the About and Contact pages.
+        Feel free to reach out to us with any questions or inquiries.
       </p>
       <img
         src="https://picsum.photos/800/400"
@@ -16,4 +16,4 @@ const Home = () => {
   );
 };
 
-export default Home;
+export default Contact;

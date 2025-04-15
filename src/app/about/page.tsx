@@ -1,11 +1,11 @@
 import React from 'react';
 
-const Home = () => {
+const About = () => {
   return (
     <div className="container mx-auto p-4">
-      <h1 className="text-3xl font-bold text-primary">Welcome to PagePilot!</h1>
+      <h1 className="text-3xl font-bold text-primary">About Us</h1>
       <p className="text-gray-700 mt-4">
-        This is the home page of our PWA. Feel free to navigate to the About and Contact pages.
+        Learn more about our company and our mission to provide simple and effective web solutions.
       </p>
       <img
         src="https://picsum.photos/800/400"
@@ -16,4 +16,4 @@ const Home = () => {
   );
 };
 
-export default Home;
+export default About;
