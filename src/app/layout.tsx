@@ -33,27 +33,6 @@ export default function RootLayout({
       <body className={`${geistMono.variable} antialiased`}>
         <header className="bg-primary text-primary-foreground p-4">
           <nav className="container mx-auto flex items-center justify-between">
-           
-            <ul className="flex space-x-4">
-              <li>
-                <Link href="/" className="flex items-center space-x-2 hover:text-accent">
-                  <Home className="h-5 w-5" />
-                  <span>Home</span>
-                </Link>
-              </li>
-              <li>
-                <Link href="/about" className="flex items-center space-x-2 hover:text-accent">
-                  <Info className="h-5 w-5" />
-                  <span>About the same</span>
-                </Link>
-              </li>
-              <li>
-                <Link href="/contact" className="flex items-center space-x-2 hover:text-accent">
-                  <Mail className="h-5 w-5" />
-                  <span>Contact You</span>
-                </Link>
-              </li>
-            </ul>
           </nav>
         </header>
         <main className="container mx-auto">
