@@ -32,28 +32,28 @@ const SelectionSection: React.FC<SelectionSectionProps> = () => {
           {/* section - 1 */}
           <div
             id="option_1"
-            className={`flex justify-between items-start p-1 border border-b-gray-200 ${activeOption === 'option_1' ? 'bg-gray-100' : ''}`}
+            className={`flex justify-between items-start border border-b-gray-200 pt-4 pb-4 pr-2 pl-3 ${activeOption === 'option_1' ? 'bg-gray-100' : ''}`}
             onClick={() => setActiveOption('option_1')}
           >
             <div>
-              <div className="text-xl font-bold">header</div>
-              <div className="font-light">description</div>
+              <div className="text-xl font-bold">2 Companions</div>
+              <div className="font-thin text-xs">An entry to the VIP experience</div>
             </div>
-            <div className="font-bold">د.إ</div>
+            <div className="font-bold">د.إ 499</div>
           </div>
 
           {/* section - 2 */}
           <div
             id="option_2"
-            className={`flex justify-between items-start p-1 ${activeOption === 'option_2' ? 'bg-gray-100 rounded-b-[10px]' : ''}`}
+            className={`flex justify-between items-start pt-4 pb-4 pr-2 pl-3 ${activeOption === 'option_2' ? 'bg-gray-100 rounded-b-[10px]' : ''}`}
             onClick={() => setActiveOption('option_2')}
           >
             <div>
-              <div className="text-xl font-bold">header</div>
-              <div className="font-light">description</div>
+              <div className="text-xl font-bold">4 Companions</div>
+              <div className="font-light text-xs">An entry to the uber VIP experience</div>
             </div>
             <div className="font-bold">
-              د.إ 
+              د.إ 899
             </div>
           </div>
         </div>
