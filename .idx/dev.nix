@@ -12,8 +12,10 @@
   idx = {
     # Search for the extensions you want on https://open-vsx.org/ and use "publisher.id"
     extensions = [
+      "dbaeumer.vscode-eslint"
+      "bradlc.vscode-tailwindcss"
       # "vscodevim.vim"
-    ];
+      ];
     workspace = {
       onCreate = {
         default.openFiles = [
