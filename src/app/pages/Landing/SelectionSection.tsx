@@ -10,7 +10,7 @@ const SelectionSection: React.FC<SelectionSectionProps> = () => {
     <div id="selection_container" className="rounded-xl w-full p-3">
       <div id="gender_radio" className="bg-white flex justify-between items-center w-full border-r-4">
         <div className='w-1/2'>
-          <label className="inline-flex items-center w-full justify-center">
+          <label className="inline-flex items-center w-full justify-center ">
             <input type="radio" className="form-radio" name="options" value="option1" />
             <span className="ml-2">Male</span>
           </label>
@@ -28,13 +28,13 @@ const SelectionSection: React.FC<SelectionSectionProps> = () => {
         <div className='bg-white justify-normal flex-col w-full items-center'>
 
           {/* section - 1 */}
-          <div id="option_1" className='flex justify-between items-start p-1 border border-black'>
+          <div id="option_1" className='flex justify-between items-start p-1'>
             <div>
               <div className="text-xl font-bold">header</div>
               <div className="font-light">description</div>
             </div>
             <div className="font-bold">
-              د.إ
+              د.إ 
             </div>
           </div>
         </div>
