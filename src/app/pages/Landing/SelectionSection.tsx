@@ -28,6 +28,17 @@ const SelectionSection: React.FC<SelectionSectionProps> = () => {
         <div className='bg-white justify-normal flex-col w-full items-center'>
 
           {/* section - 1 */}
+          <div id="option_1" className='flex justify-between items-start p-1 border border-b-gray-200'>
+            <div>
+              <div className="text-xl font-bold">header</div>
+              <div className="font-light">description</div>
+            </div>
+            <div className="font-bold">
+              د.إ 
+            </div>
+          </div>
+
+          {/* section - 2 */}
           <div id="option_1" className='flex justify-between items-start p-1'>
             <div>
               <div className="text-xl font-bold">header</div>
