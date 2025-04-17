@@ -31,16 +31,16 @@ export default function RootLayout({
   return (
     <html lang="en" className={`${roboto.variable} font-sans`}>
       <body className={`${geistMono.variable} antialiased`}>
-        <header className="bg-primary text-primary-foreground p-4">
+        {/* <header className="bg-primary text-primary-foreground p-4">
           <nav className="container mx-auto flex items-center justify-between">
           </nav>
-        </header>
+        </header> */}
         <main className="container mx-auto">
           <LandingPage />
         </main>
-        <footer className="bg-secondary text-foreground p-4 text-center">
+        {/* <footer className="bg-secondary text-foreground p-4 text-center">
           <p>&copy; {new Date().getFullYear()} PagePilot. All rights reserved.</p>
-        </footer>
+        </footer> */}
       </body>
     </html>
   );

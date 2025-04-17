@@ -11,7 +11,7 @@ const SelectionSection: React.FC<SelectionSectionProps> = () => {
   const [activeOption, setActiveOption] = useState<string | null>(null);
   return (
     <div id="selection_container" className="rounded-xl w-full p-3">
-      <div id="gender_radio" className="bg-white flex justify-between items-center w-full border-r-4">
+      <div id="gender_radio" className="bg-white flex justify-between items-center w-full border-r-4 rounded-t-[10px] p-4">
         <div className='w-1/2'>
           <label className="inline-flex items-center w-full justify-center ">
             <input type="radio" className="form-radio" name="options" value="option1" />
@@ -28,7 +28,7 @@ const SelectionSection: React.FC<SelectionSectionProps> = () => {
         </div>
         </div>
         
-        <div className='bg-white justify-normal flex-col w-full items-center'>
+        <div className='bg-white justify-normal flex-col w-full items-center rounded-b-[10px]'>
           {/* section - 1 */}
           <div
             id="option_1"
@@ -45,7 +45,7 @@ const SelectionSection: React.FC<SelectionSectionProps> = () => {
           {/* section - 2 */}
           <div
             id="option_2"
-            className={`flex justify-between items-start p-1 ${activeOption === 'option_2' ? 'bg-gray-100' : ''}`}
+            className={`flex justify-between items-start p-1 ${activeOption === 'option_2' ? 'bg-gray-100 rounded-b-[10px]' : ''}`}
             onClick={() => setActiveOption('option_2')}
           >
             <div>
