@@ -7,8 +7,8 @@ interface SelectionSectionProps {
 
 const SelectionSection: React.FC<SelectionSectionProps> = () => {
   return (
-    <div className="bg-white rounded-lg w-full">
-      <div className="flex justify-between items-center w-full">
+    <div className="rounded-lg w-full p-3">
+      <div id="gender_radio" className="bg-white flex justify-between items-center w-full border-r-4">
         <div className='w-1/2'>
           <label className="inline-flex items-center w-full justify-center">
             <input type="radio" className="form-radio" name="options" value="option1" />
@@ -23,6 +23,21 @@ const SelectionSection: React.FC<SelectionSectionProps> = () => {
             <span className="ml-2">Female</span>
           </label>
         </div>
+        </div>
+        
+        <div className='bg-white justify-normal flex-col w-full items-center'>
+
+        {/* section - 1 */}
+        <div id="option_1" className='flex justify-between items-start p-1 border border-black'>
+          <div>
+            <div>header</div>
+            <div>description</div>
+          </div>
+          <div>
+            price
+          </div>
+        </div>
+
         </div>
 
     </div>
