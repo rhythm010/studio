@@ -17,7 +17,7 @@ const DisplaySection: React.FC<DisplaySectionProps> = ({ selectedGender }) => {
         setCurrentGender(selectedGender); // Update currentGender
         setIsFadingOut(false); // Start fading in
         setShouldBeVisible(true)
-      }, 800);
+      }, 500);
     }
   }, [selectedGender]);
 
@@ -28,7 +28,7 @@ const DisplaySection: React.FC<DisplaySectionProps> = ({ selectedGender }) => {
     else {
       setTimeout(()=>{
         setShouldBeVisible(true)
-      },100)
+      },50)
       
     }
   },[isFadingOut])
@@ -47,7 +47,7 @@ const DisplaySection: React.FC<DisplaySectionProps> = ({ selectedGender }) => {
         <div className="image-wrapper p-7">
 
           <img id="client_img" 
-          className={`absolute w-[11rem] left-[7.5rem] top-[12rem] transition-opacity duration-800 ${isFadingOut ? 'opacity-0' : (shouldBeVisible ? 'opacity-100' : 'opacity-0')}`} 
+          className={`absolute w-[11rem] left-[7.5rem] top-[12rem] transition-opacity duration-500 ${isFadingOut ? 'opacity-0' : (shouldBeVisible ? 'opacity-100' : 'opacity-0')}`} 
           src={`/displaySection/${currentGender}.png`} alt="Display" />
 
         </div>
