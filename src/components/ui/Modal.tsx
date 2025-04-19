@@ -10,7 +10,7 @@ import {
 import { createContext, useContext, useState, ReactNode, useCallback } from "react";
 
 interface ModalContextProps {
-  openModal: (content: ReactNode, size?: "sm" | "md" | "lg" | "xl", onClose?: (data?: any) => void) => void;
+  openModal: (content: ReactNode, title?: string, size?: "sm" | "md" | "lg" | "xl", onClose?: (data?: any) => void) => void;
   closeModal: () => void;
   isOpen: boolean;
 }
@@ -32,12 +32,13 @@ export const ModalProvider: React.FC<ModalProviderProps> = ({ children }) => {
   const [content, setContent] = useState<ReactNode>(null);
   const [size, setSize] = useState<"sm" | "md" | "lg" | "xl">("md");
   const [onCloseCallback, setOnCloseCallback] = useState<(data?: any) => void | undefined>(undefined);
-
-  const openModal = useCallback((content: ReactNode, size: "sm" | "md" | "lg" | "xl" = "md", onClose?: (data?: any) => void) => {
+  const [dialogTitle, setDialogTitle] = useState<string | undefined>(undefined);
+  const openModal = useCallback((content: ReactNode, title?: string, size: "sm" | "md" | "lg" | "xl" = "md", onClose?: (data?: any) => void) => {
     setContent(content);
     setSize(size);
     setOnCloseCallback(()=>onClose);
     setIsOpen(true);
+    setDialogTitle(title)
   }, []);
 
   const closeModal = useCallback(() => {
@@ -60,6 +61,7 @@ export const ModalProvider: React.FC<ModalProviderProps> = ({ children }) => {
             size === "sm" ? "425px" : size === "md" ? "525px" : size === "lg" ? "725px" : "925px"
           }]`}
         >
+          {dialogTitle && <DialogTitle>{dialogTitle}</DialogTitle>}
           {content}
         </DialogContent>
       </Dialog>
