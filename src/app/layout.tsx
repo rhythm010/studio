@@ -10,7 +10,7 @@ import enCommon from '../../public/locales/en/common.json';
 import LandingPage from './pages/Landing/LandingPage';
 import { ModalProvider } from '@/components/ui/Modal';
 import './globals.css';
-import Home from './page';
+import Header from '@/components/Header';
 
 const geistMono = Geist_Mono({
   variable: '--font-geist-mono',
@@ -69,7 +69,10 @@ function RootLayout({
       <body className={`${geistMono.variable} antialiased`}>
         <ModalProvider>
           <main className="container mx-auto">
-            <LandingPage />
+            <div className='fixed top-0 left-0 w-full z-50'>
+              <Header />
+            </div>
+            <div className=''><LandingPage /></div>
           </main>
           {/* <Home /> */}
         </ModalProvider>
