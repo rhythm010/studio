@@ -11,13 +11,15 @@ interface SelectionSectionProps {
 
 const SelectionSection: React.FC<SelectionSectionProps> = () => {
   const [activeOption, setActiveOption] = useState<string | null>(null);
-  const { t } = useTranslation(['common']);
+  const { t } = useTranslation('common');
 
   return (<>
-  <div className="w-full rounded-xl pr-3 pl-3">
-      <button className="w-full bg-white text-center border-gray-200 p-2 px-3 rounded-[0.5rem]">
-        {t('submit', { ns: 'common' })}
+   <div className="w-full rounded-xl pr-3 pl-3">
+      <button className="w-full bg-white text-center border border-gray-200 p-2 px-3 rounded-[0.5rem]">
+        {t('submit')}
       </button>
+
+    
     </div>
     <div id="selection_container" className="rounded-xl w-full p-3">
 
@@ -43,7 +45,7 @@ const SelectionSection: React.FC<SelectionSectionProps> = () => {
         {/* section - 1 */}
         <div
           id="option_1"
-          className={`flex justify-between items-start border border-b-gray-200 pt-4 pb-4 pr-2 pl-3 ${activeOption === 'option_1' ? 'bg-gray-100' : ''}`}
+          className={`flex justify-between items-start border-b-gray-200 pt-4 pb-4 pr-2 pl-3 ${activeOption === 'option_1' ? 'bg-gray-900 text-white' : ''}`}
           onClick={() => setActiveOption('option_1')}
         >
           <div>
@@ -56,14 +58,14 @@ const SelectionSection: React.FC<SelectionSectionProps> = () => {
         {/* section - 2 */}
         <div
           id="option_2"
-          className={`flex justify-between items-start pt-4 pb-4 pr-2 pl-3 ${activeOption === 'option_2' ? 'bg-gray-100 rounded-b-[10px]' : ''}`}
+          className={`flex justify-between items-start pt-4 pb-4 pr-2 pl-3 ${activeOption === 'option_2' ? 'bg-gray-900 text-white rounded-b-[10px]' : ''}`}
           onClick={() => setActiveOption('option_2')}
         >
           <div>
             <div id="selection_second_tier" className="text-xl font-bold">{t('second_tier_title')}</div>
             <div id="second_tier_description" className="font-light text-xs">{t('second_tier_description')}</div>
           </div>
-          <div id="price_second_tier" className="font-bold">{t('second_tier_price', { ns: 'common' })}د.إ</div>
+          <div id="price_second_tier" className="font-bold">{t('second_tier_price')}د.إ</div>
         </div>
 
       </div>
