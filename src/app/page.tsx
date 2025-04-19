@@ -1,26 +1,40 @@
 'use client'
 
-import { useTranslation } from 'next-i18next';
+import { useTranslation } from 'react-i18next';
 import { useParams } from 'next/navigation';
+import { Button } from '@/components/ui/button';
+import { useModal } from '@/components/ui/Modal';
 
 export const dynamic = 'force-dynamic';
 
 const Home = () => {
   const { t } = useTranslation('common');
   const { locale } = useParams();
-  const { i18n } = useTranslation();
+  const { openModal } = useModal()
   // i18n.changeLanguage(locale);
+
+  const openTestModal = () => {
+    openModal(
+      <div className='flex flex-col'>
+        <p>This is a modal</p>
+        <Button onClick={() => openModal(undefined,undefined,(data)=>console.log(data))}>close</Button>
+      </div>,
+      "md",
+      (data) => {
+        if(data) {
+          console.log("data from modal", data);
+        }
+      }
+    );
+  };
+
   return (
     <div className="container mx-auto p-4">
-      <h1 className="text-3xl font-bold text-primary">
-        Welcome to PagePilot!
-      </h1>{' '}
-      {/* This is an example */}
-      <p className="text-gray-700 mt-4">
-        This is the home page of our PWA 3. Feel free to navigate to the About and Contact pages.
-      </p>
-      <p>{t('greeting')}</p>
-      <p>{t('description')}</p>
+      <div className='flex gap-2'>
+        <Button onClick={openTestModal}>
+          Open Modal
+        </Button>
+      </div>
     </div>
   );
 };

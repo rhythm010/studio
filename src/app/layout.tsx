@@ -8,7 +8,9 @@ import { initReactI18next } from 'react-i18next';
 import arCommon from '../../public/locales/ar/common.json';
 import enCommon from '../../public/locales/en/common.json';
 import LandingPage from './pages/Landing/LandingPage';
+import { ModalProvider } from '@/components/ui/Modal';
 import './globals.css';
+import Home from './page';
 
 const geistMono = Geist_Mono({
   variable: '--font-geist-mono',
@@ -65,15 +67,13 @@ function RootLayout({
   return (
     <html lang={lang} className={`${roboto.variable} font-sans`}>
       <body className={`${geistMono.variable} antialiased`}>
-        {/* <button onClick={changeLanguage}>
-          {isEnglish ? 'Arabic' : 'English'}
-        </button> */}
-        <main className="container mx-auto">
-          <LandingPage />
-        </main>
-        {/* <div>{t('greeting')}</div>
-        <div>{t('description')}</div> */}
-        {/* {children} */}
+        <ModalProvider>
+          <main className="container mx-auto">
+            <LandingPage />
+          </main>
+          {/* <Home /> */}
+        </ModalProvider>
+
       </body>
     </html>
   );
