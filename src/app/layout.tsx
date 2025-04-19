@@ -75,7 +75,7 @@ function RootLayout({
             </div>
             <div className=''><LandingPage /></div>
           </main>
-          <Home />
+          {/* <Home /> */}
         </ModalProvider>
 
       </body>
