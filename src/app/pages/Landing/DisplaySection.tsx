@@ -1,9 +1,41 @@
+import { useEffect, useState } from 'react';
+
 interface DisplaySectionProps {
   selectedGender: string | null;
 }
 
-const DisplaySection: React.FC<DisplaySectionProps> = ({ selectedGender = 'male' }) => {
-  const isCompanion1Hidden = selectedGender === 'male';
+const DisplaySection: React.FC<DisplaySectionProps> = ({ selectedGender }) => {
+  const [currentGender, setCurrentGender] = useState<string>(selectedGender || 'male');
+  const [isFadingOut, setIsFadingOut] = useState(false);
+  const [shouldBeVisible, setShouldBeVisible] = useState(true);
+
+  useEffect(() => {
+    if (selectedGender && selectedGender !== currentGender) {
+      setIsFadingOut(true); // Start fading out
+
+      setTimeout(() => {
+        setCurrentGender(selectedGender); // Update currentGender
+        setIsFadingOut(false); // Start fading in
+        setShouldBeVisible(true)
+      }, 800);
+    }
+  }, [selectedGender]);
+
+  useEffect(() => {
+    if(isFadingOut){
+      setShouldBeVisible(false)
+    }
+    else {
+      setTimeout(()=>{
+        setShouldBeVisible(true)
+      },100)
+      
+    }
+  },[isFadingOut])
+
+
+  const isCompanion1Hidden = currentGender === 'male';
+
   return (
     <div className="flex h-full pt-[2rem]">
       <div id="companion_1" className={`flex-1 flex items-center justify-center border-white`}>
@@ -13,7 +45,11 @@ const DisplaySection: React.FC<DisplaySectionProps> = ({ selectedGender = 'male'
       </div>
       <div id="center_stage" className="border-white">
         <div className="image-wrapper p-7">
-          <img id="client_img" className="absolute w-[11rem] left-[7.5rem] top-[12rem]" src={`/displaySection/${selectedGender === 'female' ? 'female' : 'male'}.png`} alt="Display" />
+
+          <img id="client_img" 
+          className={`absolute w-[11rem] left-[7.5rem] top-[12rem] transition-opacity duration-800 ${isFadingOut ? 'opacity-0' : (shouldBeVisible ? 'opacity-100' : 'opacity-0')}`} 
+          src={`/displaySection/${currentGender}.png`} alt="Display" />
+
         </div>
       </div>
       <div id="companion_2" className="flex-1 flex items-center justify-center border-white">
