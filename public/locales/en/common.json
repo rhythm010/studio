@@ -7,6 +7,8 @@
     "second_tier_description": "An entry to the uber VIP experience",
     "first_tier_price": "499",
     "second_tier_price": "899",
-    "open_modal": "Open Modal 2",
+    "open_modal": "Open Modal",
+    "submit": "Submit",
     "close": "Close"
+    
 }

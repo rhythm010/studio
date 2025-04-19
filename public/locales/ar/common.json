@@ -1,13 +1,14 @@
 {
   "greeting": "مرحبا بالعالم!","description": "هذا مثال.",
-    "male": "ذكر",
-    "female": "أنثى",
-    "first_tier_title": "2 مرافقين",
-    "first_tier_description": "دخول إلى تجربة كبار الشخصيات",
-    "second_tier_title": "4 مرافقين",
-    "second_tier_description": "دخول إلى تجربة كبار الشخصيات للغاية",
-    "first_tier_price": "499",
-    "second_tier_price": "899",
+  "male": "ذكر",
+  "female": "أنثى",
+  "first_tier_title": "2 مرافقين",
+  "first_tier_description": "دخول إلى تجربة كبار الشخصيات",
+  "second_tier_title": "4 مرافقين",
+  "second_tier_description": "دخول إلى تجربة كبار الشخصيات للغاية",
+  "first_tier_price": "499",
+  "second_tier_price": "899",
   "open_modal": "افتح النموذج",
-  "close": "إغلاق"
+  "close": "إغلاق",
+  "submit": "إرسال"
 }
