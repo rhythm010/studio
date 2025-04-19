@@ -61,7 +61,7 @@ export const ModalProvider: React.FC<ModalProviderProps> = ({ children }) => {
             size === "sm" ? "425px" : size === "md" ? "525px" : size === "lg" ? "725px" : "925px"
           }]`}
         >
-          {dialogTitle && <DialogTitle>{dialogTitle}</DialogTitle>}
+          {/* {dialogTitle && <DialogTitle>{dialogTitle}</DialogTitle>} */}
           {content}
         </DialogContent>
       </Dialog>
