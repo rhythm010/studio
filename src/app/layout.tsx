@@ -11,6 +11,7 @@ import LandingPage from './pages/Landing/LandingPage';
 import { ModalProvider } from '@/components/ui/Modal';
 import './globals.css';
 import Header from '@/components/Header';
+import Home from './page';
 
 const geistMono = Geist_Mono({
   variable: '--font-geist-mono',
@@ -74,7 +75,7 @@ function RootLayout({
             </div>
             <div className=''><LandingPage /></div>
           </main>
-          {/* <Home /> */}
+          <Home />
         </ModalProvider>
 
       </body>

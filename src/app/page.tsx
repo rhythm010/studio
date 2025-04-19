@@ -11,13 +11,12 @@ const Home = () => {
   const { t } = useTranslation('common');
   const { locale } = useParams();
   const { openModal } = useModal()
-  // i18n.changeLanguage(locale);
-
+  
   const openTestModal = () => {
     openModal(
       <div className='flex flex-col'>
         <p>This is a modal</p>
-        <Button onClick={() => openModal(undefined,undefined,(data)=>console.log(data))}>close</Button>
+        <Button onClick={() => openModal(undefined,undefined,(data)=>console.log(data))}>{t('close')}</Button>
       </div>,
       "md",
       (data) => {
@@ -32,7 +31,7 @@ const Home = () => {
     <div className="container mx-auto p-4">
       <div className='flex gap-2'>
         <Button onClick={openTestModal}>
-          Open Modal
+          {t('open_modal')}
         </Button>
       </div>
     </div>
