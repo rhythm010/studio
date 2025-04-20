@@ -1,20 +1,30 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { Button } from '@/components/ui/button';
 import { Icons } from '@/components/icons';
 import { Tooltip, TooltipContent, TooltipTrigger } from '@/components/ui/tooltip';
 import { Switch } from '@/components/ui/switch';
+import { useTranslation } from 'next-i18next';
 
 interface HeaderProps {
   showBack?: boolean;
 }
+
 
 function Header({ showBack = true }: HeaderProps) {
   const [isMenuOpen, setIsMenuOpen] = useState<boolean>(false);
 
   const onToggle = (checked: boolean) => {
     console.log('Toggle state:', checked);
+  };
+  const { i18n } = useTranslation();
+  const handleToggleChange = (checked: boolean) => {
+    if (checked) {
+      i18n.changeLanguage('ar');
+    } else {
+      i18n.changeLanguage('en');
+    }
   };
 
   return (
@@ -37,7 +47,7 @@ function Header({ showBack = true }: HeaderProps) {
             </Button>
           </TooltipTrigger>
           <TooltipContent className="flex flex-col items-start">
-            <div className='flex flex-row items-center space-x-2'><Switch id="airplane-mode" onCheckedChange={onToggle}/><label htmlFor="airplane-mode">toggle</label></div>
+            <div className='flex flex-row items-center space-x-2'><Switch id="airplane-mode" onCheckedChange={handleToggleChange}/><label htmlFor="airplane-mode">toggle</label></div>
           </TooltipContent>
         </Tooltip>
       </div>
