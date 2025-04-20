@@ -11,6 +11,7 @@ import LandingPage from './pages/Landing/LandingPage';
 import { ModalProvider } from '@/components/ui/Modal';
 import './globals.css';
 import Header from '@/components/Header';
+import { TooltipProvider } from '@/components/ui/tooltip';
 import Home from './page';
 
 const geistMono = Geist_Mono({
@@ -69,14 +70,15 @@ function RootLayout({
     <html lang={lang} className={`${roboto.variable} font-sans`}>
       <body className={`${geistMono.variable} antialiased`}>
         <ModalProvider>
-          <main className="container mx-auto">
-            <div className='fixed top-0 left-0 w-full z-50'>
-              <Header />
-            </div>
-            <div className=''><LandingPage /></div>
-          </main>
-          {/* <Home /> */}
-        </ModalProvider>
+          <TooltipProvider>
+            <main className="container mx-auto">
+              <div className='fixed top-0 left-0 w-full z-50'>
+                <Header />
+              </div>
+              <div className=''><LandingPage /></div>
+            </main>
+          </TooltipProvider>
+      </ModalProvider>
 
       </body>
     </html>
