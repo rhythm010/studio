@@ -40,7 +40,7 @@ const DisplaySection: React.FC<DisplaySectionProps> = ({ selectedGender }) => {
     <div className="flex h-full pt-[2rem]">
       <div id="companion_1" className={`flex-1 flex items-center justify-center border-white`}>
         <div className="image-wrapper">
-          <img className="max-w-[11rem]" src="/displaySection/sideGuard.png" alt="Companion 1" />
+          <img className="max-w-[11rem]" src="/displaySection/sideGuard_white_shirt.png" alt="Companion 1" />
         </div>
       </div>
       <div id="center_stage" className="border-white">
@@ -54,7 +54,7 @@ const DisplaySection: React.FC<DisplaySectionProps> = ({ selectedGender }) => {
       </div>
       <div id="companion_2" className="flex-1 flex items-center justify-center border-white">
         <div className="image-wrapper">
-        <img className="max-w-[11rem]" src="/displaySection/sideGuard.png" alt="Companion 2" />
+        <img className="max-w-[11rem]" src="/displaySection/sideGuard_white_shirt.png" alt="Companion 2" />
         </div>
       </div>
     </div>
