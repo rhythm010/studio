@@ -6,14 +6,14 @@ import { Icons } from '@/components/icons';
 import { Tooltip, TooltipContent, TooltipTrigger } from '@/components/ui/tooltip';
 import { Switch } from '@/components/ui/switch';
 import { useTranslation } from 'next-i18next';
-
 interface HeaderProps {
   showBack?: boolean;
 }
 
-
 function Header({ showBack = true }: HeaderProps) {
   const [isMenuOpen, setIsMenuOpen] = useState<boolean>(false);
+
+  const { t } = useTranslation('common');
 
   const onToggle = (checked: boolean) => {
     console.log('Toggle state:', checked);
@@ -36,8 +36,8 @@ function Header({ showBack = true }: HeaderProps) {
           </Button>
         </div>
       )}
-      <div>
-        <h1 className="text-white">PagePilot</h1>
+      <div id="header_title_text">
+        <h1 className="text-white">{t('header_title_text')}</h1>
       </div>
       <div>
         <Tooltip open={isMenuOpen}>
@@ -47,7 +47,7 @@ function Header({ showBack = true }: HeaderProps) {
             </Button>
           </TooltipTrigger>
           <TooltipContent className="flex flex-col items-start">
-            <div className='flex flex-row items-center space-x-2'><Switch id="airplane-mode" onCheckedChange={handleToggleChange}/><label htmlFor="airplane-mode">toggle</label></div>
+            <div className='flex flex-row items-center space-x-2'><Switch id="airplane-mode" onCheckedChange={handleToggleChange}/><label htmlFor="airplane-mode">en-ar</label></div>
           </TooltipContent>
         </Tooltip>
       </div>
