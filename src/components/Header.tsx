@@ -1,24 +1,35 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, } from 'react';
 import { Button } from '@/components/ui/button';
 import { Icons } from '@/components/icons';
 import { Tooltip, TooltipContent, TooltipTrigger } from '@/components/ui/tooltip';
 import { Switch } from '@/components/ui/switch';
-import { useTranslation } from 'next-i18next';
+import { useTranslation } from 'react-i18next';
+import { useModal } from '@/components/ui/Modal';
+import React from 'react';
 interface HeaderProps {
   showBack?: boolean;
 }
 
-function Header({ showBack = true }: HeaderProps) {
+const Header: React.FC<HeaderProps> = ({ showBack = true }) => {
   const [isMenuOpen, setIsMenuOpen] = useState<boolean>(false);
+  const { setModalContent, setIsModalOpen,setTitle , modalContent} = useModal();
+  const { i18n, t } = useTranslation();
 
-  const { t } = useTranslation('common');
+    useEffect(() => {
+      if(modalContent) {
+        setIsMenuOpen(false)
+      }
+    }, [modalContent])
 
-  const onToggle = (checked: boolean) => {
-    console.log('Toggle state:', checked);
+
+  const handleModalOpen = () => {
+    setTitle('Modal Title');
+    setModalContent(<p>Hello from Modal!</p>);
+    setIsModalOpen(true);
   };
-  const { i18n } = useTranslation();
+
   const handleToggleChange = (checked: boolean) => {
     if (checked) {
       i18n.changeLanguage('ar');
@@ -31,7 +42,7 @@ function Header({ showBack = true }: HeaderProps) {
     <div className="bg-gray-800 p-2 shadow-lg w-full flex items-center justify-between">
       {showBack && (
         <div>
-          <Button className="bg-gray-800 hover:bg-gray-700" variant="default" size="sm">
+          <Button onClick={handleModalOpen} className="bg-gray-800 hover:bg-gray-700" variant="default" size="sm">
             <Icons.backArrow className="mr-2 h-4 w-4" />
           </Button>
         </div>
@@ -53,6 +64,5 @@ function Header({ showBack = true }: HeaderProps) {
       </div>
     </div>
   );
-}
-
+};
 export default Header;

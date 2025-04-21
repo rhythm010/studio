@@ -31,7 +31,7 @@ const Home = () => {
     <div className="container mx-auto p-4">
       <div className='flex gap-2'>
         <Button onClick={openTestModal}>
-          {t('open_modal')}
+          {/* {t('open_modal')} */}
         </Button>
       </div>
     </div>

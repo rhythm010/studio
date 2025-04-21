@@ -1,70 +1,64 @@
-import {
-  Dialog,
-  DialogContent,
-  DialogDescription,
-  DialogFooter,
-  DialogHeader,
-  DialogTitle,
-  DialogTrigger,
-} from "@/components/ui/dialog";
-import { createContext, useContext, useState, ReactNode, useCallback } from "react";
+import { createContext, useContext, useState, ReactNode ,React } from "react";
+import { Dialog, DialogContent, DialogTitle } from "@/components/ui/dialog";
 
-interface ModalContextProps {
-  openModal: (content: ReactNode, title?: string, size?: "sm" | "md" | "lg" | "xl", onClose?: (data?: any) => void) => void;
-  closeModal: () => void;
-  isOpen: boolean;
+interface IModalContextProps {
+  modalContent: ReactNode | null;
+  setModalContent: (content: ReactNode | null) => void;
+  isModalOpen: boolean;
+  setIsModalOpen: (open: boolean) => void;
+  onCloseCallback: ((data?: any) => void) | undefined;
+  setOnCloseCallback: (onClose?: ((data?: any) => void) | undefined) => void;
+  title: string | undefined;
+  setTitle: (title: string | undefined) => void;
 }
 
-const ModalContext = createContext<ModalContextProps>({
-  openModal: () => {},
-  closeModal: () => {},
-  isOpen: false,
+const IModalContext = createContext<IModalContextProps>({
+  modalContent: null,
+  setModalContent: () => {},
+  isModalOpen: false,
+  setIsModalOpen: () => {},
+  onCloseCallback: undefined,
+  setOnCloseCallback: () => {},
+  title: undefined,
+  setTitle: () => {},
 });
 
-export const useModal = () => useContext(ModalContext);
+export const useModal = () => useContext(IModalContext);
 
-interface ModalProviderProps {
+interface ModalProviderProps{
   children: ReactNode;
 }
 
 export const ModalProvider: React.FC<ModalProviderProps> = ({ children }) => {
-  const [isOpen, setIsOpen] = useState(false);
-  const [content, setContent] = useState<ReactNode>(null);
-  const [size, setSize] = useState<"sm" | "md" | "lg" | "xl">("md");
-  const [onCloseCallback, setOnCloseCallback] = useState<(data?: any) => void | undefined>(undefined);
-  const [dialogTitle, setDialogTitle] = useState<string | undefined>(undefined);
-  const openModal = useCallback((content: ReactNode, title?: string, size: "sm" | "md" | "lg" | "xl" = "md", onClose?: (data?: any) => void) => {
-    setContent(content);
-    setSize(size);
-    setOnCloseCallback(()=>onClose);
-    setIsOpen(true);
-    setDialogTitle(title)
-  }, []);
+  const [modalContent, setModalContent] = useState<ReactNode | null>(null);
+  const [isModalOpen, setIsModalOpen] = useState<boolean>(false);
+  const [onCloseCallback, setOnCloseCallback] = useState<((data?: any) => void) | undefined>(undefined);
+  const [title, setTitle] = useState<string | undefined>(undefined);
 
-  const closeModal = useCallback(() => {
-    setIsOpen(false);
-    if(onCloseCallback) {
-        onCloseCallback()
-    }
-  }, [onCloseCallback]);
-
+  return <IModalContext.Provider value={{ modalContent, setModalContent, isModalOpen, setIsModalOpen, onCloseCallback, setOnCloseCallback, title, setTitle }}>{children}</IModalContext.Provider>
+};
+ 
+export const Modal: React.FC = () => {
+  const { modalContent, isModalOpen, setIsModalOpen, title , onCloseCallback , setModalContent} = useModal();
+  
   return (
-    <ModalContext.Provider value={{ openModal, closeModal, isOpen }}>
-      {children}
-      <Dialog open={isOpen} onOpenChange={(open) => {
-        if(!open) {
-          closeModal();
+    <Dialog
+      open={isModalOpen}
+      onOpenChange={(open) => {
+        if (!open) {
+          
+          setIsModalOpen(false);
+          setModalContent(null);
+          if (onCloseCallback) {
+            onCloseCallback();
+          }
         }
-      }}>
-        <DialogContent
-          className={`px-4 sm:px-6 sm:max-w-[${
-            size === "sm" ? "425px" : size === "md" ? "525px" : size === "lg" ? "725px" : "925px"
-          }]`}
-        >
-          {/* {dialogTitle && <DialogTitle>{dialogTitle}</DialogTitle>} */}
-          {content}
-        </DialogContent>
-      </Dialog>
-    </ModalContext.Provider>
+      }}
+    >
+      <DialogContent className={"min-w-[400px]"}>
+        {title && <DialogTitle>{title}</DialogTitle>}
+        {modalContent}
+      </DialogContent>
+    </Dialog>
   );
 };
