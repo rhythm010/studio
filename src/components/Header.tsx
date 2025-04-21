@@ -38,6 +38,10 @@ const Header: React.FC<HeaderProps> = ({ showBack = true }) => {
     }
   };
 
+  const handleReset = () => {
+    window.location.reload()
+  };
+
   return (
     <div className="bg-gray-800 p-2 shadow-lg w-full flex items-center justify-between">
       {showBack && (
@@ -58,7 +62,10 @@ const Header: React.FC<HeaderProps> = ({ showBack = true }) => {
             </Button>
           </TooltipTrigger>
           <TooltipContent className="flex flex-col items-start">
-            <div className='flex flex-row items-center space-x-2'><Switch id="airplane-mode" onCheckedChange={handleToggleChange}/><label htmlFor="airplane-mode">en-ar</label></div>
+            <div className='flex flex-row items-center space-x-2'>
+              <Switch id="airplane-mode" onCheckedChange={handleToggleChange}/>
+              <label htmlFor="airplane-mode">en-ar</label>
+            </div><Button onClick={handleReset} className='mt-5' size='sm' variant='ghost'>reset</Button>
           </TooltipContent>
         </Tooltip>
       </div>

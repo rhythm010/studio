@@ -55,15 +55,13 @@ const RootLayout: React.FC<{ children: React.ReactNode }> = ({
                   <Header />
                 </div>
                 <div className=''>
-                  <LandingPage />
-                  {/* <MatchingPage /> */}
+                  {/* <LandingPage /> */}
+                  <MatchingPage />
                   </div>
                 {children}
               </div>
             </main>
-          </TooltipProvider>
-            {/* <Modal /> */}
-        
+          </TooltipProvider>  
       </ModalProvider>
         </body>
     </html>
