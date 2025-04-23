@@ -18,7 +18,7 @@ const SelectionSection: React.FC<SelectionSectionProps> = ({ onGenderChange }) =
   const [selectedGender, setSelectedGender] = useState<string | null>('male');
   const [activeOption, setActiveOption] = useState<string | null>(null);
   const [selectedOption, setSelectedOption] = useState<string | null>(null);
-  const { openModal, closeModal } = useModal()
+  const { openModal, closeModal } = useModal();
   const { t } = useTranslation('common')
   const handleGenderChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     const gender = event.target.value
@@ -37,9 +37,17 @@ const SelectionSection: React.FC<SelectionSectionProps> = ({ onGenderChange }) =
       console.log('tier clicked', tier.id);
       setActiveOption(tier.id);
     }};
+
+    const submitClickHandler = () =>{ 
+      console.log('submit is clicked');
+      openModal(<TierDetails />);
+    }
+
   return (<>
     <div className="w-full rounded-xl pr-3 pl-3">
-      <button className="w-full bg-white text-center border border-gray-200 p-2 px-3 rounded-[0.5rem]">
+      <button className="w-full bg-white text-center border border-gray-200 p-2 px-3 rounded-[0.5rem]"
+        onClick={submitClickHandler}
+      >
         {t('submit')}
       </button>
 

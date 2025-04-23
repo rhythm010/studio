@@ -48,6 +48,7 @@ const RootLayout: React.FC<{ children: React.ReactNode }> = ({
       <html lang='en' className={`${roboto.variable} font-sans`}>
       <body className={`${roboto.variable} antialiased`}>
         <ModalProvider>
+          <Modal/>
           <TooltipProvider>
             <main className="min-h-screen flex flex-col items-center justify-center">
               <div className="container mx-auto">
@@ -55,8 +56,8 @@ const RootLayout: React.FC<{ children: React.ReactNode }> = ({
                   <Header />
                 </div>
                 <div className=''>
-                  {/* <LandingPage /> */}
-                  <MatchingPage />
+                  <LandingPage />
+                  {/* <MatchingPage /> */}
                   </div>
                 {children}
               </div>

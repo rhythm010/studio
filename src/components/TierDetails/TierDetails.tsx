@@ -2,8 +2,8 @@ import React from "react";
 import { Check } from "lucide-react";
 
 interface TierDetailsProps {
-  title: string;
-  onClose: () => void;
+  title?: string;
+  onClose?: () => void;
 }
 
 const TierDetails: React.FC<TierDetailsProps> = ({ title, onClose }) => {

@@ -3,6 +3,8 @@ import { Dialog, DialogContent, DialogTitle } from "@/components/ui/dialog";
 
 interface IModalContextProps {
   modalContent: ReactNode | null;
+  closeModal: () => void;
+  openModal: (content: ReactNode) => void;
   setModalContent: (content: ReactNode | null) => void;
   isModalOpen: boolean;
   setIsModalOpen: (open: boolean) => void;
@@ -14,6 +16,8 @@ interface IModalContextProps {
 
 const IModalContext = createContext<IModalContextProps>({
   modalContent: null,
+  closeModal: () => {},
+  openModal: () => {},
   setModalContent: () => {},
   isModalOpen: false,
   setIsModalOpen: () => {},
@@ -22,8 +26,11 @@ const IModalContext = createContext<IModalContextProps>({
   title: undefined,
   setTitle: () => {},
 });
-
-export const useModal = () => useContext(IModalContext);
+export const useModal = () => {
+  const context = useContext(IModalContext);
+  if (context === undefined) throw new Error('useModal must be used within a ModalProvider');
+  return context;
+}
 
 interface ModalProviderProps{
   children: ReactNode;
@@ -35,27 +42,35 @@ export const ModalProvider: React.FC<ModalProviderProps> = ({ children }) => {
   const [onCloseCallback, setOnCloseCallback] = useState<((data?: any) => void) | undefined>(undefined);
   const [title, setTitle] = useState<string | undefined>(undefined);
 
-  return <IModalContext.Provider value={{ modalContent, setModalContent, isModalOpen, setIsModalOpen, onCloseCallback, setOnCloseCallback, title, setTitle }}>{children}</IModalContext.Provider>
+  const openModal = (content: ReactNode) => {
+        setModalContent(content);
+        setIsModalOpen(true);
+    };
+
+    const closeModal = () => {
+        setIsModalOpen(false);
+        setModalContent(null);
+
+  };
+
+  return <IModalContext.Provider value={{ modalContent, setModalContent, isModalOpen, setIsModalOpen, onCloseCallback, setOnCloseCallback, title, setTitle, openModal }}>{children}</IModalContext.Provider>
 };
  
 export const Modal: React.FC = () => {
-  const { modalContent, isModalOpen, setIsModalOpen, title , onCloseCallback , setModalContent} = useModal();
+  const { modalContent, isModalOpen, title , onCloseCallback , closeModal} = useModal();
   
   return (
     <Dialog
-      open={isModalOpen}
+      open={isModalOpen}      
       onOpenChange={(open) => {
         if (!open) {
-          
-          setIsModalOpen(false);
-          setModalContent(null);
-          if (onCloseCallback) {
-            onCloseCallback();
-          }
+          closeModal();
+          onCloseCallback && onCloseCallback();
+
         }
       }}
     >
-      <DialogContent className={"min-w-[400px]"}>
+      <DialogContent className={"w-[300px] min-h-[400px]"}>
         {title && <DialogTitle>{title}</DialogTitle>}
         {modalContent}
       </DialogContent>
