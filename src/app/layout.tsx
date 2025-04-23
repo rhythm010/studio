@@ -57,7 +57,6 @@ const RootLayout: React.FC<{ children: React.ReactNode }> = ({
                 </div>
                 <div className=''>
                   <LandingPage />
-                  {/* <MatchingPage /> */}
                   </div>
                 {children}
               </div>
