@@ -6,14 +6,12 @@ import { useTranslation } from 'react-i18next';
 import { initReactI18next } from 'react-i18next';
 import arCommon from '../../public/locales/ar/common.json';
 import enCommon from '../../public/locales/en/common.json';
-import LandingPage from './pages/Landing/LandingPage';
 import { ModalProvider, Modal } from '@/components/ui/Modal';
 import  './globals.css';
 import Header from '@/components/Header';
 import { TooltipProvider } from '@/components/ui/tooltip';
 import React from 'react';
-import MatchingPage from './pages/Matching/MatchingPage';
-
+import './globals.css';
 const roboto = Roboto({
     weight: ['400', '700'],
     subsets: ['latin'],
@@ -55,13 +53,10 @@ const RootLayout: React.FC<{ children: React.ReactNode }> = ({
                 <div className='fixed top-0 left-0 w-full z-50'>
                   <Header />
                 </div>
-                <div className=''>
-                  <LandingPage />
-                  </div>
                 {children}
               </div>
             </main>
-          </TooltipProvider>  
+          </TooltipProvider>
       </ModalProvider>
         </body>
     </html>
