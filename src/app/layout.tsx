@@ -1,7 +1,7 @@
 "use client";
 import type { Metadata } from 'next';
 import { Roboto } from 'next/font/google';
-import i18next, { Namespace } from 'i18next';
+import i18next from 'i18next'; 
 import { useTranslation } from 'react-i18next';
 import { initReactI18next } from 'react-i18next';
 import arCommon from '../../public/locales/ar/common.json';
@@ -12,13 +12,13 @@ import Header from '@/components/Header';
 import { TooltipProvider } from '@/components/ui/tooltip';
 import React from 'react';
 import './globals.css';
+
 const roboto = Roboto({
-    weight: ['400', '700'],
-    subsets: ['latin'],
-    display: 'swap',
-    variable: '--font-roboto',
-  });
-// export const metadata: Metadata = {
+  weight: ['400', '700'],
+  subsets: ['latin'],
+  display: 'swap',
+});
+
 //   title: 'PagePilot PWA',
 //   description: 'A simple PWA built with Next.js',
 //   manifest: '/manifest.json',
@@ -43,8 +43,8 @@ const RootLayout: React.FC<{ children: React.ReactNode }> = ({
   const { i18n } = useTranslation('common');
 
   return (
-      <html lang='en' className={`${roboto.variable} font-sans`}>
-      <body className={`${roboto.variable} antialiased`}>
+      <html lang='en' className={roboto.className}>
+      <body className="">
         <ModalProvider>
           <Modal/>
           <TooltipProvider>
