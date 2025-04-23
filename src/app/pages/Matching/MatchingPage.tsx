@@ -36,19 +36,17 @@ const MatchingPage: React.FC = () => {
         key={isReset}
         className="w-full flex flex-col items-center justify-center"
       >
-        {isLoading ? (
+        {isLoading && (
           <Loader2 className="transition-all duration-1000 animate-spin h-24 w-24" />
-        ) : (
-          <CheckCircle2 className="translate-y-[-3rem] opacity-100 transition-all duration-1000 text-green-500 h-24 w-24" />
         )}
         {!isLoading && (
           <div id="QR_code_container" className="mt-5">
             <QRCodeHandler />
           </div>
         )}
-        <Button className="mt-5" onClick={handleReset}>
+        {/* <Button className="mt-5" onClick={handleReset}>
           reset
-        </Button>
+        </Button> */}
       </div>
         </div>
     );

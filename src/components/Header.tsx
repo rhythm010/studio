@@ -1,7 +1,7 @@
 'use client';
 
 import { useState, useEffect, } from 'react';
-import { Button } from '@/components/ui/button';
+import { Button} from '@/components/ui/button';
 import { Icons } from '@/components/icons';
 import { Tooltip, TooltipContent, TooltipTrigger } from '@/components/ui/tooltip';
 import { Switch } from '@/components/ui/switch';
@@ -14,7 +14,7 @@ interface HeaderProps {
 
 const Header: React.FC<HeaderProps> = ({ showBack = true }) => {
   const [isMenuOpen, setIsMenuOpen] = useState<boolean>(false);
-  const { setModalContent, setIsModalOpen,setTitle , modalContent} = useModal();
+  const { setModalContent, setIsModalOpen,setTitle , modalContent , closeModal} = useModal();
   const { i18n, t } = useTranslation();
 
     useEffect(() => {
@@ -43,7 +43,7 @@ const Header: React.FC<HeaderProps> = ({ showBack = true }) => {
   };
 
   return (
-    <div className="bg-gray-800 p-2 shadow-lg w-full flex items-center justify-between">
+    <div className="bg-gray-800 shadow-lg h-16 w-full flex items-center justify-between">
       {showBack && (
         <div>
           <Button onClick={handleModalOpen} className="bg-gray-800 hover:bg-gray-700" variant="default" size="sm">
@@ -57,7 +57,9 @@ const Header: React.FC<HeaderProps> = ({ showBack = true }) => {
       <div>
         <Tooltip open={isMenuOpen}>
           <TooltipTrigger asChild>
-            <Button className="bg-gray-800 hover:bg-gray-700" variant="default" size="sm" onClick={() => setIsMenuOpen(!isMenuOpen)}>
+            <Button className="bg-gray-800 hover:bg-gray-700" variant="default" size="sm" onClick={() => {
+              setIsMenuOpen(!isMenuOpen);
+              closeModal();}}>
               <Icons.menu className="mr-2 h-4 w-4" />
             </Button>
           </TooltipTrigger>

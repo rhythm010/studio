@@ -3,7 +3,7 @@
 import React, { useState, ReactNode } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useModal } from '@/components/ui/Modal';
-import TierDetails from '@/components/TierDetails/TierDetails';
+import MatchingPage from '../Matching/MatchingPage';
 
 interface SelectionSectionProps {
   onGenderChange: (gender: string) => void;
@@ -40,7 +40,7 @@ const SelectionSection: React.FC<SelectionSectionProps> = ({ onGenderChange }) =
 
     const submitClickHandler = () =>{ 
       console.log('submit is clicked');
-      openModal(<TierDetails />);
+      openModal(<MatchingPage />);
     }
 
   return (<>
