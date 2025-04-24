@@ -12,5 +12,8 @@
   "open_modal": "افتح النموذج",
   "close": "إغلاق",
   "submit": "إرسال",
-  "header_title_text": "رفيق"
+  "header_title_text": "رفيق",
+  "timer_start": "يبدأ",
+  "timer_stop": "قف",
+  "in_service_feedback": "هل لديك ملاحظات؟"
 }

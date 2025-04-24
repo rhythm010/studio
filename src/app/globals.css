@@ -88,3 +88,12 @@
     @apply bg-background text-foreground;
   }  
 }
+
+@layer components {
+  .header-button {
+    @apply bg-gray-800 text-white hover:bg-gray-700;
+  }
+}
+
+
+

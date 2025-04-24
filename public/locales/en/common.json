@@ -10,6 +10,9 @@
     "open_modal": "Open Modal",
     "submit": "Submit",
     "close": "Close",
-    "header_title_text": "Companion"
-    
+    "header_title_text": "Companion",
+    "timer_start": "Start",
+    "timer_stop": "Stop",
+    "in_service_feedback": "Got Feedback?"
+
 }
