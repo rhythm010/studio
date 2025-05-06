@@ -4,10 +4,13 @@ import StopWatch from "./StopWatch";
 import { useTranslation } from 'react-i18next';
 import { useModal } from '../../../components/ui/Modal'; // Assuming useModal is exported from Modal.tsx
 import ConfirmationModalContent from '../../../components/ConfirmationModalContent'; // Import the new component
+import { useRouter } from 'next/navigation'
+
 
 
 const InService: React.FC = () => {
 
+  const router = useRouter()
   const { t } = useTranslation('common');
   const [isRunning, setIsRunning] = useState<boolean>(false);
   const [elapsedTime, setElapsedTime] = useState<number>(0);
@@ -18,8 +21,9 @@ const InService: React.FC = () => {
 
   const openEndServiceModal = () => {
     const handleYes = () => {
-      // handling yes 
+ setIsRunning(false); // Stop the timer
       closeModal();
+ router.push('/end-service')
     };
     const handleNo = () => {
       // handling no
