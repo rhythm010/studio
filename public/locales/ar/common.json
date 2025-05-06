@@ -15,5 +15,7 @@
   "header_title_text": "رفيق",
   "timer_start": "يبدأ",
   "timer_stop": "قف",
-  "in_service_feedback": "هل لديك ملاحظات؟"
+  "in_service_feedback": "هل لديك ملاحظات؟",
+  "end_service_confirmation": "هل أنت متأكد من رغبتك في إنهاء الخدمة؟",
+  "end_service": "إنهاء الخدمة"
 }
