@@ -6,7 +6,7 @@ import StarRating from '../../../components/StarRating'; // Assuming the path is
 const EndService: React.FC = () => {
   const router = useRouter();
   const handleStarClick = () => {
-    router.push('/introduction');
+    router.push('/login');
   };
 
   return (

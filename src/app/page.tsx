@@ -1,10 +1,12 @@
-import IntroductionPage from './introduction/page';
-import InService from './pages/InService/InService';
-import LandingPage from './pages/Landing/LandingPage';
+"use client";
 
+import { useRouter } from 'next/navigation';
+import { useEffect } from 'react';
 
 export default function HomePage() {
-  // return <LandingPage />;
-  // return <InService />;
-  return <IntroductionPage />;
+  const router = useRouter();
+  useEffect(() => {
+    router.push('/login');
+  }, [router]);
 }
+
