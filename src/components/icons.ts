@@ -1,4 +1,4 @@
-import {ArrowRight, Check, ChevronsUpDown, Circle, Copy, Edit, ExternalLink, File, HelpCircle, Home, Loader2, Mail, Menu, MessageSquare, Moon, Plus, PlusCircle, Search, Server, Settings, Share2, Shield, Sun, Trash, User, X, Workflow, ArrowLeft, RotateCw} from 'lucide-react';
+import {ArrowRight, Check, ChevronsUpDown, Circle, Copy, Edit, ExternalLink, File, HelpCircle, Home, Loader2, Mail, Menu, MessageSquare, Moon, Plus, PlusCircle, Search, Server, Settings, Share2, Shield, Sun, Trash, User, X, Workflow, ArrowLeft, RotateCw, Star as StarOutline, StarIcon} from 'lucide-react';
 
 const Icons = {
   arrowRight: ArrowRight,
@@ -30,7 +30,9 @@ const Icons = {
   user: User,
   backArrow: ArrowLeft,
   reset: RotateCw,
-  menu:Menu
+  menu:Menu,
+  starOutline: StarOutline,
+  starFilled: StarIcon
 };
 
 export {Icons};

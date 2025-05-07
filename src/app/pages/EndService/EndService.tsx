@@ -1,9 +1,17 @@
+"use client";
 import React from 'react';
+import { useRouter } from 'next/navigation';
+import StarRating from '../../../components/StarRating'; // Assuming the path is correct
 
 const EndService: React.FC = () => {
+  const router = useRouter();
+  const handleStarClick = () => {
+    router.push('/introduction');
+  };
+
   return (
     <div className="flex items-center justify-center h-screen w-screen">
-      <p className="text-4xl font-bold">Hello World</p>
+      <StarRating label="How was the service?" onClick={handleStarClick} />
     </div>
   );
 };
