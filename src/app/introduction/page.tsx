@@ -1,7 +1,7 @@
 import React from 'react';
-import Introduction from '@/components/Introduction/Introduction';
+import Introduction from '@/app/pages/Introduction/Introduction';
 
-const IntroductionPage: React.FC = () => {
+const IntroductionPage = () => {
   return (
     <div>
       <Introduction />
