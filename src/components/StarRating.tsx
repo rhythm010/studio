@@ -4,17 +4,15 @@ import { Icons } from './icons';
 
 
 interface StarRatingProps {
-  label: string; // Text label for the rating
-  onRatingChange?: (rating: number) => void;
-  onClick?: () => void; // Added onClick prop
+ label: string; // Text label for the rating
+  onRatingChange: (rating: number) => void; // Added onClick prop
 }
 
-const StarRating: React.FC<StarRatingProps> = ({ label, onRatingChange, onClick }) => {
+const StarRating: React.FC<StarRatingProps> = ({ label, onRatingChange }) => {
   const [rating, setRating] = useState<number>(0);
 
   const handleStarClick = (selectedRating: number) => {
-    setRating(selectedRating);
-    onClick?.(); // Invoke the onClick prop
+ onRatingChange(selectedRating); // Invoke the onClick prop
     console.log('rating selected:', selectedRating)
   };
 

@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 
 interface MultipleAnsQProps {
   question: string;
-  options: string[];
+  options?: string[];
   onOptionSelected: (option: string) => void;
 }
 
@@ -27,7 +27,7 @@ const MultipleAnsQ: React.FC<MultipleAnsQProps> = ({
     <div className="border border-black rounded-md p-6 flex flex-col items-center">
       <p className="mb-4 text-center">{question}</p>
       <div className="grid grid-cols-2 gap-4">
-        {options.map((option) => (
+        {options?.map((option) => (
           <button
             key={option}
             className={`border border-black rounded-md p-2 ${
