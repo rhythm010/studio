@@ -42,7 +42,9 @@ const EndService: React.FC = () => {
     } else {
       console.log('All answers:');
       answers.forEach(item => console.log(`Question: ${item.question}, Answer: ${item.answer}`));
-      // Optionally redirect or perform other actions when all questions are answered
+      setTimeout(() => {
+        router.push('/login');
+      }, 1000); // 1 second delay
     }
   };
 
