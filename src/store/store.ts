@@ -16,21 +16,21 @@ interface CompanionStore {
   reset: () => void;
 }
 
-const useCompanionStore = create<CompanionStore>((set, get) => ({
-  sessionId: "",
-  matchingId: "",
-  serviceSelected: "",
+const useCompanionStore = create<CompanionStore>((set) => ({
+  sessionId: '',
+  matchingId: '',
+  serviceSelected: '',
   profileDetails: {},
   setProfileDetails: (details) =>
     set((state) => ({
       profileDetails: { ...state.profileDetails, ...details },
     })),
   setSessionId: (id) => set({ sessionId: id }),
-  setMatchingId: (id) => set({ matchingId: id }),
-  setServiceSelected: (service) => set({ serviceSelected: service }),
+  setMatchingId: (id) => set({ matchingId: id}),
+  setServiceSelected: (service) => set({ serviceSelected: service}),
   reset: () =>
     set({
-      sessionId: "",
+      sessionId: '',
       matchingId: "",
       serviceSelected: "",
       profileDetails: {},

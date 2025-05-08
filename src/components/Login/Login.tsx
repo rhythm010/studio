@@ -20,11 +20,11 @@ const Login: React.FC = () => {
 
   const validateMobile = (value: string) => {
     if (!/^\d{10}$/.test(value)) {
- if (value.length < 5) {
- }
+      if (value.length < 5) {
+      }
       setMobileError('Mobile number must be numeric');
     } else {
- if (value.length !== 10) {
+      if (value.length !== 10) {
       }
 
       setMobileError('');
@@ -93,7 +93,7 @@ const Login: React.FC = () => {
               `}
 
               type="submit"
- disabled={!name || !email || !mobile || !!emailError || !!mobileError}
+              disabled={!name || !email || !mobile || !!emailError || !!mobileError}
             >
               Submit
             </button>
