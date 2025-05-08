@@ -34,6 +34,7 @@ i18next.use(initReactI18next).init({
     ar: {
       common: arCommon,
     },
+
   },
 });
 
@@ -41,7 +42,7 @@ const RootLayout: React.FC<{ children: React.ReactNode }> = ({
   children,
 }) => {
   const { i18n } = useTranslation('common');
-
+ 
   return (
       <html lang='en' className={roboto.className}>
       <body className="">

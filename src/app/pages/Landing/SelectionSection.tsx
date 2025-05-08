@@ -5,6 +5,7 @@ import { useTranslation } from 'react-i18next';
 import { useModal } from '@/components/ui/Modal';
 import MatchingPage from '../Matching/MatchingPage';
 import { useRouter } from 'next/navigation';
+import useCompanionStore from '@/store/store';
 
 
 interface SelectionSectionProps {
@@ -22,6 +23,7 @@ const SelectionSection: React.FC<SelectionSectionProps> = ({ onGenderChange }) =
   const [selectedOption, setSelectedOption] = useState<string | null>(null);
   const { openModal, closeModal } = useModal();
   const { t } = useTranslation('common');
+  const { setServiceSelection } = useCompanionStore();
   const router = useRouter();
     
   const handleGenderChange = (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -43,7 +45,8 @@ const SelectionSection: React.FC<SelectionSectionProps> = ({ onGenderChange }) =
     }};
 
     const submitClickHandler = () =>{ 
-        openModal(<MatchingPage />); // Open the modal
+ setServiceSelection({gender: selectedGender ?? '', package: activeOption === 'option_1' ? 'silver' : 'gold'})
+ openModal(<MatchingPage />); // Open the modal
         setTimeout(() => {
             closeModal();
             router.push("/in-service");

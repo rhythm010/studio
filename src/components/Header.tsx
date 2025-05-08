@@ -8,6 +8,7 @@ import { Switch } from '@/components/ui/switch';
 import { useTranslation } from 'react-i18next';
 import { useModal } from '@/components/ui/Modal';
 import { useRouter } from 'next/navigation';
+import useCompanionStore from '@/store/store';
 import React from 'react';
 
 interface HeaderProps {
@@ -19,6 +20,7 @@ const Header: React.FC<HeaderProps> = ({ showBack = true }) => {
   const { closeModal } = useModal();
   const { i18n, t } = useTranslation();
 
+  const store = useCompanionStore();
   const router = useRouter();
   const handleModalOpen = () => {
     router.back()
@@ -34,6 +36,10 @@ const Header: React.FC<HeaderProps> = ({ showBack = true }) => {
 
   const handleReset = () => {
  router.push('/login')
+  };
+
+  const handleGetStore = () => {
+    console.log('Current store state:', store);
   };
 
   return (
@@ -60,7 +66,10 @@ const Header: React.FC<HeaderProps> = ({ showBack = true }) => {
             <div className='flex flex-row items-center space-x-2'>
               <Switch id="airplane-mode" onCheckedChange={handleToggleChange}/>
               <label htmlFor="airplane-mode">en-ar</label>
-            </div><Button onClick={handleReset} className='mt-5' size='sm' variant='ghost'>reset</Button>
+            </div>
+            <Button onClick={handleReset} className='mt-5' size='sm' variant='ghost'>reset</Button>
+ <Button onClick={handleGetStore} className='mt-5' size='sm' variant='ghost'>getStore</Button>
+
           </TooltipContent>
         </Tooltip>
       </div>

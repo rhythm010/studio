@@ -1,5 +1,6 @@
 'use client';
 import React, { useState } from 'react';
+import useCompanionStore from '@/store/store';
 import { useRouter } from 'next/navigation';
 
 const Login: React.FC = () => {
@@ -8,6 +9,8 @@ const Login: React.FC = () => {
   const [mobile, setMobile] = useState('');
   const [emailError, setEmailError] = useState('');
   const [mobileError, setMobileError] = useState('');
+
+  const { setProfileDetails, ...storeState } = useCompanionStore();
 
   const router = useRouter();
   const validateEmail = (value: string) => {
@@ -33,7 +36,12 @@ const Login: React.FC = () => {
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    // Handle form submission logic here
+    setProfileDetails({
+      name,
+      email,
+      mobile,
+    });
+    console.log('Current store state:', storeState);
     router.push('/introduction');
   };
 
