@@ -33,7 +33,7 @@ const Header: React.FC<HeaderProps> = ({ showBack = true }) => {
   };
 
   const handleReset = () => {
-    router.push('/')
+ router.push('/login')
   };
 
   return (
