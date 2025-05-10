@@ -24,5 +24,7 @@
 ,  "loginEmailPlaceholder": "Enter your email"
 ,  "loginMobileLabel": "Mobile Number"
 ,  "loginMobilePlaceholder": "Enter your mobile number"
-,  "loginSubmitButton": "Submit"
+,  "loginSubmitButton": "Submit",
+  "introductionNextButton": "Next",
+  "introductionAgreeButton": "I Agree"
 }

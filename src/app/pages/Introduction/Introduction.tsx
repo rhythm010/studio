@@ -1,6 +1,7 @@
 "use client";
 import React, { useState, useRef, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
+import { useTranslation } from 'react-i18next';
 
 const Introduction = () => {
   const router = useRouter();
@@ -8,6 +9,7 @@ const Introduction = () => {
   const [isAgreed, setIsAgreed] = useState<boolean>(false);
   const [hasReachedImage3, setHasReachedImage3] = useState<boolean>(false);
   const [touchStartX, setTouchStartX] = useState<number | null>(null);
+  const { t } = useTranslation('common');
   const images = ['Image 1', 'Image 2', 'Image 3'];
   const sliderRef = useRef<HTMLDivElement>(null);
 
@@ -39,7 +41,7 @@ const Introduction = () => {
     }
   }, [currentImage]);
 
-  const buttonText = currentImage < images.length - 1 ? 'Next' : 'I Agree';
+  const buttonText = currentImage < images.length - 1 ? t('introductionNextButton') : t('introductionAgreeButton');
 
   const handleButtonClick = () => {
     if (buttonText === 'Next') handleNext();
@@ -86,7 +88,10 @@ const Introduction = () => {
       <button
         className={`fixed bottom-0 left-1/2 -translate-x-1/2 mb-4 w-[90%] px-4 py-2 rounded-md ${isAgreed || buttonText === 'Next' ? 'bg-gray-800' : 'bg-gray-800 cursor-not-allowed'
           } text-white font-bold`}
-        onClick={handleButtonClick}
+        onClick={() => {
+          if (currentImage < images.length - 1) handleNext();
+          else handleAgreeClick();
+        }}
         disabled={buttonText === 'I Agree' && !hasReachedImage3}
       >
         {buttonText}

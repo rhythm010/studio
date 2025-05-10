@@ -1,6 +1,5 @@
 {
   "greeting": "مرحبا بالعالم!","description": "هذا مثال.",
-  
   "male": "ذكر",  
   "female": "أنثى",  
   "first_tier_title": "فضي",
@@ -26,5 +25,7 @@
   "loginEmailPlaceholder": "أدخل بريدك الإلكتروني",
   "loginMobileLabel": "رقم الجوال",
   "loginMobilePlaceholder": "أدخل رقم جوالك",
-  "loginSubmitButton": "إرسال"
+  "loginSubmitButton": "إرسال",
+  "introductionNextButton": "التالي",
+  "introductionAgreeButton": "أوافق"
 }
