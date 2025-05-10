@@ -9,28 +9,31 @@ interface StarRatingProps {
 }
 
 const StarRating: React.FC<StarRatingProps> = ({ label, onRatingChange }) => {
-  const [rating, setRating] = useState<number>(0);
+  const [hoverRating, setHoverRating] = useState<number>(0);
+  const [selectedRating, setSelectedRating] = useState<number>(0);
 
   const handleStarClick = (selectedRating: number) => {
- onRatingChange(selectedRating); // Invoke the onClick prop
+    setSelectedRating(selectedRating);
+    // onRatingChange(selectedRating);
     console.log('rating selected:', selectedRating)
   };
 
   return (
     <div className="flex flex-col items-center space-y-2">
-      <div className="text-sm font-medium text-gray-700">{label}</div>
+      <div className="text-lg font-bold text-gray-700">{label}</div>
       <div className="flex space-x-1">
-        {[1, 2, 3, 4, 5].map((star) => (
+        {[1, 2, 3, 4, 5].map((starIndex) => (
           <button
-            key={star}
-            onClick={() => handleStarClick(star)}
+            key={starIndex}
+            onClick={() => handleStarClick(starIndex)}
+            onMouseEnter={() => setHoverRating(starIndex)}
+            onMouseLeave={() => setHoverRating(0)}
             className="focus:outline-none"
-            aria-label={`Rate ${star} stars`}
           >
-            {star <= rating ? ( 
-              <Icons.starFilled className="h-6 w-6 text-yellow-400" /> 
+            {(hoverRating || selectedRating) >= starIndex ? (
+              <Icons.starFilled className="h-8 w-8 text-yellow-400" />
             ) : (
-              <Icons.starOutline className="h-6 w-6 text-gray-400" /> 
+              <Icons.starOutline className="h-8 w-8 text-gray-400" />
             )}
           </button>
         ))}

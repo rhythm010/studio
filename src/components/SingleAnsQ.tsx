@@ -17,11 +17,11 @@ const SingleAnsQ: React.FC<SingleAnsQProps> = ({
   cancelText,
 }) => {
   return (
-    <div className="border border-black rounded-md p-6 flex flex-col items-center justify-center">
-      <p className="mb-4">{text}</p>
-      <div className="flex space-x-4">
-        <Button onClick={onYes} className="hover:bg-white">{confirmText}</Button>
-        <Button variant="outline" onClick={onNo}>{cancelText}</Button>
+    <div id="question-container" className="rounded-md p-6 flex flex-col items-center w-full max-w-md m-[1.5rem] shadow-lg">
+      <p className="mb-4 text-xl font-bold">{text}</p>
+      <div className="flex justify-center w-full space-x-4">
+        <Button onClick={onYes} className="flex-1">{confirmText}</Button>
+        <Button variant="outline" onClick={onNo} className="flex-1">{cancelText}</Button>
       </div>
     </div>
   );

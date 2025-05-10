@@ -24,14 +24,14 @@ const MultipleAnsQ: React.FC<MultipleAnsQProps> = ({
   };
 
   return (
-    <div className="border border-black rounded-md p-6 flex flex-col items-center">
-      <p className="mb-4 text-center">{question}</p>
-      <div className="grid grid-cols-2 gap-4">
+    <div id="main-container" className="flex flex-col items-center justify-center min-h-screen p-5 w-[180rem]">
+      <p className="mb-4 text-center font-bold text-[1.6rem]">{question}</p>
+      <div className="grid grid-cols-2 gap-x-8 gap-y-4 w-full max-w-lg">
         {options?.map((option) => (
           <button
-            key={option}
-            className={`border border-black rounded-md p-2 ${
-              selectedOption === option ? 'bg-gray-300 text-black' : 'bg-white text-black'
+            key={option} // Use a unique key
+            className={`rounded-md p-2 flex items-center justify-center text-center whitespace-normal shadow-md ${
+ selectedOption === option ? 'bg-gray-400 text-black' : 'bg-white text-black'
             }`}
             onClick={() => handleOptionClick(option)}
           >

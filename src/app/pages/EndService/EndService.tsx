@@ -14,25 +14,25 @@ const EndService: React.FC = () => {
   const [currentQuestionIndex, setCurrentQuestionIndex] = useState(0);
   const [answers, setAnswers] = useState<{ question: string, answer: any }[]>([]); // Keep local state for now for logging
   const questions = [
-    {
-      qId: '1',
-      type: 'MultipleAnsQ',
-      question: 'How was the service?',
-      options: ['Excellent', 'Good', 'Fair', 'Bad']
-    },
-    {
-      qId: '2',
-      type: 'OpenAnsQ',
-      question: 'Do you want to add any additional comment?',
-    },
+    // {
+    //   qId: '1',
+    //   type: 'MultipleAnsQ',
+    //   question: 'How was the service?',
+    //   options: ['Excellent', 'Good', 'Fair', 'Bad']
+    // },
+    // {
+    //   qId: '2',
+    //   type: 'OpenAnsQ',
+    //   question: 'Do you want to add any additional comment?',
+    // },
 
-    {
-      qId: '3',
-      type: 'SingleAnsQ',
-      question: 'Was the guard on time?',
-      confirmText: 'Yes',
-      cancelText: 'No',
-    },
+    // {
+    //   qId: '3',
+    //   type: 'SingleAnsQ',
+    //   question: 'Was the guard on time?',
+    //   confirmText: 'Yes',
+    //   cancelText: 'No',
+    // },
     {
       qId: '4',
       type: "StarRating",
