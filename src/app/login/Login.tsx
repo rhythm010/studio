@@ -7,6 +7,7 @@ const Login: React.FC = () => {
   const [name, setName] = useState('');
   const [email, setEmail] = useState('');
   const [mobile, setMobile] = useState('');
+  const [hasBlurredEmail, setHasBlurredEmail] = useState(false);
   const [emailError, setEmailError] = useState('');
   const [mobileError, setMobileError] = useState('');
 
@@ -75,8 +76,14 @@ const Login: React.FC = () => {
               type="email"
               placeholder="Enter your email"
               value={email}
-              onChange={(e) => setEmail(e.target.value)}
-              onBlur={() => validateEmail(email)}
+              onChange={(e) => {
+                setEmail(e.target.value);
+                if (hasBlurredEmail) {
+                  validateEmail(e.target.value);
+                }
+              }}
+              onBlur={() => { validateEmail(email); setHasBlurredEmail(true); }}
+
             />
             {emailError && <p className="text-red-500 text-xs italic">{emailError}</p>}
           </div>
