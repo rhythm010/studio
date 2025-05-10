@@ -16,5 +16,13 @@
     "in_service_feedback": "Got Feedback?",
     "end_service_confirmation": "Are you sure you want to end the service?",
     "end_service": "end service"
-
+,  "loginEnterDetails": "Enter Details"
+,  "loginHiName": "Hi, {{name}}"
+,  "loginNameLabel": "Name"
+,  "loginNamePlaceholder": "Enter your name"
+,  "loginEmailLabel": "Email"
+,  "loginEmailPlaceholder": "Enter your email"
+,  "loginMobileLabel": "Mobile Number"
+,  "loginMobilePlaceholder": "Enter your mobile number"
+,  "loginSubmitButton": "Submit"
 }

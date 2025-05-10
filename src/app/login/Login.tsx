@@ -1,12 +1,14 @@
 'use client';
 import React, { useState, useRef } from 'react';
 import { useRouter } from 'next/navigation';
+import { useTranslation } from 'react-i18next';
 import { useCompanionStore } from '@/store/store';
 
 const Login: React.FC = () => {
+  const { t } = useTranslation('common'); // Explicitly using the 'common' namespace
   const [name, setName] = useState('');
   const [email, setEmail] = useState('');
-  const [headerText, setHeaderText] = useState('Enter Details');
+  const [headerText, setHeaderText] = useState(t('loginEnterDetails'));
   const [mobile, setMobile] = useState('');
   const [hasBlurredEmail, setHasBlurredEmail] = useState(false);
   const [emailError, setEmailError] = useState('');
@@ -83,33 +85,32 @@ const Login: React.FC = () => {
         <form onSubmit={handleSubmit}>
           <div className="mb-4">
             <label className="block text-gray-700 text-sm font-bold mb-2" htmlFor="name">
-              Name
+              {t('loginNameLabel')}
             </label>
             <input
               className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
-              id="name"
+              id="name" // Keep ID for htmlFor
               type="text"
-              placeholder="Enter your name"
-              value={name}
+              placeholder={t('loginNamePlaceholder')}
               onChange={(e) => setName(e.target.value)}
               onKeyDown={handleKeyDownName}
               onBlur={() => {
                 if (name) {
-                  setHeaderText(`Hi, ${name}`);
+ setHeaderText(prevText => t('loginHiName', { name })); // Using a callback
                 }
               }}
             />
-          </div>
+         </div>
           <div className="mb-4">
             <label className="block text-gray-700 text-sm font-bold mb-2" htmlFor="email">
-              Email
+              {t('loginEmailLabel')}
             </label>
             <input
               className={`shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline ${emailError ? 'border-red-500' : ''}`}
               ref={emailInputRef}
               id="email"
               type="email"
-              placeholder="Enter your email"
+              placeholder={t('loginEmailPlaceholder')}
               value={email}
               onChange={(e) => {
                 setEmail(e.target.value);
@@ -124,16 +125,18 @@ const Login: React.FC = () => {
           </div>
           <div className="mb-6">
             <label className="block text-gray-700 text-sm font-bold mb-2" htmlFor="mobile">
-              Mobile Number
+              {t('loginMobileLabel')}
             </label>
             <input
               className={`shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 mb-3 leading-tight focus:outline-none focus:shadow-outline ${mobileError ? 'border-red-500' : ''}`}
               ref={mobileInputRef}
               id="mobile"
-              type="number"
-              placeholder="Enter your mobile number"
+              type="number" // Use tel type for mobile numbers
+              placeholder={t('loginMobilePlaceholder')}
               value={mobile}
-              onChange={(e) => setMobile(e.target.value)}
+              onChange={(e) => {
+                setMobile(e.target.value);
+              }}
               onKeyDown={handleKeyDownMobile}
               onBlur={() => validateMobile(mobile)}
             />
@@ -143,14 +146,14 @@ const Login: React.FC = () => {
             <button
               className={`
                 
-                bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline
-                ${!name || !email || !mobile || !!emailError || !!mobileError ? 'bg-gray-400 cursor-not-allowed hover:bg-gray-400' : 'bg-blue-500 hover:bg-blue-700'}
+                 hover:bg-gray-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline
+                ${!name || !email || !mobile || !!emailError || !!mobileError ? 'bg-gray-400 cursor-not-allowed hover:bg-gray-400' : 'bg-gray-800 hover:bg-gray-700'}
               `}
 
               type="submit"
-              disabled={!name || !email || !mobile || !!emailError || !!mobileError}
+              disabled={!name || !email || !mobile || !!emailError || !!mobileError || mobile.length < 8}
             >
-              Submit
+              {t('loginSubmitButton')}
             </button>
           </div>
         </form>

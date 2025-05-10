@@ -17,5 +17,14 @@
   "timer_stop": "قف",
   "in_service_feedback": "هل لديك ملاحظات؟",
   "end_service_confirmation": "هل أنت متأكد من رغبتك في إنهاء الخدمة؟",
-  "end_service": "إنهاء الخدمة"
+  "end_service": "إنهاء الخدمة",
+  "loginEnterDetails": "أدخل التفاصيل",
+  "loginHiName": "مرحباً، {{name}}",
+  "loginNameLabel": "الاسم",
+  "loginNamePlaceholder": "أدخل اسمك",
+  "loginEmailLabel": "البريد الإلكتروني",
+  "loginEmailPlaceholder": "أدخل بريدك الإلكتروني",
+  "loginMobileLabel": "رقم الجوال",
+  "loginMobilePlaceholder": "أدخل رقم جوالك",
+  "loginSubmitButton": "إرسال"
 }
