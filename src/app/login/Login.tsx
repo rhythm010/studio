@@ -1,7 +1,7 @@
 'use client';
 import React, { useState } from 'react';
-import useCompanionStore from '@/store/store';
 import { useRouter } from 'next/navigation';
+import { useCompanionStore } from '@/store/store';
 
 const Login: React.FC = () => {
   const [name, setName] = useState('');

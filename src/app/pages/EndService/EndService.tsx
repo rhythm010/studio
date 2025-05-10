@@ -5,44 +5,56 @@ import MultipleAnsQ from '../../../components/MultipleAnsQ';
 import OpenAnsQ from '../../../components/OpenAnsQ';
 import SingleAnsQ from '../../../components/SingleAnsQ';
 import StarRating from '../../../components/StarRating';
+import { useCompanionStore } from '../../../store/store';
+
 
 const EndService: React.FC = () => {
   const router = useRouter();
+  const addFeedback = useCompanionStore((state) => state.addFeedback);
   const [currentQuestionIndex, setCurrentQuestionIndex] = useState(0);
-  const [answers, setAnswers] = useState<{ question: string, answer: any }[]>([]);
-
+  const [answers, setAnswers] = useState<{ question: string, answer: any }[]>([]); // Keep local state for now for logging
   const questions = [
     {
+      qId: '1',
       type: 'MultipleAnsQ',
       question: 'How was the service?',
       options: ['Excellent', 'Good', 'Fair', 'Bad']
     },
     {
+      qId: '2',
       type: 'OpenAnsQ',
       question: 'Do you want to add any additional comment?',
     },
 
     {
+      qId: '3',
       type: 'SingleAnsQ',
       question: 'Was the guard on time?',
       confirmText: 'Yes',
       cancelText: 'No',
     },
     {
+      qId: '4',
       type: "StarRating",
       question: 'Overall feedback for the service'
     }
   ];
 
-  const handleAnswer = (answer: any) => {
+  const handleAnswer = (response: any) => {
     const currentQuestion = questions[currentQuestionIndex];
-    setAnswers([...answers, { question: currentQuestion.question, answer }]);
+
+    // Create FeedbackDetails object and add to store
+    const feedbackDetails = {
+      question: currentQuestion.question,
+      response: response,
+    };
+    addFeedback(feedbackDetails);
+
     if (currentQuestionIndex < questions.length - 1) {
       setCurrentQuestionIndex(currentQuestionIndex + 1);
     } else {
-      console.log('All answers:');
-      answers.forEach(item => console.log(`Question: ${item.question}, Answer: ${item.answer}`));
-      setTimeout(() => {
+      console.log('All questions answered. Feedback stored in the store.');
+        setTimeout(() => {
         router.push('/login');
       }, 1000); // 1 second delay
     }

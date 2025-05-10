@@ -8,7 +8,7 @@ import { Switch } from '@/components/ui/switch';
 import { useTranslation } from 'react-i18next';
 import { useModal } from '@/components/ui/Modal';
 import { useRouter } from 'next/navigation';
-import useCompanionStore from '@/store/store';
+import { useCompanionStore } from '@/store/store';
 import React from 'react';
 
 interface HeaderProps {
@@ -75,15 +75,6 @@ const Header: React.FC<HeaderProps> = ({ showBack = true }) => {
             <Button onClick={() => router.push('/landing')} className='mt-2' size='sm' variant='ghost'>
               landing
             </Button>
-            {/* <Button onClick={() => router.push('/')} className='mt-2' size='sm' variant='ghost'>
-              Home
-            </Button> */}
-            {/* <Button onClick={() => router.push('/about')} className='mt-2' size='sm' variant='ghost'>
-              About
-            </Button> */}
-            {/* <Button onClick={() => router.push('/contact')} className='mt-2' size='sm' variant='ghost'>
-              Contact
-            </Button> */}
             <Button onClick={() => router.push('/in-service')} className='mt-2' size='sm' variant='ghost'>
               in-service
             </Button>

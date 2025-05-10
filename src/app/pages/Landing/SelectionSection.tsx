@@ -5,8 +5,7 @@ import { useTranslation } from 'react-i18next';
 import { useModal } from '@/components/ui/Modal';
 import MatchingPage from '../Matching/MatchingPage';
 import { useRouter } from 'next/navigation';
-import useCompanionStore from '@/store/store';
-
+import { useCompanionStore } from '@/store/store';
 
 interface SelectionSectionProps {
   onGenderChange: (gender: string) => void;

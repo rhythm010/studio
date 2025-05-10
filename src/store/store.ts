@@ -9,17 +9,24 @@ interface ServiceSelection {
   package: string;
 }
 
+interface FeedbackDetails {
+  question: string;
+  response: string | boolean;
+}
+
 interface CompanionStore {
   sessionId: string;
   matchingId: string;
   serviceSelected: string;
   profileDetails: ProfileDetails;
   serviceSelection:   ServiceSelection;
+  feedbackDetails: FeedbackDetails[];
   setProfileDetails: (details: Partial<ProfileDetails>) => void;
   setSessionId: (id: string) => void;
   setMatchingId: (id: string) => void;
   setServiceSelected: (service: string) => void;
   reset: () => void;
+  addFeedback: (feedback: FeedbackDetails) => void;
   setServiceSelection: (selection: ServiceSelection) => void;
 }
 
@@ -31,6 +38,7 @@ const useCompanionStore = create<CompanionStore>((set) => ({
   serviceSelection: {
     gender: '',
     package: '',
+
   },
   setProfileDetails: (details) =>
     set((state) => ({
@@ -38,8 +46,11 @@ const useCompanionStore = create<CompanionStore>((set) => ({
     })),
   setSessionId: (id) => set({ sessionId: id }),
   setServiceSelection: (selection) => set({ serviceSelection: selection }),
+  feedbackDetails: [],
   setMatchingId: (id) => set({ matchingId: id}),
   setServiceSelected: (service) => set({ serviceSelected: service}),
+  addFeedback: (feedback) =>
+    set((state) => ({ feedbackDetails: [...state.feedbackDetails, feedback] })),
   reset: () =>
     set({
       sessionId: '',
@@ -49,4 +60,4 @@ const useCompanionStore = create<CompanionStore>((set) => ({
     }),
 }));
 
-export default useCompanionStore;
+export { useCompanionStore };
