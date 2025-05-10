@@ -39,6 +39,13 @@ const Introduction = () => {
     }
   }, [currentImage]);
 
+  const buttonText = currentImage < images.length - 1 ? 'Next' : 'I Agree';
+
+  const handleButtonClick = () => {
+    if (buttonText === 'Next') handleNext();
+    else handleAgreeClick();
+  };
+
   return (
     <div className="flex flex-col items-center justify-center h-screen bg-gray-100 px-4 pt-4 overflow-x-hidden"> {/* Changed justify-between to justify-center */}
       <div className="flex flex-col items-center mb-8"> {/* New container for image and dots */}
@@ -77,12 +84,12 @@ const Introduction = () => {
         </div>
       </div> {/* Closing the new container */}
       <button
-        disabled={!isAgreed}
-        className={`fixed bottom-0 left-1/2 -translate-x-1/2 mb-4 w-[90%] px-4 py-2 rounded-md ${isAgreed ? 'bg-blue-500 hover:bg-blue-600' : 'bg-gray-400 cursor-not-allowed'
+        className={`fixed bottom-0 left-1/2 -translate-x-1/2 mb-4 w-[90%] px-4 py-2 rounded-md ${isAgreed || buttonText === 'Next' ? 'bg-gray-800' : 'bg-gray-800 cursor-not-allowed'
           } text-white font-bold`}
-        onClick={handleAgreeClick}
+        onClick={handleButtonClick}
+        disabled={buttonText === 'I Agree' && !hasReachedImage3}
       >
-        I Agree
+        {buttonText}
       </button>
     </div>
   );
