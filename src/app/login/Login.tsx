@@ -10,7 +10,7 @@ const Login: React.FC = () => {
   const [emailError, setEmailError] = useState('');
   const [mobileError, setMobileError] = useState('');
 
-  const { setProfileDetails, ...storeState } = useCompanionStore();
+  const { setProfileDetails, setSessionId, ...storeState } = useCompanionStore();
 
   const router = useRouter();
   const validateEmail = (value: string) => {
@@ -41,6 +41,8 @@ const Login: React.FC = () => {
       email,
       mobile,
     });
+    const sessionId = `${Date.now()}-${Math.random()}`;
+    setSessionId(sessionId);
     console.log('Current store state:', storeState);
     router.push('/introduction');
   };
