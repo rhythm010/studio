@@ -67,9 +67,32 @@ const Header: React.FC<HeaderProps> = ({ showBack = true }) => {
               <Switch id="airplane-mode" onCheckedChange={handleToggleChange}/>
               <label htmlFor="airplane-mode">en-ar</label>
             </div>
-            <Button onClick={handleReset} className='mt-5' size='sm' variant='ghost'>reset</Button>
- <Button onClick={handleGetStore} className='mt-5' size='sm' variant='ghost'>getStore</Button>
-
+            <Button onClick={handleReset} className='mt-2' size='sm' variant='ghost'>reset</Button>
+            <Button onClick={handleGetStore} className='mt-2' size='sm' variant='ghost'>getStore</Button>
+            <Button onClick={() => router.push('/login')} className='mt-2' size='sm' variant='ghost'>
+              login
+            </Button>
+            <Button onClick={() => router.push('/landing')} className='mt-2' size='sm' variant='ghost'>
+              landing
+            </Button>
+            {/* <Button onClick={() => router.push('/')} className='mt-2' size='sm' variant='ghost'>
+              Home
+            </Button> */}
+            {/* <Button onClick={() => router.push('/about')} className='mt-2' size='sm' variant='ghost'>
+              About
+            </Button> */}
+            {/* <Button onClick={() => router.push('/contact')} className='mt-2' size='sm' variant='ghost'>
+              Contact
+            </Button> */}
+            <Button onClick={() => router.push('/in-service')} className='mt-2' size='sm' variant='ghost'>
+              in-service
+            </Button>
+            <Button onClick={() => router.push('/end-service')} className='mt-2' size='sm' variant='ghost'>
+              End Service
+            </Button>
+            <Button onClick={() => router.push('/introduction')} className='mt-2' size='sm' variant='ghost'>
+              Introduction
+            </Button>
           </TooltipContent>
         </Tooltip>
       </div>
