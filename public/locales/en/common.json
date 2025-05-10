@@ -26,5 +26,10 @@
 ,  "loginMobilePlaceholder": "Enter your mobile number"
 ,  "loginSubmitButton": "Submit",
   "introductionNextButton": "Next",
-  "introductionAgreeButton": "I Agree"
+  "introductionAgreeButton": "I Agree",
+  "star_rating_label": "Overall feedback for the service",
+  "star_rating_feedback_placeholder": "What went wrong ?",
+  "star_rating_submit_button": "Submit",
+  "yes": "Yes",
+  "no": "No"
 }

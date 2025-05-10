@@ -27,5 +27,10 @@
   "loginMobilePlaceholder": "أدخل رقم جوالك",
   "loginSubmitButton": "إرسال",
   "introductionNextButton": "التالي",
-  "introductionAgreeButton": "أوافق"
+  "introductionAgreeButton": "أوافق",
+  "star_rating_label": "التقييم العام للخدمة",
+  "star_rating_feedback_placeholder": "الرجاء تقديم ملاحظات (اختياري)",
+  "star_rating_submit_button": "إرسال",
+  "yes": "نعم",
+  "no": "لا"
 }

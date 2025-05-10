@@ -12,6 +12,7 @@ interface ServiceSelection {
 interface FeedbackDetails {
   question: string;
   response: string | boolean;
+  details: string;
 }
 
 interface CompanionStore {
@@ -50,7 +51,9 @@ const useCompanionStore = create<CompanionStore>((set) => ({
   setMatchingId: (id) => set({ matchingId: id}),
   setServiceSelected: (service) => set({ serviceSelected: service}),
   addFeedback: (feedback) =>
-    set((state) => ({ feedbackDetails: [...state.feedbackDetails, feedback] })),
+ set((state) => ({
+ feedbackDetails: [...state.feedbackDetails, { ...feedback, details: feedback.details || '' }],
+ })),
   reset: () =>
     set({
       sessionId: '',
