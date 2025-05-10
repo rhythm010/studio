@@ -31,38 +31,38 @@ const Introduction = () => {
   }, [currentImage]);
 
   useEffect(() => {
-    if (currentImage === images.length - 1) {
+    if (currentImage === images.length - 1 || hasReachedImage3) {
       setIsAgreed(true);
       setHasReachedImage3(true);
     } else {
-        if(!hasReachedImage3){
             setIsAgreed(false);
-        }
     }
   }, [currentImage]);
 
   return (
-    <div className="flex flex-col items-center justify-between h-screen bg-gray-100 px-4 pb-20 pt-4">
-      <div className="w-96 h-64 overflow-hidden relative mb-8">
-        <div ref={sliderRef} className="flex transition-transform duration-500">
-          {images.map((image, index) => (
-            <div
-              key={index}
-              className="w-96 h-64 border border-black flex items-center justify-center text-2xl shrink-0"
-            >
-              {image}
-            </div>
-          ))}
+    <div className="flex flex-col items-center justify-center h-screen bg-gray-100 px-4 pt-4"> {/* Changed justify-between to justify-center */}
+      <div className="flex flex-col items-center mb-8"> {/* New container for image and dots */}
+        <div id="image-section" className="w-96 h-64 overflow-hidden relative mx-auto"> {/* Removed mb-8 from this div */}
+          <div id="image-section" ref={sliderRef} className="flex transition-transform duration-500">
+            {images.map((image, index) => (
+              <div
+                key={index}
+                className="w-96 h-64 border border-black flex items-center justify-center text-2xl shrink-0"
+              >
+                {image}
+              </div>
+            ))}
+          </div>
         </div>
-        <div className="absolute left-0 top-0 w-full h-full flex items-center justify-between px-4">
-          <button onClick={handlePrev} className="p-2 rounded-full bg-gray-200 hover:bg-gray-300">
-            {'<'}
-          </button>
-          <button onClick={handleNext} className="p-2 rounded-full bg-gray-200 hover:bg-gray-300">
-            {'>'}
-          </button>
+        <div className="flex justify-center mt-4"> {/* Removed mb-8 from this div */}
+        {images.map((_, index) => (
+          <span
+            key={index}
+            className={`dot h-2 w-2 mx-1 rounded-full ${index === currentImage ? 'bg-gray-800' : 'bg-gray-400'}`}
+          ></span>
+        ))}
         </div>
-      </div>
+      </div> {/* Closing the new container */}
       <button
         disabled={!isAgreed}
         className={`fixed bottom-0 left-1/2 -translate-x-1/2 mb-4 w-[90%] px-4 py-2 rounded-md ${
