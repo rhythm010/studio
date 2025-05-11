@@ -21,16 +21,16 @@ const InService: React.FC = () => {
 
   const openEndServiceModal = () => {
     const handleYes = () => {
- setIsRunning(false); // Stop the timer
+      setIsRunning(false); // Stop the timer
       closeModal();
- router.push('/end-service')
+      router.push('/end-service')
     };
     const handleNo = () => {
       // handling no
       closeModal();
     };
- openModal(
- <ConfirmationModalContent text={t('end_service_confirmation')} onConfirm={handleYes} onCancel={handleNo} />
+    openModal(
+      <ConfirmationModalContent text={t('end_service_confirmation')} onConfirm={handleYes} onCancel={handleNo} />
     );
   }
   const handleStartStop = () => {
@@ -59,15 +59,38 @@ const InService: React.FC = () => {
 
   return (
     <div className="flex flex-col h-screen">
-      <div id="stopwatch_section" className="h-[90%] flex flex-col items-center justify-center border-b border-gray-700">
-        <StopWatch isRunning={isRunning} startStop={handleStartStop} elapsedTime={elapsedTime} setElapsedTime={setElapsedTime} />
+      <div id="stopwatch_section" className="h-[90%] flex flex-col items-center justify-center border-gray-700">
+        <StopWatch
+          isRunning={isRunning}
+          startStop={handleStartStop}
+          elapsedTime={elapsedTime}
+          setElapsedTime={setElapsedTime}
+        />
       </div>
 
-      <div id="action_section" className="h-[10%] flex items-center justify-evenly">
-        <button className="header-button px-4 py-2 rounded">{t("in_service_feedback")}</button>
-        <button className="header-button px-4 py-2 rounded" onClick={openEndServiceModal}>
-          {t("end_service")}
-        </button>
+      <div id="action_section" className="flex items-center justify-evenly border border-black rounded-lg m-4 p-4 h-[10%] mb-72">
+        {/* Three rounded buttons */}
+        <div className="flex flex-col items-center mx-2">
+          <button className="rounded-full w-12 h-12 border border-black mb-1">
+            {/* Icon or empty */}
+          </button>
+          <span className="text-sm">{t("Assist")}</span>
+        </div>
+        <div className="flex flex-col items-center">
+          <button className="rounded-full w-12 h-12 border border-black mb-1">
+            {/* Icon or empty */}
+          </button>
+          <span className="text-sm">{t("Feedback")}</span>
+        </div>
+        <div className="flex flex-col items-center mx-2">
+          <button
+            className="rounded-full w-12 h-12 border border-black mb-1"
+            onClick={openEndServiceModal}
+          >
+            {/* Icon or empty */}
+          </button>
+          <span className="text-sm">{t("End Service")}</span>
+        </div>
       </div>
       {/* Modal is now handled by the hook */}
 
