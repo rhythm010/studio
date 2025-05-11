@@ -94,7 +94,7 @@ const InService: React.FC = () => {
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
             </svg>
           </button>
-          <span className="text-sm font-bold mt-4">{t("End Service")}</span>
+          <span className="text-sm font-bold mt-4">{t("end_service")}</span>
         </div>
       </div>
       {/* Modal is now handled by the hook */}
