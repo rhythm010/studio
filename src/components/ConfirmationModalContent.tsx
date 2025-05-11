@@ -25,7 +25,6 @@ const ConfirmationModalContent: React.FC<ConfirmationModalContentProps> = ({ tex
           
  onClick={onCancel}
         >
-          No
           {t('no')}
         </button>
       </div>
