@@ -47,12 +47,6 @@ const StopWatch: React.FC<StopWatchProps> = ({ isRunning, startStop, elapsedTime
       >
         <div dangerouslySetInnerHTML={{ __html: formatTime(elapsedTime) }} />
       </div>
-      <button 
-        onClick={startStop}
-        className="header-button mt-4 px-[1.5rem] py-[0.5rem] rounded"
-      >
-        {isRunning ? t('timer_stop') : t('timer_start')}
-      </button>
     </div>
   );
 };

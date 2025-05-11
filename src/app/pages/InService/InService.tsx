@@ -66,30 +66,35 @@ const InService: React.FC = () => {
           elapsedTime={elapsedTime}
           setElapsedTime={setElapsedTime}
         />
+        <button
+          onClick={handleStartStop}
+        >
+          {isRunning ? 'Stop' : 'Start'}
+        </button>
       </div>
 
-      <div id="action_section" className="flex items-center justify-evenly border border-black rounded-lg m-4 p-4 h-[10%] mb-72">
+      <div id="action_section" className="flex items-center justify-evenly rounded-lg m-4 p-4 h-[10%] mb-72 shadow-lg">
         {/* Three rounded buttons */}
-        <div className="flex flex-col items-center mx-2">
-          <button className="rounded-full w-12 h-12 border border-black mb-1">
+        <div id="assist_button" className="flex flex-col items-center mx-2">
+          <button className="rounded-full w-16 h-16 border border-black mb-1">
             {/* Icon or empty */}
           </button>
-          <span className="text-sm">{t("Assist")}</span>
+          <span className="text-sm font-bold">{t("Assist")}</span>
         </div>
-        <div className="flex flex-col items-center">
-          <button className="rounded-full w-12 h-12 border border-black mb-1">
+        <div id="play_pause_button" className="flex flex-col items-center">
+          <button className="rounded-full w-16 h-16 border border-black mb-1">
             {/* Icon or empty */}
           </button>
-          <span className="text-sm">{t("Feedback")}</span>
+          <span className="text-sm font-bold">{t("Feedback")}</span>
         </div>
-        <div className="flex flex-col items-center mx-2">
+        <div id="end_service_button" className="flex flex-col items-center mx-2">
           <button
-            className="rounded-full w-12 h-12 border border-black mb-1"
+            className="rounded-full w-16 h-16 border border-black mb-1"
             onClick={openEndServiceModal}
           >
             {/* Icon or empty */}
           </button>
-          <span className="text-sm">{t("End Service")}</span>
+          <span className="text-sm font-bold">{t("End Service")}</span>
         </div>
       </div>
       {/* Modal is now handled by the hook */}
