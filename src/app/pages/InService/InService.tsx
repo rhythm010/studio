@@ -59,7 +59,7 @@ const InService: React.FC = () => {
 
   return (
     <div className="flex flex-col h-screen">
-      <div id="stopwatch_section" className="h-[90%] flex flex-col items-center justify-center border-gray-700">
+      <div id="stopwatch_section" className="h-[90%] flex flex-col items-center justify-center border-gray-700 mt-[13rem]">
         <StopWatch
           isRunning={isRunning}
           startStop={handleStartStop}
@@ -68,21 +68,24 @@ const InService: React.FC = () => {
         />
       </div>
 
-      <div id="action_section" className="flex items-center justify-evenly rounded-lg m-4 p-4 h-[10%] mb-72">
+      <div id="action_section" className="flex items-center justify-evenly rounded-lg m-4 p-4 h-[10%] mb-32">
         {/* Three rounded buttons */}
         <div id="assist_button" className="flex flex-col items-center mx-2">
-          <button className="rounded-full w-16 h-16 mb-1 shadow-md">
-            {/* Icon or empty */}
+          <button onClick={() => openModal()} className="rounded-full w-16 h-16 mb-1 shadow-md flex items-center justify-center">
+            <img src="/icons/icon_light_bulb.png" alt="Assist Icon" className="w-8 h-8" />
           </button>
-          <span className="text-sm font-bold">{t("Assist")}</span>
+          <span className="text-sm font-bold mt-4">{t("Assist")}</span>
         </div>
         <div id="play_pause_button" className="flex flex-col items-center">
           <button onClick={handleStartStop} className="rounded-full w-16 h-16 mb-1 flex items-center justify-center text-2xl shadow-md">
-            {isRunning ? '||' : '>'}
+            {isRunning ? (
+ <img src="/icons/icon_pause.png" alt="Pause Icon" className="w-8 h-8" />
+ ) : (<img src="/icons/icon_play.png" alt="Play Icon" className="w-8 h-8" />)}
           </button>
-          <span className="text-sm font-bold">{t("Feedback")}</span>
+          <span className="text-sm font-bold mt-4">{isRunning ? t('timer_stop') : t('timer_start')}</span>
         </div>
         <div id="end_service_button" className="flex flex-col items-center mx-2">
+          {/* <button className=\"rounded-full w-16 h-16 border border-black mb-1\"> */}
           <button
             onClick={openEndServiceModal} className="rounded-full w-16 h-16 mb-1 flex items-center justify-center text-red-500 text-2xl shadow-md"
           >
@@ -91,7 +94,7 @@ const InService: React.FC = () => {
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
             </svg>
           </button>
-          <span className="text-sm font-bold">{t("End Service")}</span>
+          <span className="text-sm font-bold mt-4">{t("End Service")}</span>
         </div>
       </div>
       {/* Modal is now handled by the hook */}

@@ -12,7 +12,7 @@
     "close": "Close",
     "header_title_text": "Companion",
     "timer_start": "Start",
-    "timer_stop": "Stop",
+    "timer_stop": "Pause",
     "in_service_feedback": "Got Feedback?",
     "end_service_confirmation": "Are you sure you want to end the service?",
     "end_service": "end service"

@@ -43,7 +43,7 @@ const StopWatch: React.FC<StopWatchProps> = ({ isRunning, startStop, elapsedTime
    return (
     <div className="flex flex-col items-center justify-center">
       <div
-        className="w-[13rem] h-[13rem] rounded-full border-4 border-black flex items-center justify-center text-4xl font-bold"
+        className="w-[20rem] h-[20rem] rounded-full border-2 border-black flex items-center justify-center text-6xl font-bold"
       >
         <div dangerouslySetInnerHTML={{ __html: formatTime(elapsedTime) }} />
       </div>
