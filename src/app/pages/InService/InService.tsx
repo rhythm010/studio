@@ -66,33 +66,30 @@ const InService: React.FC = () => {
           elapsedTime={elapsedTime}
           setElapsedTime={setElapsedTime}
         />
-        <button
-          onClick={handleStartStop}
-        >
-          {isRunning ? 'Stop' : 'Start'}
-        </button>
       </div>
 
-      <div id="action_section" className="flex items-center justify-evenly rounded-lg m-4 p-4 h-[10%] mb-72 shadow-lg">
+      <div id="action_section" className="flex items-center justify-evenly rounded-lg m-4 p-4 h-[10%] mb-72">
         {/* Three rounded buttons */}
         <div id="assist_button" className="flex flex-col items-center mx-2">
-          <button className="rounded-full w-16 h-16 border border-black mb-1">
+          <button className="rounded-full w-16 h-16 mb-1 shadow-md">
             {/* Icon or empty */}
           </button>
           <span className="text-sm font-bold">{t("Assist")}</span>
         </div>
         <div id="play_pause_button" className="flex flex-col items-center">
-          <button className="rounded-full w-16 h-16 border border-black mb-1">
-            {/* Icon or empty */}
+          <button onClick={handleStartStop} className="rounded-full w-16 h-16 mb-1 flex items-center justify-center text-2xl shadow-md">
+            {isRunning ? '||' : '>'}
           </button>
           <span className="text-sm font-bold">{t("Feedback")}</span>
         </div>
         <div id="end_service_button" className="flex flex-col items-center mx-2">
           <button
-            className="rounded-full w-16 h-16 border border-black mb-1"
-            onClick={openEndServiceModal}
+            onClick={openEndServiceModal} className="rounded-full w-16 h-16 mb-1 flex items-center justify-center text-red-500 text-2xl shadow-md"
           >
-            {/* Icon or empty */}
+            {/* Red cross icon */}
+            <svg xmlns="http://www.w3.org/2000/svg" className="h-8 w-8" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+            </svg>
           </button>
           <span className="text-sm font-bold">{t("End Service")}</span>
         </div>
