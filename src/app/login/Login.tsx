@@ -1,5 +1,5 @@
 'use client';
-import React, { useState, useRef } from 'react';
+import React, { useState, useRef, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import { useTranslation } from 'react-i18next';
 import { useCompanionStore } from '@/store/store';
@@ -8,7 +8,7 @@ const Login: React.FC = () => {
   const { t } = useTranslation('common'); // Explicitly using the 'common' namespace
   const [name, setName] = useState('');
   const [email, setEmail] = useState('');
-  const [headerText, setHeaderText] = useState(t('loginEnterDetails'));
+ const [headerText, setHeaderText] = useState('');
   const [mobile, setMobile] = useState('');
   const [hasBlurredEmail, setHasBlurredEmail] = useState(false);
   const [emailError, setEmailError] = useState('');
@@ -19,6 +19,14 @@ const Login: React.FC = () => {
   const submitButtonRef = useRef<HTMLButtonElement>(null);
 
   const { setProfileDetails, setSessionId, ...storeState } = useCompanionStore();
+
+  useEffect(() => {
+    if (name) {
+      setHeaderText(t('loginHiName', { name }));
+    } else {
+      setHeaderText(t('loginEnterDetails'));
+    }
+  }, [name, t]); // Depend on name and t (or i18n instance)
 
   const router = useRouter();
   const validateEmail = (value: string) => {
@@ -96,11 +104,11 @@ const Login: React.FC = () => {
               onKeyDown={handleKeyDownName}
               onBlur={() => {
                 if (name) {
- setHeaderText(prevText => t('loginHiName', { name })); // Using a callback
+                  setHeaderText(prevText => t('loginHiName', { name })); // Using a callback
                 }
               }}
             />
-         </div>
+          </div>
           <div className="mb-4">
             <label className="block text-gray-700 text-sm font-bold mb-2" htmlFor="email">
               {t('loginEmailLabel')}

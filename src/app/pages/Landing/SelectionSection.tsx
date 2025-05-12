@@ -19,7 +19,7 @@ interface TierOption {
 
 const SelectionSection: React.FC<SelectionSectionProps> = ({ onGenderChange, onOptionChange }) => {
   const [selectedGender, setSelectedGender] = useState<string | null>('male');
-  const [activeOption, setActiveOption] = useState<string | null>(null);
+  const [activeOption, setActiveOption] = useState<string | null>('option_1');
     const { openModal, closeModal } = useModal();
   const { t } = useTranslation('common');
   const { setServiceSelection } = useCompanionStore();
