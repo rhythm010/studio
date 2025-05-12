@@ -51,12 +51,13 @@ const DisplaySection: React.FC<DisplaySectionProps> = ({ selectedGender, selecte
 
   return (
     <div className="relative h-full pt-[2rem]">
-          <div id="companion_1" className={`flex items-center justify-center absolute ${ selectedOption === 'option_2' ? 'left-[calc(0rem-2rem)]': 'left-0'} top-[8rem] h-full`}>
+          <div id="companion_1" className={`flex items-center justify-center absolute ${ selectedOption === 'option_2' ? 'left-[calc(0rem-1rem)]': 'left-0'} top-[8rem] h-full`}>
               <div className="image-wrapper">
                   <img className="max-w-[11rem]" src="/displaySection/sideGuard_white_shirt.png" alt="Companion 1" />
               </div>
           </div>
-         {selectedOption === 'option_2' && <div id="companion_1_extra" className={`flex items-center justify-center absolute left-[1rem] top-[calc(8rem+2rem)] h-full`}>
+          {/* Extra companion - left */}
+         {selectedOption === 'option_2' && <div id="companion_1_extra" className={`flex items-center justify-center absolute left-[2rem] top-[calc(8rem+2rem)] h-full`}>
               <div className="image-wrapper">
                   <img className="max-w-[11rem]" src="/displaySection/sideGuard_white_shirt.png" alt="Companion 1" />
               </div>
@@ -67,17 +68,17 @@ const DisplaySection: React.FC<DisplaySectionProps> = ({ selectedGender, selecte
                   className={`absolute w-[11rem] left-1/2 top-[8rem] -translate-x-1/2 transition-opacity duration-500 ${isFadingOut ? 'opacity-0' : (shouldBeVisible ? 'opacity-100' : 'opacity-0')}`} src={`/displaySection/${currentGender}.png`} alt="Display" />
               </div>
           </div>
-          <div id="companion_2" className="flex items-center justify-center absolute right-0 top-[8rem] h-full">
+          <div id="companion_2" className={`flex items-center justify-center absolute ${ selectedOption === 'option_2' ? 'right-[calc(0rem-1rem)]': 'right-0'} top-[8rem] h-full`}>
               <div className="image-wrapper">
                   <img className="max-w-[11rem]" src="/displaySection/sideGuard_white_shirt.png" alt="Companion 2" />
               </div>
           </div>
-
-          <div id="companion_2_extra" className="flex items-center justify-center absolute right-0 top-[8rem] h-full">
+          {/* Extra companion - right */}
+          {selectedOption === 'option_2' && <div id="companion_2_etra" className="flex items-center justify-center absolute right-[2rem] top-[calc(8rem+2rem)] h-full">
               <div className="image-wrapper">
                   <img className="max-w-[11rem]" src="/displaySection/sideGuard_white_shirt.png" alt="Companion 2" />
               </div>
-          </div>
+          </div>}
       </div>
 
   );
