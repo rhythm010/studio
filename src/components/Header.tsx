@@ -45,14 +45,14 @@ const Header: React.FC<HeaderProps> = ({ showBack = true }) => {
 
   return (
     <header className="bg-gray-800 shadow-lg h-16 w-full flex items-center justify-between">
-      {showBack && (
+      {showBack && isDevMode && (
         <div>
           <Button onClick={handleModalOpen} className="bg-gray-800 hover:bg-gray-700" variant="default" size="sm">
             <Icons.backArrow className="mr-2 h-4 w-4" />
           </Button>
         </div>
       )}
-      <div id="header_title_text">
+      <div id="header_title_text" className="flex flex-grow justify-center ml-4">
         <h1 className="text-white">{t('header_title_text')}</h1>
       </div>
       <div>
