@@ -4,9 +4,11 @@ import { useEffect, useState } from 'react';
 
 interface DisplaySectionProps {
   selectedGender: string | null;
+ selectedOption: string | null;
 }
 
-const DisplaySection: React.FC<DisplaySectionProps> = ({ selectedGender }) => {
+const DisplaySection: React.FC<DisplaySectionProps> = ({ selectedGender, selectedOption }) => {
+  const [activeOption, setActiveOption] = useState<string | null>(null);
   const [currentGender, setCurrentGender] = useState<string>(selectedGender || 'male');
   const [isFadingOut, setIsFadingOut] = useState(false);
   const [shouldBeVisible, setShouldBeVisible] = useState(true);
@@ -24,6 +26,12 @@ const DisplaySection: React.FC<DisplaySectionProps> = ({ selectedGender }) => {
   }, [selectedGender]);
 
   useEffect(() => {
+    if (selectedOption) {
+      setActiveOption(selectedOption);
+    }
+  }, [selectedOption]);
+
+  useEffect(() => {
     if(isFadingOut){
       setShouldBeVisible(false)
     }
@@ -37,6 +45,9 @@ const DisplaySection: React.FC<DisplaySectionProps> = ({ selectedGender }) => {
 
 
   const isCompanion1Hidden = currentGender === 'male';
+
+  console.log('selected option');
+  console.log(selectedOption);
 
   return (
     <div className="relative h-full pt-[2rem]">

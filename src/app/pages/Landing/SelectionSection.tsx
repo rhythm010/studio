@@ -9,6 +9,7 @@ import { useCompanionStore } from '@/store/store';
 
 interface SelectionSectionProps {
   onGenderChange: (gender: string) => void;
+  onOptionChange: (option: string | null) => void;
 }
 
 interface TierOption {
@@ -16,11 +17,10 @@ interface TierOption {
   title: string;
 }
 
-const SelectionSection: React.FC<SelectionSectionProps> = ({ onGenderChange }) => {
+const SelectionSection: React.FC<SelectionSectionProps> = ({ onGenderChange, onOptionChange }) => {
   const [selectedGender, setSelectedGender] = useState<string | null>('male');
   const [activeOption, setActiveOption] = useState<string | null>(null);
-  const [selectedOption, setSelectedOption] = useState<string | null>(null);
-  const { openModal, closeModal } = useModal();
+    const { openModal, closeModal } = useModal();
   const { t } = useTranslation('common');
   const { setServiceSelection } = useCompanionStore();
   const router = useRouter();
@@ -36,11 +36,13 @@ const SelectionSection: React.FC<SelectionSectionProps> = ({ onGenderChange }) =
     if (typeof tier === 'string') {
       // Handle the case where only string is passed
       console.log('tier clicked', tier);
-        setActiveOption(tier);
+      setActiveOption(tier);
+      onOptionChange(tier);
     } else {
       // Handle the case where a TierOption object is passed
       console.log('tier clicked', tier.id);
       setActiveOption(tier.id);
+      onOptionChange(tier.id);
     }};
 
     const submitClickHandler = () =>{ 
