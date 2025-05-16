@@ -6,7 +6,9 @@ import { useModal } from '@/components/ui/Modal';
 import MatchingPage from '../Matching/MatchingPage';
 import { useRouter } from 'next/navigation';
 import { useCompanionStore } from '@/store/store';
+import { database } from '@/lib/firebase'; // Import the database instance
 
+import { ref, push } from 'firebase/database'; // Import required Firebase functions
 interface SelectionSectionProps {
   onGenderChange: (gender: string) => void;
   onOptionChange: (option: string | null) => void;
@@ -45,13 +47,28 @@ const SelectionSection: React.FC<SelectionSectionProps> = ({ onGenderChange, onO
       onOptionChange(tier.id);
     }};
 
-    const submitClickHandler = () =>{ 
- setServiceSelection({gender: selectedGender ?? '', package: activeOption === 'option_1' ? 'silver' : 'gold'})
- openModal(<MatchingPage />); // Open the modal
-        setTimeout(() => {
-            closeModal();
-            router.push("/in-service");
-        }, 3000);
+    const submitClickHandler = async () => {
+      setServiceSelection({ gender: selectedGender ?? '', package: activeOption === 'option_1' ? 'silver' : 'gold' });
+      openModal(<MatchingPage />); // Open the modal
+
+      try {
+        const sessionRef = ref(database, 'sessions'); // Create a reference to the 'sessions' node
+        const newSessionRef = push(sessionRef); // Generate a unique key for the new object
+        const sessionId = newSessionRef.key; // Get the generated unique key
+
+        await push(sessionRef, {
+          key: 'companion',
+          day: new Date().toISOString().split('T')[0], // Get today's date in YYYY-MM-DD format
+          id: sessionId,
+        });
+      } catch (error) {
+        console.error("Error writing to Firebase:", error);
+      }
+
+      setTimeout(() => {
+        closeModal();
+        router.push("/in-service");
+      }, 3000);
     }
 
   return (
@@ -89,7 +106,7 @@ const SelectionSection: React.FC<SelectionSectionProps> = ({ onGenderChange, onO
 
     {/* Tier Selection  */}
       <div id="tier_options_container" className='bg-white justify-normal flex-col w-full items-center rounded-b-[10px]'>
-        {/* section - 1 */}
+        {/* section - silver */}
         <div
             id="option_1"
             className={`flex justify-between items-start border-b-gray-200 pt-4 pb-4 pr-2 pl-3 cursor-pointer ${
@@ -104,7 +121,7 @@ const SelectionSection: React.FC<SelectionSectionProps> = ({ onGenderChange, onO
           <div id="price_first_tier" className="font-bold">{t('first_tier_price')}د.إ</div>
         </div>
 
-          {/* section - 2 */}
+          {/* section - gold */}
         <div
           id="option_2"
           className={`flex justify-between items-start pt-4 pb-4 pr-2 pl-3 ${

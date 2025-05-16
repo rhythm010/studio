@@ -63,10 +63,14 @@ const DisplaySection: React.FC<DisplaySectionProps> = ({ selectedGender, selecte
               </div>
           </div>}
           <div id="center_stage" className="border-white w-full h-full">
-              <div className="image-wrapper p-7">
+              {selectedOption === 'option_1' && <div className="image-wrapper p-7 z-10">
                   <img id="client_img" 
                   className={`absolute w-[11rem] left-1/2 top-[8rem] -translate-x-1/2 transition-opacity duration-500 ${isFadingOut ? 'opacity-0' : (shouldBeVisible ? 'opacity-100' : 'opacity-0')}`} src={`/displaySection/${currentGender}.png`} alt="Display" />
-              </div>
+              </div>}
+              {selectedOption === 'option_2' && <div className="image-wrapper p-7 z-10">
+                  <img id="client_img" 
+                  className={`absolute w-[11rem] left-1/2 top-[8rem] -translate-x-1/2 transition-opacity duration-500 ${isFadingOut ? 'opacity-0' : (shouldBeVisible ? 'opacity-100' : 'opacity-0')}`} src={`/displaySection/${currentGender == "male"?"male":"female"}.png`} alt="Display" />
+              </div>}
           </div>
           <div id="companion_2" className={`flex items-center justify-center absolute ${ selectedOption === 'option_2' ? 'right-[calc(0rem-1rem)]': 'right-0'} top-[8rem] h-full`}>
               <div className="image-wrapper">
