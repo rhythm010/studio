@@ -46,9 +46,6 @@ const DisplaySection: React.FC<DisplaySectionProps> = ({ selectedGender, selecte
 
   const isCompanion1Hidden = currentGender === 'male';
 
-  console.log('selected option');
-  console.log(selectedOption);
-
   return (
     <div className="relative h-full pt-[2rem]">
           <div id="companion_1" className={`flex items-center justify-center absolute ${ selectedOption === 'option_2' ? 'left-[calc(0rem-1rem)]': 'left-0'} top-[8rem] h-full`}>

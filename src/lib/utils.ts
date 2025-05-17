@@ -1,7 +1,7 @@
 import { clsx, type ClassValue } from "clsx"
 import { database } from '@/lib/firebase';
 import { useCompanionStore } from '@/store/store';
-import { ref, update } from "firebase/database";
+import { ref, update, remove, get } from "firebase/database";
 import { twMerge } from "tailwind-merge"
 
 export function cn(...inputs: ClassValue[]) {
@@ -33,6 +33,26 @@ export async function updateStoreInFirebase() {
     console.log('error in updating value');
     console.log(error);
   } // Handle or log the error appropriately
+}
+
+export async function removeDevSessions() {
+  const storeRef = ref(database, 'storeObjects');
+  try {
+    // This approach reads all objects to filter, which might not be scalable
+    // For production, consider backend filtering or a different data structure
+    const snapshot = await get(storeRef);
+    if (snapshot.exists()) {
+      const objects = snapshot.val();
+      for (const key in objects) {
+        if (objects[key].dev_session === true) {
+          const devSessionRef = ref(database, `storeObjects/${key}`);
+          await remove(devSessionRef);
+        }
+      }
+    }
+  } catch (error) {
+    console.error('Error removing dev sessions:', error);
+  }
 }
 
 

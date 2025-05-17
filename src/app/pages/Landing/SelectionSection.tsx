@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useModal } from '@/components/ui/Modal';
 import MatchingPage from '../Matching/MatchingPage';
@@ -8,7 +8,7 @@ import { useRouter } from 'next/navigation';
 import { useCompanionStore } from '@/store/store';
 import { database } from '@/lib/firebase'; // Import the database instance
 
-import { ref, push } from 'firebase/database'; // Import required Firebase functions
+import { ref, push, onValue } from 'firebase/database'; // Import required Firebase functions
 import { updateStoreInFirebase } from '@/lib/utils';
 interface SelectionSectionProps {
   onGenderChange: (gender: string) => void;
@@ -23,10 +23,30 @@ interface TierOption {
 const SelectionSection: React.FC<SelectionSectionProps> = ({ onGenderChange, onOptionChange }) => {
   const [selectedGender, setSelectedGender] = useState<string | null>('male');
   const [activeOption, setActiveOption] = useState<string | null>('option_1');
-    const { openModal, closeModal } = useModal();
+  const sessionId = useCompanionStore.getState().getSessionId(); 
+  const { openModal, closeModal } = useModal();
   const { t } = useTranslation('common');
   const { setServiceSelection } = useCompanionStore();
   const router = useRouter();
+
+
+  useEffect(() => {
+    if (sessionId) {
+      const dbRef = ref(database, `storeObjects/${sessionId}`);
+      const unsubscribe = onValue(dbRef, (snapshot) => {
+        const data = snapshot.val();
+        if (data && data.matchingDone) {
+          closeModal();
+          router.push('/in-service');
+        }
+      });
+      return () => unsubscribe();
+    }
+
+    return () => {};
+  }, [sessionId, router]);
+
+
     
   const handleGenderChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     const gender = event.target.value
@@ -58,7 +78,7 @@ const SelectionSection: React.FC<SelectionSectionProps> = ({ onGenderChange, onO
         // closeModal();
         // router.push("/in-service");
       }, 3000);
-    }
+    };
 
   return (
     <>
