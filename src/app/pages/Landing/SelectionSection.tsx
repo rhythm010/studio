@@ -9,6 +9,7 @@ import { useCompanionStore } from '@/store/store';
 import { database } from '@/lib/firebase'; // Import the database instance
 
 import { ref, push } from 'firebase/database'; // Import required Firebase functions
+import { updateStoreInFirebase } from '@/lib/utils';
 interface SelectionSectionProps {
   onGenderChange: (gender: string) => void;
   onOptionChange: (option: string | null) => void;
@@ -51,23 +52,11 @@ const SelectionSection: React.FC<SelectionSectionProps> = ({ onGenderChange, onO
       setServiceSelection({ gender: selectedGender ?? '', package: activeOption === 'option_1' ? 'silver' : 'gold' });
       openModal(<MatchingPage />); // Open the modal
 
-      try {
-        const sessionRef = ref(database, 'sessions'); // Create a reference to the 'sessions' node
-        const newSessionRef = push(sessionRef); // Generate a unique key for the new object
-        const sessionId = newSessionRef.key; // Get the generated unique key
-
-        await push(sessionRef, {
-          key: 'companion',
-          day: new Date().toISOString().split('T')[0], // Get today's date in YYYY-MM-DD format
-          id: sessionId,
-        });
-      } catch (error) {
-        console.error("Error writing to Firebase:", error);
-      }
+      updateStoreInFirebase();
 
       setTimeout(() => {
         closeModal();
-        router.push("/in-service");
+        // router.push("/in-service");
       }, 3000);
     }
 

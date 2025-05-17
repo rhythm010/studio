@@ -24,6 +24,8 @@ interface CompanionStore {
   feedbackDetails: FeedbackDetails[];
   setProfileDetails: (details: Partial<ProfileDetails>) => void;
   setSessionId: (id: string) => void;
+  getSessionId: () => string;
+  setDevSession: (isDev: boolean) => void;
   setMatchingId: (id: string) => void;
   setServiceSelected: (service: string) => void;
   reset: () => void;
@@ -34,6 +36,7 @@ interface CompanionStore {
 const useCompanionStore = create<CompanionStore>((set) => ({
   sessionId: '',
   matchingId: '',
+  dev_session: false, // Add the dev_session key with initial value
   serviceSelected: '',
   profileDetails: {},
   serviceSelection: {
@@ -46,6 +49,8 @@ const useCompanionStore = create<CompanionStore>((set) => ({
       profileDetails: { ...state.profileDetails, ...details },
     })),
   setSessionId: (id) => set({ sessionId: id }),
+  setDevSession: (isDev) => set({ dev_session: isDev }), // Add the setDevSession method
+  getSessionId: () => useCompanionStore.getState().sessionId, // Add the getSessionId method
   setServiceSelection: (selection) => set({ serviceSelection: selection }),
   feedbackDetails: [],
   setMatchingId: (id) => set({ matchingId: id}),

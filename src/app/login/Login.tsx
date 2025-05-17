@@ -3,12 +3,19 @@ import React, { useState, useRef, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import { useTranslation } from 'react-i18next';
 import { useCompanionStore } from '@/store/store';
+import { database } from '@/lib/firebase';
+import { ref, set } from 'firebase/database';
+import { extractDataFromStore } from '@/lib/utils'; // Import the utility function
+
 
 const Login: React.FC = () => {
   const { t } = useTranslation('common'); // Explicitly using the 'common' namespace
   const [name, setName] = useState('');
+
+  const IS_DEV_SESSION = true; // Define a constant for the dev_session value
+
   const [email, setEmail] = useState('');
- const [headerText, setHeaderText] = useState('');
+  const [headerText, setHeaderText] = useState('');
   const [mobile, setMobile] = useState('');
   const [hasBlurredEmail, setHasBlurredEmail] = useState(false);
   const [emailError, setEmailError] = useState('');
@@ -18,7 +25,7 @@ const Login: React.FC = () => {
   const mobileInputRef = useRef<HTMLInputElement>(null);
   const submitButtonRef = useRef<HTMLButtonElement>(null);
 
-  const { setProfileDetails, setSessionId, ...storeState } = useCompanionStore();
+  const { setProfileDetails, setSessionId, setDevSession, ...storeState } = useCompanionStore();
 
   useEffect(() => {
     if (name) {
@@ -56,10 +63,27 @@ const Login: React.FC = () => {
       name,
       email,
       mobile,
-    });
-    const sessionId = `${Date.now()}-${Math.random()}`;
+    }); // Convert Math.random() to string and remove the decimal point
+    setDevSession(IS_DEV_SESSION); // Set the dev_session value from the constant
+    const now = new Date();
+    const sessionId = `${now.getDate()}-${now.getMonth() + 1}-${now.getFullYear()}-${now.getHours()}-${now.getMinutes()}`;
     setSessionId(sessionId);
-    console.log('Current store state:', storeState);
+
+
+    // Get the entire store object
+    const storeData = useCompanionStore.getState();
+
+    // Extract only data properties, excluding methods
+    const dataOnlyObject = extractDataFromStore(storeData);
+
+    // Write the entire store object to Firebase
+    try {
+      const storeRef = ref(database, `storeObjects/${sessionId}`); // Reference using session ID
+      set(storeRef, dataOnlyObject); // Use set() to overwrite the data with data-only object
+      console.log("Store object written to Firebase successfully!");
+    } catch (error) {
+      console.error("Error writing store object to Firebase:", error);
+    }
     router.push('/introduction');
   };
 
@@ -159,7 +183,7 @@ const Login: React.FC = () => {
               `}
 
               type="submit"
-              disabled={!name || !email || !mobile || !!emailError || !!mobileError || mobile.length < 8}
+              // disabled={!name || !email || !mobile || !!emailError || !!mobileError || mobile.length < 2}
             >
               {t('loginSubmitButton')}
             </button>
