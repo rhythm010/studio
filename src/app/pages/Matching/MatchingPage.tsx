@@ -5,23 +5,23 @@ import QRCodeHandler from './QRCodeHandler';
 
 
 const MatchingPage: React.FC = () => {
-    const [isLoading, setIsLoading] = useState<boolean>(true);
+    const [isLoading, setIsLoading] = useState<boolean>(false);
     const [isReset, setIsReset] = useState<boolean>(false);
 
-    useEffect(() => {
-        if (isReset) {
-            setIsLoading(true);
-        }
-    }, [isReset]);
+    // useEffect(() => {
+    //     if (isReset) {
+    //         setIsLoading(true);
+    //     }
+    // }, [isReset]);
 
-    useEffect(() => {
-        if (isLoading) {
-            const timeout = setTimeout(() => {
-                setIsLoading(false);
-            }, 2000);
-            return () => clearTimeout(timeout);
-        }
-    }, [isLoading]);
+    // useEffect(() => {
+    //     if (isLoading) {
+    //         const timeout = setTimeout(() => {
+    //             setIsLoading(false);
+    //         }, 2000);
+    //         return () => clearTimeout(timeout);
+    //     }
+    // }, [isLoading]);
 
     const handleReset = () => {
         setIsReset(true);

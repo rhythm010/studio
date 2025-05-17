@@ -55,7 +55,7 @@ const SelectionSection: React.FC<SelectionSectionProps> = ({ onGenderChange, onO
       updateStoreInFirebase();
 
       setTimeout(() => {
-        closeModal();
+        // closeModal();
         // router.push("/in-service");
       }, 3000);
     }
