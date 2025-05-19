@@ -22,6 +22,7 @@ interface CompanionStore {
   profileDetails: ProfileDetails;
   serviceSelection:   ServiceSelection;
   feedbackDetails: FeedbackDetails[];
+  isComplete: boolean; // Add isComplete key
   setProfileDetails: (details: Partial<ProfileDetails>) => void;
   setMatchingDone: (done: boolean) => void;
   setSessionId: (id: string) => void;
@@ -33,6 +34,8 @@ interface CompanionStore {
   addFeedback: (feedback: FeedbackDetails) => void;
   setServiceSelection: (selection: ServiceSelection) => void;
   getMatchingDone: () => boolean;
+  setIsComplete: (complete: boolean) => void; // Add setIsComplete setter
+  getIsComplete: () => boolean; // Add getIsComplete getter
 }
 
 const useCompanionStore = create<CompanionStore>((set) => ({
@@ -47,6 +50,8 @@ const useCompanionStore = create<CompanionStore>((set) => ({
     package: '',
 
   },
+  feedbackDetails: [],
+  isComplete: false, // Initialize isComplete to false
   setProfileDetails: (details) =>
     set((state) => ({
       profileDetails: { ...state.profileDetails, ...details },
@@ -56,16 +61,20 @@ const useCompanionStore = create<CompanionStore>((set) => ({
   setMatchingDone: (done) => set({ matchingDone: done }),
   getSessionId: () => useCompanionStore.getState().sessionId, // Add the getSessionId method
   setServiceSelection: (selection) => set({ serviceSelection: selection }),
-  feedbackDetails: [],
   setMatchingId: (id) => set({ matchingId: id}),
   setServiceSelected: (service) => set({ serviceSelected: service}),
   addFeedback: (feedback) =>
  set((state) => ({
  feedbackDetails: [...state.feedbackDetails, { ...feedback, details: feedback.details || '' }],
  })),
+
   getMatchingDone: () => useCompanionStore.getState().matchingDone,
+  setIsComplete: (complete) => set({ isComplete: complete }), // Implement setIsComplete
+  getIsComplete: () => useCompanionStore.getState().isComplete, // Implement getIsComplete
+
   reset: () =>
     set({
+      isComplete: false, // Reset isComplete on reset as well
       sessionId: '',
       matchingId: "",
       serviceSelected: "",
@@ -74,3 +83,7 @@ const useCompanionStore = create<CompanionStore>((set) => ({
 }));
 
 export { useCompanionStore };
+
+// TODO: In the component for the end-service route,
+// call the 'endServiceInDb' method from utils
+// when the session is considered ended.

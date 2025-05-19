@@ -2,13 +2,17 @@
 
 import { useEffect, useState, useRef } from 'react';
 import { Html5Qrcode } from 'html5-qrcode';
-
+import { useCompanionStore } from '@/store/store'; // Import the store
+import { updateStoreInFirebase } from '@/lib/utils'; // Import the utility method
+import { useRouter } from 'next/navigation';
 
 const GuardMatchingPage: React.FC = () => {
   const qrCodeRef = useRef<string>('reader');
   const html5Qrcode = useRef<Html5Qrcode | null>(null);
   const [scanning, setScanning] = useState(false);
   const [qrData, setQrData] = useState('');
+  const setMatchingDone = useCompanionStore((state) => state.setMatchingDone); // Get the setter from the store
+  const router = useRouter();
 
   useEffect(() => {
     // Create an instance of Html5Qrcode
@@ -26,9 +30,15 @@ const GuardMatchingPage: React.FC = () => {
     };
   }, []);
 
-  const QRCodeAnalyze = () => {
-    
-  }
+  const QRCodeAnalyze = (decodedData: string) => {
+    if (decodedData === 'Companion123') {
+      console.log("QR code matched 'Companion123'. Updating matching status in store and Firebase.");
+      setMatchingDone(true); // Update matchingDone in the store
+      updateStoreInFirebase(); // Call the utility method to update Firebase
+    } else {
+      console.log("QR code data did not match 'Companion123'.");
+    }
+  };
 
   const startScanning = () => {
     if (html5Qrcode.current && !html5Qrcode.current.isScanning) {
@@ -43,6 +53,7 @@ const GuardMatchingPage: React.FC = () => {
           // Handle the decoded text
           console.log(`QR code detected: ${decodedText}`);
           setQrData(decodedText);
+          QRCodeAnalyze(decodedText); // Call QRCodeAnalyze with decoded data
           stopScanning(); // Stop scanning after a successful scan
           // You can perform actions with the decodedText here, e.g., navigation
         },
