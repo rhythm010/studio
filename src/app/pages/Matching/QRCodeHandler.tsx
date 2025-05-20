@@ -1,11 +1,15 @@
 import React, { useState, useEffect } from 'react';
 import { QRCodeCanvas } from 'qrcode.react';
 import { Button } from '@/components/ui/button';
+import { useCompanionStore} from '@/store/store';
 
 const QRCodeHandler: React.FC = () => {
   const [qrCodeData, setQrCodeData] = useState<string>('');
+  const { sessionId } = useCompanionStore();
   const generateQRCode = () => {
- setQrCodeData('Companion123');
+    if (sessionId) {
+      setQrCodeData(sessionId);
+    }
   };
 
   const resetQRCode = () => {

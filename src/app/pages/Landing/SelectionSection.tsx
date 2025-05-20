@@ -17,7 +17,7 @@ interface SelectionSectionProps {
 
 interface TierOption {
     id: string;
-  title: string;
+    title: string;
 }
 
 const SelectionSection: React.FC<SelectionSectionProps> = ({ onGenderChange, onOptionChange }) => {
@@ -38,7 +38,7 @@ const SelectionSection: React.FC<SelectionSectionProps> = ({ onGenderChange, onO
         if (data && data.matchingDone) {
           closeModal();
           console.log('matching done');
-          // router.push('/in-service');
+          router.push('/in-service');
         }
       });
       return () => unsubscribe();
@@ -75,10 +75,10 @@ const SelectionSection: React.FC<SelectionSectionProps> = ({ onGenderChange, onO
 
       updateStoreInFirebase();
 
-      setTimeout(() => {
-        // closeModal();
-        // router.push("/in-service");
-      }, 3000);
+      // setTimeout(() => {
+      //   closeModal();
+      //   router.push("/in-service");
+      // }, 3000);
     };
 
   return (

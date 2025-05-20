@@ -3,7 +3,7 @@
 import { useEffect, useState, useRef } from 'react';
 import { Html5Qrcode } from 'html5-qrcode';
 import { useCompanionStore } from '@/store/store'; // Import the store
-import { updateStoreInFirebase } from '@/lib/utils'; // Import the utility method
+import { checkIfSessionExistsAndMatch, updateStoreInFirebase } from '@/lib/utils'; // Import the utility method
 import { useRouter } from 'next/navigation';
 
 const GuardMatchingPage: React.FC = () => {
@@ -31,10 +31,9 @@ const GuardMatchingPage: React.FC = () => {
   }, []);
 
   const QRCodeAnalyze = (decodedData: string) => {
-    if (decodedData === 'Companion123') {
-      console.log("QR code matched 'Companion123'. Updating matching status in store and Firebase.");
-      setMatchingDone(true); // Update matchingDone in the store
-      updateStoreInFirebase(); // Call the utility method to update Firebase
+    if (decodedData) {
+      console.log("QR code matched. Updating matching status in store and Firebase.");
+      checkIfSessionExistsAndMatch(decodedData);
     } else {
       console.log("QR code data did not match 'Companion123'.");
     }

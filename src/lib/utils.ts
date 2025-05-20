@@ -1,7 +1,7 @@
 import { clsx, type ClassValue } from "clsx"
 import { database } from '@/lib/firebase';
 import { useCompanionStore } from '@/store/store';
-import { ref, update, remove, get } from "firebase/database";
+import { ref, update, remove, get, child, DatabaseReference } from "firebase/database";
 import { twMerge } from "tailwind-merge"
 
 export function cn(...inputs: ClassValue[]) {
@@ -54,5 +54,24 @@ export async function removeDevSessions() {
     console.error('Error removing dev sessions:', error);
   }
 }
+
+export async function checkIfSessionExistsAndMatch(sessionId: string): Promise<void> {
+  const dbRef = ref(database);
+  try {
+    const sessionRef: DatabaseReference = child(dbRef, `storeObjects/${sessionId}`);
+    const snapshot = await get(sessionRef);
+    if (snapshot.exists()) {
+      console.log("Session exists:", snapshot.val());
+      // Update the matchingDone key to true
+      await update(sessionRef, { matchingDone: true });
+      console.log(`Matching updated to true for session: ${sessionId}`);
+    } else {
+      console.log("No data available for session:", sessionId);
+    }
+  } catch (error) {
+    console.error("Error checking or fetching session:", error);
+  }
+}
+
 
 
