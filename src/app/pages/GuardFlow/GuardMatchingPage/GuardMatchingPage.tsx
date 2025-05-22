@@ -10,6 +10,7 @@ const GuardMatchingPage: React.FC = () => {
   const qrCodeRef = useRef<string>('reader');
   const html5Qrcode = useRef<Html5Qrcode | null>(null);
   const [scanning, setScanning] = useState(false);
+  const [serviceContinue, setserviceContinue] = useState(true);
   const [qrData, setQrData] = useState('');
   const setMatchingDone = useCompanionStore((state) => state.setMatchingDone); // Get the setter from the store
   const router = useRouter();
@@ -30,10 +31,22 @@ const GuardMatchingPage: React.FC = () => {
     };
   }, []);
 
-  const QRCodeAnalyze = (decodedData: string) => {
+  const scanSuccess = () => {
+    console.log("QR code matched. Updating matching status in store and Firebase.");
+
+    stopScanning();
+  };
+
+  const endCompanionService = () => {
+    console.log("Ending companion service.");
+  };
+
+  const QRCodeAnalyze = async (decodedData: string) => {
     if (decodedData) {
-      console.log("QR code matched. Updating matching status in store and Firebase.");
-      checkIfSessionExistsAndMatch(decodedData);
+      const success = await checkIfSessionExistsAndMatch(decodedData);
+      if (success) {
+        scanSuccess();
+      }
     } else {
       console.log("QR code data did not match 'Companion123'.");
     }
@@ -53,7 +66,7 @@ const GuardMatchingPage: React.FC = () => {
           console.log(`QR code detected: ${decodedText}`);
           setQrData(decodedText);
           QRCodeAnalyze(decodedText); // Call QRCodeAnalyze with decoded data
-          stopScanning(); // Stop scanning after a successful scan
+          // stopScanning(); // Stop scanning after a successful scan
           // You can perform actions with the decodedText here, e.g., navigation
         },
         (errorMessage) => {
@@ -82,6 +95,7 @@ const GuardMatchingPage: React.FC = () => {
         setScanning(false);
       });
     }
+    setserviceContinue(false);
   };
 
   return (
@@ -90,8 +104,10 @@ const GuardMatchingPage: React.FC = () => {
         <div id={qrCodeRef.current} style={{ width: '100%', maxWidth: '500px' }}></div>
         {qrData && <p>Scanned Data: {qrData}</p>}
       </div>
-      <button onClick={scanning ? stopScanning : startScanning} style={{ position: 'fixed', bottom: '6rem', width: '70%', maxWidth: '500px', left: '50%', transform: 'translateX(-50%)', backgroundColor: 'rgb(31 41 55 / var(--tw-bg-opacity, 1))', color: 'white', padding: '1rem', marginLeft: 'auto', marginRight: 'auto' }}
-      >{scanning ? 'Stop Scan' : 'Start Scan'}</button>
+      {serviceContinue && <button onClick={scanning ? stopScanning : startScanning} style={{ position: 'fixed', bottom: '6rem', width: '70%', maxWidth: '500px', left: '50%', transform: 'translateX(-50%)', backgroundColor: 'rgb(31 41 55 / var(--tw-bg-opacity, 1))', color: 'white', padding: '1rem', marginLeft: 'auto', marginRight: 'auto' }}
+      >{scanning ? 'Stop Scan' : 'Start Scan'}</button>}
+      {!serviceContinue && <button style={{ position: 'fixed', bottom: '6rem', width: '70%', maxWidth: '500px', left: '50%', transform: 'translateX(-50%)', backgroundColor: 'red', color: 'white', padding: '1rem', marginLeft: 'auto', marginRight: 'auto' }}
+      onClick={endCompanionService}>End Service</button>}
     </div>
   );
 };

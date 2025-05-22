@@ -55,7 +55,7 @@ export async function removeDevSessions() {
   }
 }
 
-export async function checkIfSessionExistsAndMatch(sessionId: string): Promise<void> {
+export async function checkIfSessionExistsAndMatch(sessionId: string): Promise<boolean> {
   const dbRef = ref(database);
   try {
     const sessionRef: DatabaseReference = child(dbRef, `storeObjects/${sessionId}`);
@@ -65,12 +65,15 @@ export async function checkIfSessionExistsAndMatch(sessionId: string): Promise<v
       // Update the matchingDone key to true
       await update(sessionRef, { matchingDone: true });
       console.log(`Matching updated to true for session: ${sessionId}`);
+      return true;
     } else {
       console.log("No data available for session:", sessionId);
     }
   } catch (error) {
     console.error("Error checking or fetching session:", error);
   }
+
+  return false;
 }
 
 
