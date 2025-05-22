@@ -65,10 +65,16 @@ const Header: React.FC<HeaderProps> = ({ showBack = true }) => {
             </Button>
           </TooltipTrigger>
           <TooltipContent className="flex flex-col items-start">
+            {/* Dev mode  */}
             <div className='flex flex-row items-center space-x-2'>
               <Switch id="dev-mode" checked={isDevMode} onCheckedChange={setIsDevMode} />
               <label htmlFor="dev-mode">dev-mode</label>
             </div>
+            {/* Companion mode */}
+            
+ <Button onClick={() => router.push('/guard-info-form')} className='mt-2' size='sm' variant='ghost'>
+ companion mode
+ </Button>
             {isDevMode && (
               <>
                 <div className='flex flex-row items-center space-x-2 mt-2'>

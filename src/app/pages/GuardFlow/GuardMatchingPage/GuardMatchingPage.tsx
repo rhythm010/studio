@@ -39,6 +39,7 @@ const GuardMatchingPage: React.FC = () => {
 
   const endCompanionService = () => {
     console.log("Ending companion service.");
+    router.push('/guard-feedback');
   };
 
   const QRCodeAnalyze = async (decodedData: string) => {

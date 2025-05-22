@@ -1,4 +1,4 @@
-import GuardFeedback from '../../src/app/pages/GuardFlow/guardFeedback/GuardFeedback';
+import GuardFeedback from '../pages/GuardFlow/guardFeedback/GuardFeedback';
 
 const GuardFeedbackPage = () => {
   return <GuardFeedback />;
