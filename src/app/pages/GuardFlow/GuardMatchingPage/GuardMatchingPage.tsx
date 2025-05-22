@@ -84,13 +84,18 @@ const GuardMatchingPage: React.FC = () => {
     }
   };
 
-  return (
-    <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
-      <button onClick={scanning ? stopScanning : startScanning}>{scanning ? 'Stop Scan' : 'Start Scan'}</button>
+ return (
+    <>
+      <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', width: '100%', maxWidth: '500px' }}>
       <div id={qrCodeRef.current} style={{ width: '100%', maxWidth: '500px' }}></div>
       {qrData && <p>Scanned Data: {qrData}</p>}
-    </div>
-  );
+      </div>
+      <button
+        onClick={scanning ? stopScanning : startScanning}
+        style={{ position: 'fixed', bottom: 0, width: '100%', backgroundColor: '#007bff', color: 'white', padding: '1rem' }}
+      >{scanning ? 'Stop Scan' : 'Start Scan'}</button>
+    </>
+ );
 };
 
 export default GuardMatchingPage;
