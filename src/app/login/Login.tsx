@@ -67,7 +67,7 @@ const Login: React.FC = () => {
     setMatchingDone(false); // setting this value to default FALSE
     setDevSession(IS_DEV_SESSION); // Set the dev_session value from the constant
     const now = new Date();
-    const sessionId = `${now.getDate()}-${now.getMonth() + 1}-${now.getFullYear()}-${now.getHours()}-${now.getMinutes()}`;
+    const sessionId = `${now.getDate()}-${now.getMonth() + 1}-${now.getFullYear()}-${now.getHours()}-${now.getMinutes()}-Client`;
     setSessionId(sessionId);
 
 
@@ -81,9 +81,9 @@ const Login: React.FC = () => {
     try {
       const storeRef = ref(database, `storeObjects/${sessionId}`); // Reference using session ID
       set(storeRef, dataOnlyObject); // Use set() to overwrite the data with data-only object
-      console.log("Store object written to Firebase successfully!");
+      console.log("Session created for client - success!");
     } catch (error) {
-      console.error("Error writing store object to Firebase:", error);
+      console.error("Session created for client - failure!", error);
     }
     router.push('/introduction');
   };

@@ -4,12 +4,15 @@ import { useEffect, useState, useRef } from 'react';
 import { Html5Qrcode } from 'html5-qrcode';
 import { useCompanionStore } from '@/store/store'; // Import the store
 import { checkIfSessionExistsAndMatch, updateStoreInFirebase } from '@/lib/utils'; // Import the utility method
+import ErrorBanner from '@/components/ErrorBanner';
 import { useRouter } from 'next/navigation';
 
 const GuardMatchingPage: React.FC = () => {
   const qrCodeRef = useRef<string>('reader');
   const html5Qrcode = useRef<Html5Qrcode | null>(null);
+  const [error, setError] = useState<string | null>(null); // State for error message
   const [scanning, setScanning] = useState(false);
+  const [errorMessage, setErrorMessage] = useState<string | null>(null); // State for error message
   const [serviceContinue, setserviceContinue] = useState(true);
   const [qrData, setQrData] = useState('');
   const setMatchingDone = useCompanionStore((state) => state.setMatchingDone); // Get the setter from the store
@@ -33,7 +36,6 @@ const GuardMatchingPage: React.FC = () => {
 
   const scanSuccess = () => {
     console.log("QR code matched. Updating matching status in store and Firebase.");
-
     stopScanning();
   };
 
@@ -47,6 +49,9 @@ const GuardMatchingPage: React.FC = () => {
       const success = await checkIfSessionExistsAndMatch(decodedData);
       if (success) {
         scanSuccess();
+      } else {
+        // error handling
+        setErrorMessage('Matching session not found.'); // Set error message state
       }
     } else {
       console.log("QR code data did not match 'Companion123'.");
@@ -101,6 +106,7 @@ const GuardMatchingPage: React.FC = () => {
 
   return (
     <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', width: '100%' }}>
+      {errorMessage && <ErrorBanner errorMessage={errorMessage} />} {/* Display error banner */}
       <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', width: '100%', maxWidth: '500px' }}>
         <div id={qrCodeRef.current} style={{ width: '100%', maxWidth: '500px' }}></div>
         {qrData && <p>Scanned Data: {qrData}</p>}
