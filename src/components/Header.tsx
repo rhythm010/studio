@@ -99,6 +99,9 @@ const Header: React.FC<HeaderProps> = ({ showBack = true }) => {
                 <Button onClick={() => router.push('/guard-matching')} className='mt-2' size='sm' variant='ghost'>
                   /Guard-matching
                 </Button>
+                <Button onClick={() => router.push('/guard-feedback')} className='mt-2' size='sm' variant='ghost'>
+                  /Guard Feedback
+                </Button>
                 <Button onClick={handleReset} className='mt-2' size='sm' variant='ghost'>reset</Button>
                 <Button onClick={handleGetStore} className='mt-2' size='sm' variant='ghost'>getStore</Button>
               </>

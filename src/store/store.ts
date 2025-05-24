@@ -27,6 +27,7 @@ interface CompanionStore {
   profileDetails: ProfileDetails;
   serviceSelection:   ServiceSelection;
   feedbackDetails: FeedbackDetails[];
+  companionFeedbackDetails: FeedbackDetails[];
   isComplete: boolean; // Add isComplete key
   companionProfileDetails: CompanionProfileDetails;
   setProfileDetails: (details: Partial<ProfileDetails>) => void;
@@ -41,6 +42,8 @@ interface CompanionStore {
   setServiceSelection: (selection: ServiceSelection) => void;
   getMatchingDone: () => boolean;
   setIsComplete: (complete: boolean) => void; // Add setIsComplete setter
+  setCompanionFeedbackDetails: (feedback: FeedbackDetails[]) => void;
+  getCompanionFeedbackDetails: () => FeedbackDetails[];
   getIsComplete: () => boolean; // Add getIsComplete getter
   setCompanionProfileDetails: (details: Partial<CompanionProfileDetails>) => void;
   getCompanionProfileDetails: () => CompanionProfileDetails;
@@ -59,6 +62,7 @@ const useCompanionStore = create<CompanionStore>((set) => ({
 
   },
   feedbackDetails: [],
+  companionFeedbackDetails: [],
   isComplete: false, // Initialize isComplete to false
   setProfileDetails: (details) =>
     set((state) => ({
@@ -76,6 +80,8 @@ const useCompanionStore = create<CompanionStore>((set) => ({
  feedbackDetails: [...state.feedbackDetails, { ...feedback, details: feedback.details || '' }],
  })),
 
+  setCompanionFeedbackDetails: (feedback) => set({ companionFeedbackDetails: feedback }),
+  getCompanionFeedbackDetails: () => useCompanionStore.getState().companionFeedbackDetails,
   getMatchingDone: () => useCompanionStore.getState().matchingDone,
   setIsComplete: (complete) => set({ isComplete: complete }), // Implement setIsComplete
   getIsComplete: () => useCompanionStore.getState().isComplete, // Implement getIsComplete
