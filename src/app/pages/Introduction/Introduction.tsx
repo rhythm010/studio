@@ -4,12 +4,15 @@ import { useRouter } from 'next/navigation';
 import { useTranslation } from 'react-i18next';
 
 const Introduction = () => {
+  const LOADING_TIME_SECONDS = 3;
+  const INTERVAL_MS = 100;
   const router = useRouter();
   const [currentImage, setCurrentImage] = useState<number>(0);
   const [isAgreed, setIsAgreed] = useState<boolean>(false);
   const [hasReachedImage3, setHasReachedImage3] = useState<boolean>(false);
   const [touchStartX, setTouchStartX] = useState<number | null>(null);
   const [progress, setProgress] = useState(0);
+  const [isLoading, setIsLoading] = useState(true);
   const { t } = useTranslation('common');
   const images = ['Image 1', 'Image 2', 'Image 3'];
   const sliderRef = useRef<HTMLDivElement>(null);
@@ -36,14 +39,18 @@ const Introduction = () => {
   useEffect(() => {
     let timer: NodeJS.Timeout;
     setProgress(0); // Reset progress on image change
+    setIsLoading(true); // Set loading to true on image change    
     timer = setInterval(() => {
       setProgress((oldProgress) => {
-        if (oldProgress === 100) return 100;
-        const newProgress = oldProgress + (100 / 30); // 100% over 30 intervals (3 seconds with 100ms interval)
+        if (oldProgress === 100) {
+          clearInterval(timer);
+          setIsLoading(false); // Set loading to false when progress is 100
+ return 100;
+        }        
+        const newProgress = oldProgress + (100 / (LOADING_TIME_SECONDS * 1000 / INTERVAL_MS));
         return Math.min(newProgress, 100);
       });
-    }, 100);
-
+    }, INTERVAL_MS);
  return () => {
       setProgress(0); // Reset progress if not on the last image
     }
@@ -67,10 +74,6 @@ const Introduction = () => {
   return (
     <div className="flex flex-col items-center justify-center h-screen bg-gray-100 px-4 pt-4 overflow-x-hidden"> {/* Changed justify-between to justify-center */}
       <div className="flex flex-col items-center mb-8"> {/* New container for image and dots */}
-        <div className="w-96 h-4 bg-gray-300 rounded-full overflow-hidden mb-4">
-          <div className="h-full bg-gray-800 rounded-full transition-all duration-100"
-               style={{ width: `${progress}%` }}></div>
-        </div>
         <div
           id="image-section"
           className="w-96 h-64 overflow-hidden relative mx-auto"
@@ -105,8 +108,9 @@ const Introduction = () => {
           ))}
         </div>
       </div> {/* Closing the new container */}
+      <div className="fixed bottom-0 left-0 right-0 flex flex-col items-center mb-4 px-4 w-full">
       <button
-        className={`fixed bottom-0 left-1/2 -translate-x-1/2 mb-4 w-[90%] px-4 py-2 rounded-md ${isAgreed || buttonText === 'Next' ? 'bg-gray-800' : 'bg-gray-800 cursor-not-allowed'
+        className={`w-full px-4 py-2 rounded-md ${isAgreed || buttonText === 'Next' ? 'bg-gray-800' : 'bg-gray-800 cursor-not-allowed'
           } text-white font-bold`}
         onClick={() => {
           if (currentImage < images.length - 1) handleNext();
@@ -115,7 +119,16 @@ const Introduction = () => {
         disabled={buttonText === 'I Agree' && !hasReachedImage3}
       >
         {buttonText}
-      </button>
+ </button>
+      <div className="w-full rounded-md bg-gray-300 overflow-hidden mt-4 h-10 relative flex items-center justify-center">
+ <div className="h-full bg-gray-800 rounded-md transition-all duration-100 absolute top-0 left-0 h-10"
+               style={{ width: `${progress}%` }}>
+ </div>
+ <span className={`absolute inset-0 flex items-center justify-center font-bold ${
+ progress > 50 ? 'text-white' : 'text-black'}`}>Next</span>
+
+        </div>
+      </div>
     </div>
   );
 };
