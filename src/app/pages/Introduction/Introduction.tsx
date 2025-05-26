@@ -9,6 +9,7 @@ const Introduction = () => {
   const [isAgreed, setIsAgreed] = useState<boolean>(false);
   const [hasReachedImage3, setHasReachedImage3] = useState<boolean>(false);
   const [touchStartX, setTouchStartX] = useState<number | null>(null);
+  const [progress, setProgress] = useState(0);
   const { t } = useTranslation('common');
   const images = ['Image 1', 'Image 2', 'Image 3'];
   const sliderRef = useRef<HTMLDivElement>(null);
@@ -33,6 +34,21 @@ const Introduction = () => {
   }, [currentImage]);
 
   useEffect(() => {
+    let timer: NodeJS.Timeout;
+    setProgress(0); // Reset progress on image change
+    timer = setInterval(() => {
+      setProgress((oldProgress) => {
+        if (oldProgress === 100) return 100;
+        const newProgress = oldProgress + (100 / 30); // 100% over 30 intervals (3 seconds with 100ms interval)
+        return Math.min(newProgress, 100);
+      });
+    }, 100);
+
+ return () => {
+      setProgress(0); // Reset progress if not on the last image
+    }
+  }, [currentImage, images.length]);
+  useEffect(() => {
     if (currentImage === images.length - 1 || hasReachedImage3) {
       setIsAgreed(true);
       setHasReachedImage3(true);
@@ -51,6 +67,10 @@ const Introduction = () => {
   return (
     <div className="flex flex-col items-center justify-center h-screen bg-gray-100 px-4 pt-4 overflow-x-hidden"> {/* Changed justify-between to justify-center */}
       <div className="flex flex-col items-center mb-8"> {/* New container for image and dots */}
+        <div className="w-96 h-4 bg-gray-300 rounded-full overflow-hidden mb-4">
+          <div className="h-full bg-gray-800 rounded-full transition-all duration-100"
+               style={{ width: `${progress}%` }}></div>
+        </div>
         <div
           id="image-section"
           className="w-96 h-64 overflow-hidden relative mx-auto"

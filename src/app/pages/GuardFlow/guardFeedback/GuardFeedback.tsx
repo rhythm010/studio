@@ -1,3 +1,4 @@
+"use client";
 import React, { useState } from 'react';
 import SingleAnsQ from '@/components/SingleAnsQ';
 import MultipleAnsQ from '@/components/MultipleAnsQ';

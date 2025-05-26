@@ -1,4 +1,4 @@
-'use client';
+'use client'
 
 import { useState } from 'react';
 import { Button } from '@/components/ui/button';
@@ -7,7 +7,7 @@ import { Tooltip, TooltipContent, TooltipTrigger } from '@/components/ui/tooltip
 import { Switch } from '@/components/ui/switch';
 import { useTranslation } from 'react-i18next';
 import { useModal } from '@/components/ui/Modal';
-import { useRouter } from 'next/navigation';
+import { useRouter } from 'next/navigation'
 import { useCompanionStore } from '@/store/store';
 import React from 'react';
 
@@ -19,6 +19,28 @@ const Header: React.FC<HeaderProps> = ({ showBack = true }) => {
   const [isMenuOpen, setIsMenuOpen] = useState<boolean>(false);
   const [isDevMode, setIsDevMode] = useState<boolean>(false);
   const { closeModal } = useModal();
+
+  React.useEffect(() => {
+    // Function to close the tooltip when clicking outside
+    const handleOutsideClick = (event: MouseEvent) => {
+      const tooltipContent = document.querySelector('.radix-tooltip-content'); // Use the appropriate selector for your tooltip content
+      const tooltipTrigger = document.querySelector('.radix-tooltip-trigger'); // Use the appropriate selector for your tooltip trigger
+
+      if (isMenuOpen && tooltipContent && !tooltipContent.contains(event.target as Node) && tooltipTrigger && !tooltipTrigger.contains(event.target as Node)) {
+        setIsMenuOpen(false);
+      }
+    };
+
+    // Add event listener when the tooltip is open
+    if (isMenuOpen) {
+      document.addEventListener('mousedown', handleOutsideClick);
+    }
+
+    // Clean up the event listener when the component unmounts or tooltip closes
+    return () => {
+      document.removeEventListener('mousedown', handleOutsideClick);
+    };
+  }, [isMenuOpen]); // Depend on isMenuOpen state
   const { i18n, t } = useTranslation('common');
 
   const store = useCompanionStore();
@@ -56,7 +78,7 @@ const Header: React.FC<HeaderProps> = ({ showBack = true }) => {
         <h1 className="text-white">{t('header_title_text')}</h1>
       </div>
       <div>
-        <Tooltip open={isMenuOpen}>
+        <Tooltip open={isMenuOpen} onOpenChange={setIsMenuOpen}>
           <TooltipTrigger asChild>
             <Button className="bg-gray-800 hover:bg-gray-700" variant="default" size="sm" onClick={() => {
               setIsMenuOpen(!isMenuOpen);
@@ -71,10 +93,10 @@ const Header: React.FC<HeaderProps> = ({ showBack = true }) => {
               <label htmlFor="dev-mode">dev-mode</label>
             </div>
             {/* Companion mode */}
-            
- <Button onClick={() => router.push('/guard-info-form')} className='mt-2' size='sm' variant='ghost'>
- companion mode
- </Button>
+
+            <Button onClick={() => router.push('/guard-info-form')} className='mt-2' size='sm' variant='ghost'>
+              companion mode
+            </Button>
             {isDevMode && (
               <>
                 <div className='flex flex-row items-center space-x-2 mt-2'>
