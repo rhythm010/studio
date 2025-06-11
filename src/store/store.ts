@@ -29,6 +29,7 @@ interface CompanionStore {
   feedbackDetails: FeedbackDetails[];
   companionFeedbackDetails: FeedbackDetails[];
   isComplete: boolean; // Add isComplete key
+  serviceRunning: boolean;
   companionProfileDetails: CompanionProfileDetails;
   setProfileDetails: (details: Partial<ProfileDetails>) => void;
   setMatchingDone: (done: boolean) => void;
@@ -45,6 +46,8 @@ interface CompanionStore {
   setCompanionFeedbackDetails: (feedback: FeedbackDetails[]) => void;
   getCompanionFeedbackDetails: () => FeedbackDetails[];
   getIsComplete: () => boolean; // Add getIsComplete getter
+  setServiceRunning: (running: boolean) => void;
+  getServiceRunning: () => boolean;
   setCompanionProfileDetails: (details: Partial<CompanionProfileDetails>) => void;
   getCompanionProfileDetails: () => CompanionProfileDetails;
 }
@@ -64,6 +67,7 @@ const useCompanionStore = create<CompanionStore>((set) => ({
   feedbackDetails: [],
   companionFeedbackDetails: [],
   isComplete: false, // Initialize isComplete to false
+  serviceRunning: true,
   setProfileDetails: (details) =>
     set((state) => ({
       profileDetails: { ...state.profileDetails, ...details },
@@ -84,6 +88,8 @@ const useCompanionStore = create<CompanionStore>((set) => ({
   getCompanionFeedbackDetails: () => useCompanionStore.getState().companionFeedbackDetails,
   getMatchingDone: () => useCompanionStore.getState().matchingDone,
   setIsComplete: (complete) => set({ isComplete: complete }), // Implement setIsComplete
+  setServiceRunning: (running) => set({ serviceRunning: running }),
+  getServiceRunning: () => useCompanionStore.getState().serviceRunning,
   getIsComplete: () => useCompanionStore.getState().isComplete, // Implement getIsComplete
 
   companionProfileDetails: { primaryCompanionName: null, secondaryCompanionName: null },
@@ -99,6 +105,7 @@ const useCompanionStore = create<CompanionStore>((set) => ({
     set({
       isComplete: false, // Reset isComplete on reset as well
       sessionId: '',
+      serviceRunning: true,
       matchingId: "",
       serviceSelected: "",
       profileDetails: {},

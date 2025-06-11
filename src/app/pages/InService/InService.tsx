@@ -4,6 +4,8 @@ import StopWatch from "./StopWatch";
 import { useTranslation } from 'react-i18next';
 import { useModal } from '../../../components/ui/Modal'; // Assuming useModal is exported from Modal.tsx
 import ConfirmationModalContent from '../../../components/ConfirmationModalContent'; // Import the new component
+import { useCompanionStore } from '../../../store/store';
+import { updateStoreInFirebase } from '../../../lib/utils';
 import { useRouter } from 'next/navigation'
 
 
@@ -19,16 +21,18 @@ const InService: React.FC = () => {
     setIsRunning(true);
   };
 
-  const openEndServiceModal = () => {
-    const handleYes = () => {
+  const onEndService = () => {
       setIsRunning(false); // Stop the timer
+      useCompanionStore.getState().setServiceRunning(false);
+      updateStoreInFirebase();
       closeModal();
       router.push('/end-service')
-    };
-    const handleNo = () => {
-      // handling no
-      closeModal();
-    };
+  }
+
+  const openEndServiceModal = () => {
+    const handleYes = () => onEndService();
+    const handleNo = () => closeModal();
+    // handling no
     openModal(
       <ConfirmationModalContent text={t('end_service_confirmation')} onConfirm={handleYes} onCancel={handleNo} />
     );
