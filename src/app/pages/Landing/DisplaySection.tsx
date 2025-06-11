@@ -4,12 +4,12 @@ import { useEffect, useState } from 'react';
 
 interface DisplaySectionProps {
   selectedGender: string | null;
- selectedOption: string | null;
+  selectedOption: string | null;
 }
 
 const DisplaySection: React.FC<DisplaySectionProps> = ({ selectedGender, selectedOption }) => {
   const [activeOption, setActiveOption] = useState<string | null>(null);
-  const [currentGender, setCurrentGender] = useState<string>(selectedGender || 'male');
+  const [currentGender, setCurrentGender] = useState<string>('male');
   const [isFadingOut, setIsFadingOut] = useState(false);
   const [shouldBeVisible, setShouldBeVisible] = useState(true);
 

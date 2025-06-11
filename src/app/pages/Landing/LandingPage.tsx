@@ -5,8 +5,8 @@ import DisplaySection from './DisplaySection';
 import SelectionSection from './SelectionSection';
 
 const LandingPage: React.FC = () => {
-  const [selectedGender, setSelectedGender] = useState<string | null>(null);
-  const [selectedOption, setSelectedOption] = useState<string | null>(null);
+  const [selectedGender, setSelectedGender] = useState<string | null>('male');
+  const [selectedOption, setSelectedOption] = useState<string | null>('option_1');
 
   const handleGenderChange = (gender: string | null) => {
     setSelectedGender(gender);

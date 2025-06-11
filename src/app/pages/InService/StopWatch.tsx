@@ -15,10 +15,10 @@ const StopWatch: React.FC<StopWatchProps> = ({ isRunning, startStop, elapsedTime
 
   useEffect(() => {
     let intervalId: NodeJS.Timeout | null = null;
-    if (isRunning) { intervalId = setInterval(() => {
-        setElapsedTime((prevTime) => prevTime + 10);
-      }, 10);
-    } else if (!isRunning && intervalId) {
+    if (isRunning) {
+      intervalId = setInterval(() => {
+        setElapsedTime((prevTime) => prevTime + 1000);
+      }, 1000);
       clearInterval(intervalId);
     }
     return () => {
@@ -30,22 +30,26 @@ const StopWatch: React.FC<StopWatchProps> = ({ isRunning, startStop, elapsedTime
   const { t } = useTranslation('common');
 
   const formatTime = (timeInMilliseconds: number) => {
-    const minutes = Math.floor(timeInMilliseconds / 60000);
-    const seconds = Math.floor((timeInMilliseconds % 60000) / 1000);
-    const milliseconds = Math.floor((timeInMilliseconds % 1000) / 10);
-    return `${minutes.toString().padStart(2, "0")}:${seconds
-      .toString()
-      .padStart(2, "0")}<span class="text-sm">${milliseconds
-        .toString()
-        .padStart(2, "0")}</span>`;
+    const totalSeconds = Math.floor(timeInMilliseconds / 1000);
+    const hours = Math.floor(totalSeconds / 3600);
+    const minutes = Math.floor((totalSeconds % 3600) / 60);
+    const seconds = totalSeconds % 60;
+
+    return {
+      hours: hours.toString().padStart(2, "0"),
+      minutes: minutes.toString().padStart(2, "0"),
+      seconds: seconds.toString().padStart(2, "0"),
+    };
   };
+
+  const { hours, minutes, seconds } = formatTime(elapsedTime);
 
    return (
     <div className="flex flex-col items-center justify-center">
       <div
         className="w-[20rem] h-[20rem] rounded-full border-2 border-black flex items-center justify-center text-6xl font-bold"
       >
-        <div dangerouslySetInnerHTML={{ __html: formatTime(elapsedTime) }} />
+        {hours}:{minutes}<span className="text-2xl ml-1">{seconds}</span>
       </div>
     </div>
   );

@@ -45,13 +45,13 @@ const Introduction = () => {
         if (oldProgress === 100) {
           clearInterval(timer);
           setIsLoading(false); // Set loading to false when progress is 100
- return 100;
-        }        
+          return 100;
+        }
         const newProgress = oldProgress + (100 / (LOADING_TIME_SECONDS * 1000 / INTERVAL_MS));
         return Math.min(newProgress, 100);
       });
     }, INTERVAL_MS);
- return () => {
+    return () => {
       setProgress(0); // Reset progress if not on the last image
     }
   }, [currentImage, images.length]);
@@ -109,7 +109,7 @@ const Introduction = () => {
         </div>
       </div> {/* Closing the new container */}
       <div className="fixed bottom-0 left-0 right-0 flex flex-col items-center mb-4 px-4 w-full">
-      <button
+        {/* <button
         className={`w-full px-4 py-2 rounded-md ${isAgreed || buttonText === 'Next' ? 'bg-gray-800' : 'bg-gray-800 cursor-not-allowed'
           } text-white font-bold`}
         onClick={() => {
@@ -119,13 +119,19 @@ const Introduction = () => {
         disabled={buttonText === 'I Agree' && !hasReachedImage3}
       >
         {buttonText}
- </button>
-      <div className="w-full rounded-md bg-gray-300 overflow-hidden mt-4 h-10 relative flex items-center justify-center">
- <div className="h-full bg-gray-800 rounded-md transition-all duration-100 absolute top-0 left-0 h-10"
-               style={{ width: `${progress}%` }}>
- </div>
- <span className={`absolute inset-0 flex items-center justify-center font-bold ${
- progress > 50 ? 'text-white' : 'text-black'}`}>Next</span>
+ </button> */}
+        <div
+          onClick={() => {
+            if (!isLoading) {
+              if (currentImage < images.length - 1) handleNext();
+              else handleAgreeClick();
+            }
+          }}
+          className="w-full rounded-md bg-gray-300 overflow-hidden mt-4 h-10 relative flex items-center justify-center">
+          <div className="h-full bg-gray-800 rounded-md transition-all duration-100 absolute top-0 left-0 h-10"
+            style={{ width: `${progress}%` }}>
+          </div>
+          <span className={`absolute inset-0 flex items-center justify-center font-bold ${progress > 50 ? 'text-white' : 'text-black'}`}>{buttonText}</span>
 
         </div>
       </div>
