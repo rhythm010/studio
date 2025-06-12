@@ -8,7 +8,7 @@ import ErrorBanner from '@/components/ErrorBanner';
 import { useRouter } from 'next/navigation';
 
 const GuardMatchingPage: React.FC = () => {
-  const qrCodeRef = useRef<string>('reader');
+  const qrCodeRef = useRef<string>('reader'); // Unique ID for the QR code scanner element
   const { getCompanionProfileDetails } = useCompanionStore(); // Get the getter from the store
   const html5Qrcode = useRef<Html5Qrcode | null>(null);
   const [error, setError] = useState<string | null>(null); // State for error message
@@ -17,7 +17,8 @@ const GuardMatchingPage: React.FC = () => {
   const [serviceContinue, setserviceContinue] = useState(true);
   const [qrData, setQrData] = useState('');
   const setMatchingDone = useCompanionStore((state) => state.setMatchingDone); // Get the setter from the store
-  const router = useRouter();
+  const setClientSessionId = useCompanionStore((state) => state.setClientSessionId); // Get the setter for clientSessionId
+  const router = useRouter(); // Get the router object for navigation
 
   const companionRole = getCompanionProfileDetails().companionRole; // Get the companion role
 
@@ -49,8 +50,10 @@ const GuardMatchingPage: React.FC = () => {
 
   const QRCodeAnalyze = async (decodedData: string) => {
     if (decodedData) {
-      const success = await checkIfSessionExistsAndMatch(decodedData);
-      if (success) {
+      const ClientSessionId = await checkIfSessionExistsAndMatch(decodedData);
+      if (ClientSessionId) {
+        setClientSessionId(ClientSessionId); // Set the clientSessionId in the store
+        updateStoreInFirebase();
         scanSuccess();
       } else {
         // error handling

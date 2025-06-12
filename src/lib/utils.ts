@@ -21,12 +21,16 @@ export function extractDataFromStore(storeObject: any): any {
   return data;
 }
 
+export function getStoreRef(sessionId: string) {
+  return ref(database, `storeObjects/${sessionId}`);
+}
+
 export async function updateStoreInFirebase() {
   const sessionId = useCompanionStore.getState().getSessionId(); // Get session ID from the store
   const storeData = useCompanionStore.getState();
   const dataToUpdate = extractDataFromStore(storeData);
-  const storeRef = ref(database, `storeObjects/${sessionId}`);
   try {
+    const storeRef = getStoreRef(sessionId);
     await update(storeRef, dataToUpdate);
     console.log('store updated successfully');
   } catch (error) { 
@@ -55,7 +59,7 @@ export async function removeDevSessions() {
   }
 }
 
-export async function checkIfSessionExistsAndMatch(sessionId: string): Promise<boolean> {
+export async function checkIfSessionExistsAndMatch(sessionId: string): Promise<any> {
   const dbRef = ref(database);
   try {
     const sessionRef: DatabaseReference = child(dbRef, `storeObjects/${sessionId}`);
@@ -65,7 +69,7 @@ export async function checkIfSessionExistsAndMatch(sessionId: string): Promise<b
       // Update the matchingDone key to true
       await update(sessionRef, { matchingDone: true });
       console.log(`Matching updated to true for session: ${sessionId}`);
-      return true;
+      return sessionId;
     } else {
       console.log("No data available for session:", sessionId);
     }

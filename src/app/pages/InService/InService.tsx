@@ -5,7 +5,7 @@ import { useTranslation } from 'react-i18next';
 import { useModal } from '../../../components/ui/Modal'; // Assuming useModal is exported from Modal.tsx
 import ConfirmationModalContent from '../../../components/ConfirmationModalContent'; // Import the new component
 import { useCompanionStore } from '../../../store/store';
-import { updateStoreInFirebase, getStoreRef } from '../../../lib/utils';
+import { getStoreRef, updateStoreInFirebase } from '../../../lib/utils';
 import { useRouter } from 'next/navigation'
 
 

@@ -18,6 +18,7 @@ interface FeedbackDetails {
 interface CompanionProfileDetails {
   primaryCompanionName: string | null;
   secondaryCompanionName: string | null;
+  clientSessionId: string | null;
   companionRole: string;
 }
 
@@ -32,12 +33,14 @@ interface CompanionStore {
   isComplete: boolean; // Add isComplete key
   serviceRunning: boolean;
   companionProfileDetails: CompanionProfileDetails;
-  setProfileDetails: (details: Partial<ProfileDetails>) => void;
-  setMatchingDone: (done: boolean) => void;
-  setSessionId: (id: string) => void;
+ setProfileDetails: (details: Partial<ProfileDetails>) => void;
+ setMatchingDone: (done: boolean) => void;
+ setSessionId: (id: string) => void;
   getSessionId: () => string;
-  setDevSession: (isDev: boolean) => void;
-  setMatchingId: (id: string) => void;
+ setDevSession: (isDev: boolean) => void;
+ setMatchingId: (id: string) => void;
+ setClientSessionId: (id: string | null) => void;
+ getClientSessionId: () => string | null;
   setServiceSelected: (service: string) => void;
   reset: () => void;
   addFeedback: (feedback: FeedbackDetails) => void;
@@ -80,6 +83,8 @@ const useCompanionStore = create<CompanionStore>((set) => ({
   setMatchingDone: (done) => set({ matchingDone: done }),
   getSessionId: () => useCompanionStore.getState().sessionId, // Add the getSessionId method
   setServiceSelection: (selection) => set({ serviceSelection: selection }),
+  setClientSessionId: (id) => set(state => ({ companionProfileDetails: { ...state.companionProfileDetails, clientSessionId: id } })),
+  getClientSessionId: () => useCompanionStore.getState().companionProfileDetails.clientSessionId,
   setMatchingId: (id) => set({ matchingId: id}),
   setServiceSelected: (service) => set({ serviceSelected: service}),
   addFeedback: (feedback) =>
@@ -95,7 +100,7 @@ const useCompanionStore = create<CompanionStore>((set) => ({
   getServiceRunning: () => useCompanionStore.getState().serviceRunning,
   getIsComplete: () => useCompanionStore.getState().isComplete, // Implement getIsComplete
 
-  companionProfileDetails: { primaryCompanionName: null, secondaryCompanionName: null, companionRole: '' },
+  companionProfileDetails: { primaryCompanionName: null, secondaryCompanionName: null, clientSessionId: null, companionRole: '' },
   setCompanionProfileDetails: (details) =>
     set((state) => ({
       companionProfileDetails: { ...state.companionProfileDetails, ...details },
