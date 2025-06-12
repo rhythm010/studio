@@ -29,12 +29,14 @@ const GuardInfoForm: React.FC = () => {
     if (yourRole === 'primary') {
       setCompanionProfileDetails({
         primaryCompanionName: yourName,
-        secondaryCompanionName: partnerName,
+ secondaryCompanionName: partnerName,
+        companionRole: yourRole,
       });
     } else {
       setCompanionProfileDetails({
         primaryCompanionName: partnerName,
-        secondaryCompanionName: yourName,
+ secondaryCompanionName: yourName,
+        companionRole: yourRole,
       });
     }
     router.push('/guard-matching');

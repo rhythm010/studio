@@ -18,6 +18,7 @@ interface FeedbackDetails {
 interface CompanionProfileDetails {
   primaryCompanionName: string | null;
   secondaryCompanionName: string | null;
+  companionRole: string;
 }
 
 interface CompanionStore {
@@ -50,6 +51,8 @@ interface CompanionStore {
   getServiceRunning: () => boolean;
   setCompanionProfileDetails: (details: Partial<CompanionProfileDetails>) => void;
   getCompanionProfileDetails: () => CompanionProfileDetails;
+  setCompanionRole: (role: string) => void;
+  getCompanionRole: () => string;
 }
 
 const useCompanionStore = create<CompanionStore>((set) => ({
@@ -92,7 +95,7 @@ const useCompanionStore = create<CompanionStore>((set) => ({
   getServiceRunning: () => useCompanionStore.getState().serviceRunning,
   getIsComplete: () => useCompanionStore.getState().isComplete, // Implement getIsComplete
 
-  companionProfileDetails: { primaryCompanionName: null, secondaryCompanionName: null },
+  companionProfileDetails: { primaryCompanionName: null, secondaryCompanionName: null, companionRole: '' },
   setCompanionProfileDetails: (details) =>
     set((state) => ({
       companionProfileDetails: { ...state.companionProfileDetails, ...details },
@@ -100,6 +103,8 @@ const useCompanionStore = create<CompanionStore>((set) => ({
     })),
   getCompanionProfileDetails: () =>
     useCompanionStore.getState().companionProfileDetails,
+  setCompanionRole: (role) => set(state => ({ companionProfileDetails: { ...state.companionProfileDetails, companionRole: role } })),
+  getCompanionRole: () => useCompanionStore.getState().companionProfileDetails.companionRole,
 
   reset: () =>
     set({

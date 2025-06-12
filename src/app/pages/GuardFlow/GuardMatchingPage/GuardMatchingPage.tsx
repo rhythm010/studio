@@ -9,6 +9,7 @@ import { useRouter } from 'next/navigation';
 
 const GuardMatchingPage: React.FC = () => {
   const qrCodeRef = useRef<string>('reader');
+  const { getCompanionProfileDetails } = useCompanionStore(); // Get the getter from the store
   const html5Qrcode = useRef<Html5Qrcode | null>(null);
   const [error, setError] = useState<string | null>(null); // State for error message
   const [scanning, setScanning] = useState(false);
@@ -17,6 +18,8 @@ const GuardMatchingPage: React.FC = () => {
   const [qrData, setQrData] = useState('');
   const setMatchingDone = useCompanionStore((state) => state.setMatchingDone); // Get the setter from the store
   const router = useRouter();
+
+  const companionRole = getCompanionProfileDetails().companionRole; // Get the companion role
 
   useEffect(() => {
     // Create an instance of Html5Qrcode
@@ -106,6 +109,7 @@ const GuardMatchingPage: React.FC = () => {
 
   return (
     <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', width: '100%' }}>
+      {companionRole && <p style={{ width: '16rem', textAlign: 'center', backgroundColor: 'rgb(31 41 55 / var(--tw-bg-opacity, 1))', color: 'white', padding: '0.5rem', fontSize: '1.2rem' }}>Role: {companionRole} Companion</p>}
       {errorMessage && <ErrorBanner errorMessage={errorMessage} />} {/* Display error banner */}
       <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', width: '100%', maxWidth: '500px' }}>
         <div id={qrCodeRef.current} style={{ width: '100%', maxWidth: '500px' }}></div>
