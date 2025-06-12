@@ -5,7 +5,7 @@ import { useTranslation } from 'react-i18next';
 import { useModal } from '../../../components/ui/Modal'; // Assuming useModal is exported from Modal.tsx
 import ConfirmationModalContent from '../../../components/ConfirmationModalContent'; // Import the new component
 import { useCompanionStore } from '../../../store/store';
-import { updateStoreInFirebase } from '../../../lib/utils';
+import { updateStoreInFirebase, getStoreRef } from '../../../lib/utils';
 import { useRouter } from 'next/navigation'
 
 
@@ -22,9 +22,9 @@ const InService: React.FC = () => {
   };
 
   const onEndService = () => {
-      setIsRunning(false); // Stop the timer
-      useCompanionStore.getState().setServiceRunning(false);
-      updateStoreInFirebase();
+          setIsRunning(false); // Stop the timer
+ useCompanionStore.getState().setServiceRunning(false)
+          updateStoreInFirebase();
       closeModal();
       router.push('/end-service')
   }
@@ -60,6 +60,23 @@ const InService: React.FC = () => {
   useEffect(() => {
     startTimer();
   }, []);
+
+  useEffect(() => {
+    const unsubscribe = getStoreRef().on('value', (snapshot) => {
+      const storeData = snapshot.val();
+      if (storeData && storeData.serviceRunning === false) {
+        onEndService();
+      }
+    });
+
+    // Clean up the listener when the component unmounts
+    return () => {
+      if (unsubscribe) {
+        unsubscribe();
+      }
+    };
+  }, []); // Empty dependency array to run this effect only once on mount
+
 
   return (
     <div className="flex flex-col h-screen">

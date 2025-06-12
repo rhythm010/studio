@@ -3,6 +3,8 @@ import React from 'react';
 import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 
+import { useModal } from '@/components/ui/Modal';
+import ConfirmationModalContent from '@/components/ConfirmationModalContent';
 import { database } from '@/lib/firebase';
 import { useCompanionStore } from '@/store/store';
 import { ref, set } from 'firebase/database';
@@ -19,6 +21,7 @@ const GuardInfoForm: React.FC = () => {
   const primaryOptions = ['Roger', 'Jamie', 'Shawn'];
   const secondaryOptions = ['Marie', 'David', 'Peter'];
 
+  const { openModal, closeModal } = useModal();
   const router = useRouter();
 
   const handleContinue = () => {
@@ -34,7 +37,7 @@ const GuardInfoForm: React.FC = () => {
         secondaryCompanionName: yourName,
       });
     }
-    // router.push('/guard-matching');
+    router.push('/guard-matching');
   };
 
   const createFirebaseSession = () => {
@@ -59,8 +62,12 @@ const GuardInfoForm: React.FC = () => {
   };
 
   const onSubmit = () => {
-    handleContinue();
-    createFirebaseSession();
+    const handleYes = () => {
+      handleContinue();
+      createFirebaseSession();
+      closeModal();
+    };
+    openModal(<ConfirmationModalContent text="Kindly provide your consent to proceed ahead" yesText="I Agree" onConfirm={handleYes} onCancel={closeModal} />);
   }
 
   useEffect(() => {

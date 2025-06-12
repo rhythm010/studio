@@ -30,7 +30,7 @@ export const useModal = () => {
 }
 
 interface ModalProviderProps {
-  title?: string;
+  title?: string; // This prop seems unnecessary if title is handled by ConfirmationModalContent
   children: ReactNode;
 }
 
@@ -51,10 +51,10 @@ export const ModalProvider: React.FC<ModalProviderProps> = ({ children, title = 
 
   };
 
-  return <IModalContext.Provider value={{ closeModal, openModal, modalContent, setModalContent, isModalOpen, setIsModalOpen, onCloseCallback, setOnCloseCallback }}>{children}<Modal title={title} /></IModalContext.Provider>; // Updated
+  return <IModalContext.Provider value={{ closeModal, openModal, modalContent, setModalContent, isModalOpen, setIsModalOpen, onCloseCallback, setOnCloseCallback }}>{children}<Modal /></IModalContext.Provider>; // Updated
 };
 
-interface IModalProps { title: string; }
+interface IModalProps { }
 export const Modal: React.FC<IModalProps> = ({ title }) => {
   const { modalContent, isModalOpen, closeModal } = useModal(); // Updated
   return (
@@ -62,7 +62,7 @@ export const Modal: React.FC<IModalProps> = ({ title }) => {
       <DialogContent className={"w-[300px] min-h-[400px] rounded-lg"}>
         <div className="flex justify-between items-center h-12 bg-gray-800 p-2 mb-4">
           <div className="w-full flex justify-center">
-          <DialogTitle className="text-lg font-bold text-white">
+          <DialogTitle className="text-lg font-bold text-white hidden">
             {title}
           </DialogTitle>
           </div>
