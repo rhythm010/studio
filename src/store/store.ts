@@ -15,6 +15,11 @@ interface FeedbackDetails {
   details: string;
 }
 
+interface ClientCompanionDetails {
+  primaryCompanionSessionId: string | null;
+  secondaryCompanionSessionId: string | null;
+}
+
 interface CompanionProfileDetails {
   primaryCompanionName: string | null;
   secondaryCompanionName: string | null;
@@ -33,6 +38,7 @@ interface CompanionStore {
   isComplete: boolean; // Add isComplete key
   serviceRunning: boolean;
   companionProfileDetails: CompanionProfileDetails;
+  clientCompanionDetails: ClientCompanionDetails;
  setProfileDetails: (details: Partial<ProfileDetails>) => void;
  setMatchingDone: (done: boolean) => void;
  setSessionId: (id: string) => void;
@@ -54,6 +60,8 @@ interface CompanionStore {
   getServiceRunning: () => boolean;
   setCompanionProfileDetails: (details: Partial<CompanionProfileDetails>) => void;
   getCompanionProfileDetails: () => CompanionProfileDetails;
+  setClientCompanionDetails: (details: Partial<ClientCompanionDetails>) => void;
+  getClientCompanionDetails: () => ClientCompanionDetails;
   setCompanionRole: (role: string) => void;
   getCompanionRole: () => string;
 }
@@ -100,6 +108,7 @@ const useCompanionStore = create<CompanionStore>((set) => ({
   getServiceRunning: () => useCompanionStore.getState().serviceRunning,
   getIsComplete: () => useCompanionStore.getState().isComplete, // Implement getIsComplete
 
+  clientCompanionDetails: { primaryCompanionSessionId: '', secondaryCompanionSessionId: '' },
   companionProfileDetails: { primaryCompanionName: null, secondaryCompanionName: null, clientSessionId: null, companionRole: '' },
   setCompanionProfileDetails: (details) =>
     set((state) => ({
@@ -108,6 +117,11 @@ const useCompanionStore = create<CompanionStore>((set) => ({
     })),
   getCompanionProfileDetails: () =>
     useCompanionStore.getState().companionProfileDetails,
+  setClientCompanionDetails: (details) =>
+    set((state) => ({
+      clientCompanionDetails: { ...state.clientCompanionDetails, ...details },
+    })),
+  getClientCompanionDetails: () => useCompanionStore.getState().clientCompanionDetails,
   setCompanionRole: (role) => set(state => ({ companionProfileDetails: { ...state.companionProfileDetails, companionRole: role } })),
   getCompanionRole: () => useCompanionStore.getState().companionProfileDetails.companionRole,
 

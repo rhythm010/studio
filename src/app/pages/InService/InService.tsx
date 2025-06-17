@@ -61,21 +61,22 @@ const InService: React.FC = () => {
     startTimer();
   }, []);
 
-  useEffect(() => {
-    const unsubscribe = getStoreRef().on('value', (snapshot) => {
-      const storeData = snapshot.val();
-      if (storeData && storeData.serviceRunning === false) {
-        onEndService();
-      }
-    });
+  // useEffect(() => {
+  //   const sessionId = useCompanionStore.getState().getSessionId(); // Get session ID from the store
+  //   const unsubscribe = getStoreRef(sessionId).on('value', (snapshot) => {
+  //     const storeData = snapshot.val();
+  //     if (storeData && storeData.serviceRunning === false) {
+  //       onEndService();
+  //     }
+  //   });
 
-    // Clean up the listener when the component unmounts
-    return () => {
-      if (unsubscribe) {
-        unsubscribe();
-      }
-    };
-  }, []); // Empty dependency array to run this effect only once on mount
+  //   // Clean up the listener when the component unmounts
+  //   return () => {
+  //     if (unsubscribe) {
+  //       unsubscribe();
+  //     }
+  //   };
+  // }, []); // Empty dependency array to run this effect only once on mount
 
 
   return (

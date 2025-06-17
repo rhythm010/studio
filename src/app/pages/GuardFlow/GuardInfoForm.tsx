@@ -22,29 +22,30 @@ const GuardInfoForm: React.FC = () => {
   const secondaryOptions = ['Marie', 'David', 'Peter'];
 
   const { openModal, closeModal } = useModal();
-  const router = useRouter();
+  const router = useRouter(); 
 
   const handleContinue = () => {
     // Add any necessary logic before routing
     if (yourRole === 'primary') {
       setCompanionProfileDetails({
         primaryCompanionName: yourName,
- secondaryCompanionName: partnerName,
+        secondaryCompanionName: partnerName,
         companionRole: yourRole,
       });
     } else {
       setCompanionProfileDetails({
         primaryCompanionName: partnerName,
- secondaryCompanionName: yourName,
+        secondaryCompanionName: yourName,
         companionRole: yourRole,
       });
     }
+
     router.push('/guard-matching');
   };
 
   const createFirebaseSession = () => {
     const now = new Date();
-    const sessionId = `${now.getDate()}-${now.getMonth() + 1}-${now.getFullYear()}-${now.getHours()}-${now.getMinutes()}-Companion`;
+    const sessionId = `${now.getDate()}-${now.getMonth() + 1}-${now.getFullYear()}-${now.getHours()}-${now.getMinutes()}-Companion-${yourRole}`;
     setSessionId(sessionId);
 
     // Get the entire store object

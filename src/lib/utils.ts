@@ -80,5 +80,35 @@ export async function checkIfSessionExistsAndMatch(sessionId: string): Promise<a
   return false;
 }
 
+export async function updateCompanionSessionIdInClient(clientSessionId: string, companionSessionId: string, companionRole:string): Promise<void> {
+  const clientRef = ref(database, 'storeObjects/' + clientSessionId);
+  try {
+    const snapshot = await get(child(clientRef, 'clientCompanionDetails'));
+    if (snapshot.exists()) {
+      // const clientCompanionDetails = snapshot.val();
+      let updatePath: string;
+      let updateValue: string | null;
+
+      if (companionRole === 'Primary') {
+        updatePath = 'clientCompanionDetails/primaryCompanionSessionId';
+        updateValue = companionSessionId;
+        console.log(`Updating primaryCompanionSessionId for client: ${clientSessionId}`);
+      } else {
+        updatePath = 'clientCompanionDetails/secondaryCompanionSessionId';
+        updateValue = companionSessionId;
+        console.log(`Updating secondaryCompanionSessionId for client: ${clientSessionId}`);
+      }
+
+      await update(clientRef, {
+        [updatePath]: updateValue
+      });
+      console.log('ClientCompanionDetails updated successfully');
+    } else {
+      console.log("No clientCompanionDetails found for client:", clientSessionId);
+    }
+  } catch (error) {
+    console.error("Error updating companion session ID for client:", error);
+  }
+}
 
 

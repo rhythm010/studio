@@ -3,7 +3,7 @@
 import { useEffect, useState, useRef } from 'react';
 import { Html5Qrcode } from 'html5-qrcode';
 import { useCompanionStore } from '@/store/store'; // Import the store
-import { checkIfSessionExistsAndMatch, updateStoreInFirebase } from '@/lib/utils'; // Import the utility method
+import { checkIfSessionExistsAndMatch, updateCompanionSessionIdInClient, updateStoreInFirebase } from '@/lib/utils'; // Import the utility method
 import ErrorBanner from '@/components/ErrorBanner';
 import { useRouter } from 'next/navigation';
 
@@ -53,6 +53,8 @@ const GuardMatchingPage: React.FC = () => {
       const ClientSessionId = await checkIfSessionExistsAndMatch(decodedData);
       if (ClientSessionId) {
         setClientSessionId(ClientSessionId); // Set the clientSessionId in the store
+        const companionSessionId = useCompanionStore.getState().getSessionId();
+        updateCompanionSessionIdInClient(ClientSessionId, companionSessionId, companionRole);
         updateStoreInFirebase();
         scanSuccess();
       } else {

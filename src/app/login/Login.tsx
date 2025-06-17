@@ -5,7 +5,7 @@ import { useTranslation } from 'react-i18next';
 import { useCompanionStore } from '@/store/store';
 import { database } from '@/lib/firebase';
 import { ref, set } from 'firebase/database';
-import { extractDataFromStore } from '@/lib/utils'; // Import the utility function
+import { extractDataFromStore, updateStoreInFirebase } from '@/lib/utils'; // Import the utility function
 
 
 const Login: React.FC = () => {
@@ -69,6 +69,7 @@ const Login: React.FC = () => {
     const now = new Date();
     const sessionId = `${now.getDate()}-${now.getMonth() + 1}-${now.getFullYear()}-${now.getHours()}-${now.getMinutes()}-Client`;
     setSessionId(sessionId);
+    updateStoreInFirebase();
 
 
     // Get the entire store object
