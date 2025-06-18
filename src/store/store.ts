@@ -27,6 +27,11 @@ interface CompanionProfileDetails {
   companionRole: string;
 }
 
+interface CompanionQueueManage {
+  queueActivated: boolean;
+  currentPosition: number;
+}
+
 interface CompanionStore {
   sessionId: string;
   matchingId: string;
@@ -39,6 +44,7 @@ interface CompanionStore {
   serviceRunning: boolean;
   companionProfileDetails: CompanionProfileDetails;
   clientCompanionDetails: ClientCompanionDetails;
+  companionQueueManage: CompanionQueueManage; // Add the new property
  setProfileDetails: (details: Partial<ProfileDetails>) => void;
  setMatchingDone: (done: boolean) => void;
  setSessionId: (id: string) => void;
@@ -64,6 +70,10 @@ interface CompanionStore {
   getClientCompanionDetails: () => ClientCompanionDetails;
   setCompanionRole: (role: string) => void;
   getCompanionRole: () => string;
+  setCompanionQueueManage: (details: Partial<CompanionQueueManage>) => void; // Add setter
+  getCompanionQueueManage: () => CompanionQueueManage; // Add getter
+  setQueueActivated: (activated: boolean) => void; // Add setter for queueActivated
+  setCurrentPosition: (position: number) => void; // Add setter for currentPosition
 }
 
 const useCompanionStore = create<CompanionStore>((set) => ({
@@ -82,6 +92,10 @@ const useCompanionStore = create<CompanionStore>((set) => ({
   companionFeedbackDetails: [],
   isComplete: false, // Initialize isComplete to false
   serviceRunning: true,
+  companionQueueManage: { // Initialize the new property
+    queueActivated: false,
+    currentPosition: 0,
+  },
   setProfileDetails: (details) =>
     set((state) => ({
       profileDetails: { ...state.profileDetails, ...details },
@@ -125,6 +139,14 @@ const useCompanionStore = create<CompanionStore>((set) => ({
   setCompanionRole: (role) => set(state => ({ companionProfileDetails: { ...state.companionProfileDetails, companionRole: role } })),
   getCompanionRole: () => useCompanionStore.getState().companionProfileDetails.companionRole,
 
+  // Implement the new getters and setters
+  setCompanionQueueManage: (details) =>
+    set((state) => ({
+      companionQueueManage: { ...state.companionQueueManage, ...details },
+    })),
+  getCompanionQueueManage: () => useCompanionStore.getState().companionQueueManage,
+  setQueueActivated: (activated) => set(state => ({ companionQueueManage: { ...state.companionQueueManage, queueActivated: activated } })),
+  setCurrentPosition: (position) => set(state => ({ companionQueueManage: { ...state.companionQueueManage, currentPosition: position } })),
   reset: () =>
     set({
       isComplete: false, // Reset isComplete on reset as well
