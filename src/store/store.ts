@@ -93,7 +93,7 @@ const useCompanionStore = create<CompanionStore>((set) => ({
   isComplete: false, // Initialize isComplete to false
   serviceRunning: true,
   companionQueueManage: { // Initialize the new property
-    queueActivated: false,
+    queueActivated: true,
     currentPosition: 0,
   },
   setProfileDetails: (details) =>
