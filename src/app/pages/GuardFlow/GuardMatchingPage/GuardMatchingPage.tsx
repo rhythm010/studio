@@ -17,7 +17,6 @@ const GuardMatchingPage: React.FC = () => {
     companionQueueManage, // Get the companionQueueManage object
     setCompanionQueueManage, // Get the setter for companionQueueManage
   } = useCompanionStore(); // Ensure you are getting the setCompanionQueueManage setter
-  const [errorMessage, setErrorMessage] = useState<string | null>(null); // State for error message
   const [currentPosition, setCurrentPosition] = useState(0); // State for queue position
   const setCompanionQueuePosition = useCompanionStore((state) => state.setCompanionQueuePosition);
   const [serviceContinue, setserviceContinue] = useState(true);
@@ -67,7 +66,7 @@ const GuardMatchingPage: React.FC = () => {
         scanSuccess();
       } else {
         // error handling
-        setErrorMessage('Matching session not found.'); // Set error message state
+        // setErrorMessage('Matching session not found.'); // Set error message state
       }
     } else {
       console.log("QR code data did not match 'Companion123'.");
@@ -148,11 +147,33 @@ const GuardMatchingPage: React.FC = () => {
       currentPosition: Math.max(0, Math.min(10, currentPosition + delta))
     });
   };
+
+  const activateQueueMode = () => {
+    setQueueActivated(true);
+  };
+
   return (
     <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', width: '100%' }}>
       {companionRole && <p style={{ width: '16rem', textAlign: 'center', backgroundColor: 'rgb(31 41 55 / var(--tw-bg-opacity, 1))', color: 'white', padding: '0.5rem', fontSize: '1.2rem' }}>Role: {companionRole} Companion</p>}
 
-      {/* New div for Queue Mode */}
+      {/* Div for Activate Queue Mode button */}
+
+      <div id="action_buttons" style={{ border: '1px solid black', marginTop: '20px', padding: '10px' }}>
+        <button
+          style={{
+            backgroundColor: companionQueueManage.queueActivated ? 'lightgray' : 'rgb(31 41 55 / var(--tw-bg-opacity, 1))',
+            color: 'white',
+            padding: '0.75rem 1.5rem',
+            fontSize: '0.9rem', // Slightly smaller font size
+            cursor: companionQueueManage.queueActivated ? 'not-allowed' : 'pointer',
+          }}
+          onClick={companionQueueManage.queueActivated ? undefined : activateQueueMode}
+          disabled={companionQueueManage.queueActivated}
+        >
+          Activate Queue mode
+        </button>
+      </div>
+
       {companionQueueManage.queueActivated && (<div id="Queue_mode" style={{ border: '1px solid black', marginTop: '20px', width: '70%', maxWidth: '500px', textAlign: 'center', paddingBottom: '5px' }}>
         <div style={{ borderBottom: '1px solid black', paddingBottom: '5px', padding: '10px' }}>
           <h3 style={{ fontSize: '1.5rem' }}>Queue Mode Active</h3>
@@ -174,7 +195,7 @@ const GuardMatchingPage: React.FC = () => {
           End Queue mode
         </button>
       </div>)}
-      {errorMessage && <ErrorBanner errorMessage={errorMessage} />} {/* Display error banner */}
+      {/* {errorMessage && <ErrorBanner errorMessage={errorMessage} />} Display error banner */}
       <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', width: '100%', maxWidth: '500px' }}>
         <div id={qrCodeRef.current} style={{ width: '100%', maxWidth: '500px' }}></div>
         {qrData && <p>Scanned Data: {qrData}</p>}
