@@ -152,6 +152,10 @@ const GuardMatchingPage: React.FC = () => {
     setQueueActivated(true);
   };
 
+  const activateRestaurantMode = () => {
+    console.log("Restaurant mode activated");
+  };
+
   return (
     <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', width: '100%' }}>
       {companionRole && <p style={{ width: '16rem', textAlign: 'center', backgroundColor: 'rgb(31 41 55 / var(--tw-bg-opacity, 1))', color: 'white', padding: '0.5rem', fontSize: '1.2rem' }}>Role: {companionRole} Companion</p>}
@@ -171,6 +175,18 @@ const GuardMatchingPage: React.FC = () => {
           disabled={companionQueueManage.queueActivated}
         >
           Activate Queue mode
+        </button>
+        <button
+          style={{
+            backgroundColor: 'rgb(31 41 55 / var(--tw-bg-opacity, 1))',
+            color: 'white',
+            padding: '0.75rem 1.5rem',
+            fontSize: '0.9rem', // Slightly smaller font size
+            cursor: 'pointer',
+            marginTop: '1rem',
+          }}
+          onClick={activateRestaurantMode}
+        >Activate Restaurant mode
         </button>
       </div>
 

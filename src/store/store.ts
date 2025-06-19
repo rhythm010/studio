@@ -32,6 +32,16 @@ interface CompanionQueueManage {
   currentPosition: number;
 }
 
+interface CompanionRestaurantManage {
+  isActive: boolean;
+  clientMsg: {
+    msg_id: number;
+    itemName: string;
+    quantity: number;
+    comments: string;
+  }[];
+}
+
 interface CompanionStore {
   sessionId: string;
   matchingId: string;
@@ -44,6 +54,7 @@ interface CompanionStore {
   serviceRunning: boolean;
   companionProfileDetails: CompanionProfileDetails;
   clientCompanionDetails: ClientCompanionDetails;
+ companionRestaurantManage: CompanionRestaurantManage; // Add the new property
   companionQueueManage: CompanionQueueManage; // Add the new property
  setProfileDetails: (details: Partial<ProfileDetails>) => void;
  setMatchingDone: (done: boolean) => void;
@@ -72,6 +83,8 @@ interface CompanionStore {
   getCompanionRole: () => string;
   setCompanionQueueManage: (details: Partial<CompanionQueueManage>) => void; // Add setter
   getCompanionQueueManage: () => CompanionQueueManage; // Add getter
+ setCompanionRestaurantManage: (details: Partial<CompanionRestaurantManage>) => void; // Add setter
+ getCompanionRestaurantManage: () => CompanionRestaurantManage; // Add getter
   setQueueActivated: (activated: boolean) => void; // Add setter for queueActivated
   setCurrentPosition: (position: number) => void; // Add setter for currentPosition
 }
@@ -95,6 +108,10 @@ const useCompanionStore = create<CompanionStore>((set) => ({
   companionQueueManage: { // Initialize the new property
     queueActivated: true,
     currentPosition: 0,
+  },
+ companionRestaurantManage: { // Initialize the new property
+ isActive: false,
+ clientMsg: [],
   },
   setProfileDetails: (details) =>
     set((state) => ({
@@ -146,7 +163,16 @@ const useCompanionStore = create<CompanionStore>((set) => ({
     })),
   getCompanionQueueManage: () => useCompanionStore.getState().companionQueueManage,
   setQueueActivated: (activated) => set(state => ({ companionQueueManage: { ...state.companionQueueManage, queueActivated: activated } })),
+
+  // Implement the new getters and setters for companionRestaurantManage
+  setCompanionRestaurantManage: (details) =>
+    set((state) => ({
+      companionRestaurantManage: { ...state.companionRestaurantManage, ...details },
+    })),
+ getCompanionRestaurantManage: () => useCompanionStore.getState().companionRestaurantManage,
+
   setCurrentPosition: (position) => set(state => ({ companionQueueManage: { ...state.companionQueueManage, currentPosition: position } })),
+
   reset: () =>
     set({
       isComplete: false, // Reset isComplete on reset as well
