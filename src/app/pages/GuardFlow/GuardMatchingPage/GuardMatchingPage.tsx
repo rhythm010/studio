@@ -6,6 +6,7 @@ import { useCompanionStore } from '@/store/store'; // Import the store
 import { checkIfSessionExistsAndMatch, updateCompanionSessionIdInClient, updateStoreInFirebase, updateQueuePositionInFirebase } from '@/lib/utils'; // Import the utility method
 import ErrorBanner from '@/components/ErrorBanner';
 import { useRouter } from 'next/navigation';
+import { useModal } from '@/components/ui/Modal';
 
 const GuardMatchingPage: React.FC = () => {
   const qrCodeRef = useRef<string>('reader');
@@ -17,7 +18,12 @@ const GuardMatchingPage: React.FC = () => {
     companionQueueManage, // Get the companionQueueManage object
     setCompanionQueueManage, // Get the setter for companionQueueManage
   } = useCompanionStore(); // Ensure you are getting the setCompanionQueueManage setter
+  const {
+    companionRestaurantManage, // Get the companionRestaurantManage object
+    setCompanionRestaurantManage, // Get the setter for companionRestaurantManage
+  } = useCompanionStore(); // Ensure you are getting the setCompanionQueueManage setter
   const [currentPosition, setCurrentPosition] = useState(0); // State for queue position
+  const { openModal, closeModal } = useModal();
   const setCompanionQueuePosition = useCompanionStore((state) => state.setCompanionQueuePosition);
   const [serviceContinue, setserviceContinue] = useState(true);
   const [qrData, setQrData] = useState('');
@@ -153,16 +159,25 @@ const GuardMatchingPage: React.FC = () => {
   };
 
   const activateRestaurantMode = () => {
-    console.log("Restaurant mode activated");
+    setCompanionRestaurantManage({
+      ...companionRestaurantManage,
+      isActive: true,
+    });
+    console.log("Restaurant mode activated", companionRestaurantManage.isActive);
   };
 
+  const showClientMsg = () => {
+    console.log("Showing client messages...");
+    openModal(<div>Restaurant Messages</div>);
+    // You can add logic here to fetch or process client messages if needed
+  };
   return (
     <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', width: '100%' }}>
       {companionRole && <p style={{ width: '16rem', textAlign: 'center', backgroundColor: 'rgb(31 41 55 / var(--tw-bg-opacity, 1))', color: 'white', padding: '0.5rem', fontSize: '1.2rem' }}>Role: {companionRole} Companion</p>}
 
       {/* Div for Activate Queue Mode button */}
 
-      <div id="action_buttons" style={{ border: '1px solid black', marginTop: '20px', padding: '10px' }}>
+      {!serviceContinue && <div id="action_buttons" style={{ border: '1px solid black', marginTop: '20px', padding: '10px' }}>
         <button
           style={{
             backgroundColor: companionQueueManage.queueActivated ? 'lightgray' : 'rgb(31 41 55 / var(--tw-bg-opacity, 1))',
@@ -176,7 +191,7 @@ const GuardMatchingPage: React.FC = () => {
         >
           Activate Queue mode
         </button>
-        <button
+        {/* <button
           style={{
             backgroundColor: 'rgb(31 41 55 / var(--tw-bg-opacity, 1))',
             color: 'white',
@@ -187,8 +202,8 @@ const GuardMatchingPage: React.FC = () => {
           }}
           onClick={activateRestaurantMode}
         >Activate Restaurant mode
-        </button>
-      </div>
+        </button> */}
+      </div>}
 
       {companionQueueManage.queueActivated && (<div id="Queue_mode" style={{ border: '1px solid black', marginTop: '20px', width: '70%', maxWidth: '500px', textAlign: 'center', paddingBottom: '5px' }}>
         <div style={{ borderBottom: '1px solid black', paddingBottom: '5px', padding: '10px' }}>
@@ -212,6 +227,35 @@ const GuardMatchingPage: React.FC = () => {
         </button>
       </div>)}
       {/* {errorMessage && <ErrorBanner errorMessage={errorMessage} />} Display error banner */}
+
+      {companionRestaurantManage.isActive && (<div id="Restaurant_mode" style={{ border: '1px solid black', marginTop: '20px', width: '70%', maxWidth: '500px', textAlign: 'center', paddingBottom: '5px' }}>
+        <div style={{ borderBottom: '1px solid black', paddingBottom: '5px', padding: '10px' }}>
+          <h3 style={{ fontSize: '1.5rem' }}>Restaurant Mode Active</h3>
+        </div>
+        <div style={{ display: 'flex', justifyContent: 'space-around', alignItems: 'center', width: '100%' }}>
+          <button onClick={() => {
+            showClientMsg(); // Call the new method
+          }} style={{
+            fontSize: '1rem',
+            padding: '1rem',
+            border: '1px solid black',
+            backgroundColor: 'rgb(31 41 55 / var(--tw-bg-opacity, 1))',
+            color: 'white',
+            marginLeft: 'auto',
+            marginRight: 'auto' }}>Msgs</button>
+        </div>
+        <button
+          style={{
+            backgroundColor: 'rgb(31 41 55 / var(--tw-bg-opacity, 1))',
+            padding: '0.5rem',
+            marginTop: '10px',
+            color: 'white',
+          }}
+          onClick={() => setCompanionRestaurantManage({...companionRestaurantManage, isActive: false})} // Call EndQueueMode function
+        >
+          End Restaurant Mode
+        </button>
+      </div>)}
       <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', width: '100%', maxWidth: '500px' }}>
         <div id={qrCodeRef.current} style={{ width: '100%', maxWidth: '500px' }}></div>
         {qrData && <p>Scanned Data: {qrData}</p>}

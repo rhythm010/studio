@@ -106,12 +106,17 @@ const useCompanionStore = create<CompanionStore>((set) => ({
   isComplete: false, // Initialize isComplete to false
   serviceRunning: true,
   companionQueueManage: { // Initialize the new property
-    queueActivated: true,
+    queueActivated: false,
     currentPosition: 0,
   },
  companionRestaurantManage: { // Initialize the new property
  isActive: false,
- clientMsg: [],
+ clientMsg: [{
+  msg_id: 1,
+    itemName: 'juice',
+    quantity: 2,
+    comments: 'make it spicy',
+ }],
   },
   setProfileDetails: (details) =>
     set((state) => ({
