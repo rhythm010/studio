@@ -13,45 +13,18 @@ const GuardFeedback: React.FC = () => {
   const { addFeedback } = useCompanionStore();
   const router = useRouter();
 
+  // New function to handle rating completion
+  const handleRatingComplete = (rating: number, details: string) => {
+    console.log('Rating complete:', { rating, details });
+    // You can add the feedback to the store here if needed
+    // addFeedback({ recommendationRating: rating, recommendationDetails: details });
+    router.push('/guard-info-form'); // Navigate to the specified route
+  };
   const questions = [
-    {
-      type: 'single',
-      text: 'How was your overall experience with the service?',
-      options: ['Excellent', 'Good', 'Fair', 'Poor'],
-      key: 'overallExperience',
-    },
-    {
-      type: 'multiple',
-      text: 'Which aspects of the service did you find most helpful? (Select all that apply)',
-      options: ['Clear instructions', 'Easy to use app', 'Quick response time', 'Friendly staff'],
-      key: 'helpfulAspects',
-    },
-    {
-      type: 'open',
-      text: 'Do you have any suggestions for improvement?',
-      key: 'suggestions',
-    },
     {
       type: 'rating',
       text: 'How likely are you to recommend this service to a friend?',
       key: 'recommendationRating',
-    },
-    {
-      type: 'single',
-      text: 'Were the instructions provided clear?',
-      options: ['Yes', 'No'],
-      key: 'clearInstructions',
-    },
-    {
-      type: 'multiple',
-      text: 'What kind of scenarios did you use the service in? (Select all that apply)',
-      options: ['Solo outing', 'Family trip', 'Late night travel', 'In an unfamiliar area'],
-      key: 'scenariosUsedIn',
-    },
-    {
-      type: 'open',
-      text: 'Is there anything else you would like to share about your experience?',
-      key: 'additionalFeedback',
     },
   ];
 
@@ -102,7 +75,7 @@ const GuardFeedback: React.FC = () => {
         return (
           <StarRating
             question={currentQuestion.text}
-            onRate={(rating) => handleAnswer(currentQuestion.key, rating)}
+            onRatingChange={({ rating, details }) => handleRatingComplete(rating, details)}
           />
         );
       default:

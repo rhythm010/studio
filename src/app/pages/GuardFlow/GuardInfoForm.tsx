@@ -74,7 +74,7 @@ const GuardInfoForm: React.FC = () => {
   }
 
   useEffect(() => {
-    setIsContinueDisabled(!(yourName && partnerName && yourRole !== partnerRole));
+    setIsContinueDisabled(!(yourName && partnerName && yourRole && partnerRole && (yourRole !== partnerRole) && (yourName !== partnerName )));
   }, [yourRole, partnerRole, yourName, partnerName]);
 
   return (
@@ -116,8 +116,8 @@ const GuardInfoForm: React.FC = () => {
           </select>
         </div>
       </div>
-      <button disabled={isContinueDisabled} onClick={onSubmit} className={`mt-6 w-full max-w-md px-4 py-2 text-white rounded-md ${isContinueDisabled ? 'bg-gray-400 cursor-not-allowed' : 'bg-gray-800'}`}>
-        Continue {/* Make button initially disabled */}
+      <button disabled={isContinueDisabled || yourRole === partnerRole} onClick={onSubmit} className={`mt-6 w-full max-w-md px-4 py-2 text-white rounded-md ${(isContinueDisabled || yourRole === partnerRole) ? 'bg-gray-400 cursor-not-allowed' : 'bg-gray-800'}`}>
+        Continue
       </button>
     </div>
   );
