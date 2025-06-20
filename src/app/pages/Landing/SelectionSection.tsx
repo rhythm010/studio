@@ -36,9 +36,9 @@ const SelectionSection: React.FC<SelectionSectionProps> = ({ onGenderChange, onO
       const unsubscribe = onValue(dbRef, (snapshot) => {
         const data = snapshot.val();
         if (data && data.matchingDone) {
-          closeModal();
+          // closeModal();
           console.log('matching done');
-          router.push('/in-service');
+          // router.push('/in-service');
         }
       });
       return () => unsubscribe();
