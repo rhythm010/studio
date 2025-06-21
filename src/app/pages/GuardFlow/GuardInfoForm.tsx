@@ -18,8 +18,8 @@ const GuardInfoForm: React.FC = () => {
   const [isContinueDisabled, setIsContinueDisabled] = useState(false);
 
   const { setCompanionProfileDetails, setSessionId } = useCompanionStore();
-  const primaryOptions = ['Gucci', 'Benjamin'];
-  const secondaryOptions = ['Benjamin', 'Gucci'];
+  const primaryOptions = ['Buchi', 'Benjamin'];
+  const secondaryOptions = ['Benjamin', 'Buchi'];
 
   const { openModal, closeModal } = useModal();
   const router = useRouter(); 
