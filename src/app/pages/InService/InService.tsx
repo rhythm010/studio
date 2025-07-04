@@ -1,14 +1,16 @@
 "use client"
 import React, { useState, useEffect } from "react";
 import StopWatch from "./StopWatch";
+import { ref, onValue, off } from "firebase/database";
+import { getDatabase } from "firebase/database"; // Import getDatabase
+import SelectedMode from "./selectedMode/selectedMode";
 import { useTranslation } from 'react-i18next';
 import { useModal } from '../../../components/ui/Modal'; // Assuming useModal is exported from Modal.tsx
 import ConfirmationModalContent from '../../../components/ConfirmationModalContent'; // Import the new component
 import { useCompanionStore } from '../../../store/store';
 import { getStoreRef, updateStoreInFirebase } from '../../../lib/utils';
 import { useRouter } from 'next/navigation'
-
-
+import { database } from '@/lib/firebase';
 ``
 const InService: React.FC = () => {
 
@@ -16,10 +18,13 @@ const InService: React.FC = () => {
   const { t } = useTranslation('common');
   const [isRunning, setIsRunning] = useState<boolean>(false);
   const [elapsedTime, setElapsedTime] = useState<number>(0);
+  const [firebaseCurrentMode, setFirebaseCurrentMode] = useState<string>("WITH_YOU");
   const { openModal, closeModal } = useModal();
   const startTimer = () => {
     setIsRunning(true);
   };
+
+  console.log('in-service loop');
 
   const onEndService = () => {
           setIsRunning(false); // Stop the timer
@@ -61,27 +66,25 @@ const InService: React.FC = () => {
     startTimer();
   }, []);
 
-  // useEffect(() => {
-  //   const sessionId = useCompanionStore.getState().getSessionId(); // Get session ID from the store
-  //   const unsubscribe = getStoreRef(sessionId).on('value', (snapshot) => {
-  //     const storeData = snapshot.val();
-  //     if (storeData && storeData.serviceRunning === false) {
-  //       onEndService();
-  //     }
-  //   });
+  useEffect(() => {
+    const modeRef = ref(database, `storeObjects/${useCompanionStore.getState().getSessionId()}/clientActivityMonitor/currentMode`);
 
-  //   // Clean up the listener when the component unmounts
-  //   return () => {
-  //     if (unsubscribe) {
-  //       unsubscribe();
-  //     }
-  //   };
-  // }, []); // Empty dependency array to run this effect only once on mount
+    const listener:any = onValue(modeRef, (snapshot) => {
+      if (snapshot.exists()) {
+        console.log('ACTIVITY MODE CHANGED = ', snapshot.val())
+        setFirebaseCurrentMode(snapshot.val());
+      } else {
+        setFirebaseCurrentMode(""); // Or a default value if appropriate
+      }
+    });
 
+    return () => off(modeRef, listener);
+  }, []);
 
   return (
     <div className="flex flex-col h-screen">
-      <div id="stopwatch_section" className="h-[90%] flex flex-col items-center justify-center border-gray-700 mt-[13rem]">
+      {/* <SelectedMode /> */}
+      <div id="stopwatch_section" className="h-[90%] flex flex-col items-center justify-center border-gray-700 mt-4">
         <StopWatch
           isRunning={isRunning}
           startStop={handleStartStop}

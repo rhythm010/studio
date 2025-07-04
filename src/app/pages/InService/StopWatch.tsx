@@ -47,7 +47,7 @@ const StopWatch: React.FC<StopWatchProps> = ({ isRunning, startStop, elapsedTime
    return (
     <div className="flex flex-col items-center justify-center">
       <div
-        className="w-[20rem] h-[20rem] rounded-full border-2 border-black flex items-center justify-center text-6xl font-bold"
+        className="w-[15rem] h-[15rem] rounded-full border-2 border-black flex items-center justify-center text-6xl font-bold"
       >
         {hours}:{minutes}<span className="text-2xl ml-1">{seconds}</span>
       </div>

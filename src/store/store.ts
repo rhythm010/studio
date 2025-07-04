@@ -1,3 +1,4 @@
+import { ACTIVITY_MODES } from '@/lib/constants';
 import { create } from 'zustand';
 
 interface ProfileDetails {
@@ -42,28 +43,75 @@ interface CompanionRestaurantManage {
   }[];
 }
 
+interface ClientActivityMonitor {
+  modeTitle: string;
+  currentMode: string;
+  currentStatus: string;
+  statusInfo: {
+    QUEUE: {
+      active: boolean;
+      currentPosition: number;
+      approxTime: number;
+      actionButtons: {
+        addItem: string;
+      };
+    };
+    PAYMENT_CALL: { 
+      active: boolean;
+      time: string;
+      actionButtons: {
+        addItem: string;
+      };
+    };
+    WAIT_ITEM: {
+      active: boolean;
+      time: string;
+      actionButtons: {
+        addItem: string;
+      };
+    };
+    WAIT_OP: {
+      active: boolean;
+      actionButtons: {
+        addItem: string;
+      };
+    };
+    WITH_YOU: {
+      active: boolean;
+      actionButtons: {
+        addItem: string;
+      };
+    }
+  };
+  companionFlow: {
+    selectedMode: string;
+  };
+}
+
+
 interface CompanionStore {
   sessionId: string;
   matchingId: string;
   serviceSelected: string;
   profileDetails: ProfileDetails;
-  serviceSelection:   ServiceSelection;
+  serviceSelection: ServiceSelection;
   feedbackDetails: FeedbackDetails[];
   companionFeedbackDetails: FeedbackDetails[];
   isComplete: boolean; // Add isComplete key
   serviceRunning: boolean;
   companionProfileDetails: CompanionProfileDetails;
   clientCompanionDetails: ClientCompanionDetails;
- companionRestaurantManage: CompanionRestaurantManage; // Add the new property
+  companionRestaurantManage: CompanionRestaurantManage; // Add the new property
   companionQueueManage: CompanionQueueManage; // Add the new property
- setProfileDetails: (details: Partial<ProfileDetails>) => void;
- setMatchingDone: (done: boolean) => void;
- setSessionId: (id: string) => void;
+  ClientActivityMonitor: ClientActivityMonitor; // Add the new property
+  setProfileDetails: (details: Partial<ProfileDetails>) => void;
+  setMatchingDone: (done: boolean) => void;
+  setSessionId: (id: string) => void;
   getSessionId: () => string;
- setDevSession: (isDev: boolean) => void;
- setMatchingId: (id: string) => void;
- setClientSessionId: (id: string | null) => void;
- getClientSessionId: () => string | null;
+  setDevSession: (isDev: boolean) => void;
+  setMatchingId: (id: string) => void;
+  setClientSessionId: (id: string | null) => void;
+  getClientSessionId: () => string | null;
   setServiceSelected: (service: string) => void;
   reset: () => void;
   addFeedback: (feedback: FeedbackDetails) => void;
@@ -83,10 +131,12 @@ interface CompanionStore {
   getCompanionRole: () => string;
   setCompanionQueueManage: (details: Partial<CompanionQueueManage>) => void; // Add setter
   getCompanionQueueManage: () => CompanionQueueManage; // Add getter
- setCompanionRestaurantManage: (details: Partial<CompanionRestaurantManage>) => void; // Add setter
- getCompanionRestaurantManage: () => CompanionRestaurantManage; // Add getter
+  setCompanionRestaurantManage: (details: Partial<CompanionRestaurantManage>) => void; // Add setter
+  getCompanionRestaurantManage: () => CompanionRestaurantManage; // Add getter
   setQueueActivated: (activated: boolean) => void; // Add setter for queueActivated
   setCurrentPosition: (position: number) => void; // Add setter for currentPosition
+  setClientActivityMonitor: (details: Partial<ClientActivityMonitor>) => void; // Add setter
+  getClientActivityMonitor: () => ClientActivityMonitor; // Add getter
 }
 
 const useCompanionStore = create<CompanionStore>((set) => ({
@@ -109,14 +159,50 @@ const useCompanionStore = create<CompanionStore>((set) => ({
     queueActivated: false,
     currentPosition: 0,
   },
- companionRestaurantManage: { // Initialize the new property
- isActive: false,
- clientMsg: [{
-  msg_id: 1,
-    itemName: 'juice',
-    quantity: 2,
-    comments: 'make it spicy',
- }],
+  companionRestaurantManage: { // Initialize the new property
+    isActive: false,
+    clientMsg: [{
+      msg_id: 1,
+      itemName: 'juice',
+      quantity: 2,
+      comments: 'make it spicy',
+    }],
+  },
+  ClientActivityMonitor: { // Initialize the new property
+    modeTitle: "WITH_YOU",
+    currentStatus: "WITH_YOU",
+    currentMode: 'WITH_YOU',
+    statusInfo: {
+      QUEUE: {
+        currentPosition: 2,
+        active: false,
+        approxTime: 0,
+        actionButtons: {
+          addItem: "",
+        },
+      },
+      PAYMENT_CALL: {
+        active: false,
+        time: "",
+        actionButtons: {
+          addItem: "",
+        },
+      },
+      WAIT_ITEM: {
+        active: false,
+        time: "",
+        actionButtons: { addItem: "" },
+      },
+      WAIT_OP: { 
+        active: false,
+        actionButtons: { addItem: "" } },
+      WITH_YOU: {
+        active: false,
+        actionButtons: { addItem: "" }}
+    },
+    companionFlow: {
+      selectedMode: "WITH_YOU"
+    },
   },
   setProfileDetails: (details) =>
     set((state) => ({
@@ -129,12 +215,12 @@ const useCompanionStore = create<CompanionStore>((set) => ({
   setServiceSelection: (selection) => set({ serviceSelection: selection }),
   setClientSessionId: (id) => set(state => ({ companionProfileDetails: { ...state.companionProfileDetails, clientSessionId: id } })),
   getClientSessionId: () => useCompanionStore.getState().companionProfileDetails.clientSessionId,
-  setMatchingId: (id) => set({ matchingId: id}),
-  setServiceSelected: (service) => set({ serviceSelected: service}),
+  setMatchingId: (id) => set({ matchingId: id }),
+  setServiceSelected: (service) => set({ serviceSelected: service }),
   addFeedback: (feedback) =>
- set((state) => ({
- feedbackDetails: [...state.feedbackDetails, { ...feedback, details: feedback.details || '' }],
- })),
+    set((state) => ({
+      feedbackDetails: [...state.feedbackDetails, { ...feedback, details: feedback.details || '' }],
+    })),
 
   setCompanionFeedbackDetails: (feedback) => set({ companionFeedbackDetails: feedback }),
   getCompanionFeedbackDetails: () => useCompanionStore.getState().companionFeedbackDetails,
@@ -174,9 +260,16 @@ const useCompanionStore = create<CompanionStore>((set) => ({
     set((state) => ({
       companionRestaurantManage: { ...state.companionRestaurantManage, ...details },
     })),
- getCompanionRestaurantManage: () => useCompanionStore.getState().companionRestaurantManage,
+  getCompanionRestaurantManage: () => useCompanionStore.getState().companionRestaurantManage,
 
   setCurrentPosition: (position) => set(state => ({ companionQueueManage: { ...state.companionQueueManage, currentPosition: position } })),
+
+  setClientActivityMonitor: (details) =>
+    set((state) => ({
+      ClientActivityMonitor: { ...state.ClientActivityMonitor, ...details },
+    })),
+
+  getClientActivityMonitor: () => useCompanionStore.getState().ClientActivityMonitor,
 
   reset: () =>
     set({

@@ -21,8 +21,8 @@ export function extractDataFromStore(storeObject: any): any {
   return data;
 }
 
-export function getStoreRef(sessionId: string) {
-  return ref(database, `storeObjects/${sessionId}`);
+export function getStoreRef(sessionId?: string) {
+  return ref(database, `storeObjects/${sessionId || useCompanionStore.getState().getSessionId()}`);
 }
 
 export async function updateStoreInFirebase() {
