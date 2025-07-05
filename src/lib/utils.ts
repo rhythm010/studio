@@ -116,6 +116,7 @@ export async function removeDevSessions() {
     }
   } catch (error) {
     console.error('Error removing dev sessions:', error);
+    throw new Error('problem in creating session');
   }
 }
 

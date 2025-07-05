@@ -69,7 +69,13 @@ const Login: React.FC = () => {
     const now = new Date();
     const sessionId = `${now.getDate()}-${now.getMonth() + 1}-${now.getFullYear()}-${now.getHours()}-${now.getMinutes()}-Client`;
     setSessionId(sessionId);
-    updateStoreInFirebase();
+
+    try {
+      updateStoreInFirebase();
+    } catch (error) {
+      console.error("Error updating store in Firebase:", error);
+      return; // Stop execution if updating the store fails
+    }
 
 
     // Get the entire store object
