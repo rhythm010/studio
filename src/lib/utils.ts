@@ -1,5 +1,5 @@
 import { clsx, type ClassValue } from "clsx"
-import { database } from '@/lib/firebase';
+import { database } from "@/lib/firebase";
 import { useCompanionStore } from '@/store/store';
 import { ref, update, remove, get, child, DatabaseReference } from "firebase/database";
 import { twMerge } from "tailwind-merge"
@@ -7,6 +7,66 @@ import { twMerge } from "tailwind-merge"
 export function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs))
 }
+
+export const storePaths = {
+  isDevMode: "isDevMode",
+  sessionId: "sessionId",
+  matchingId: "matchingId",
+  dev_session: "dev_session",
+  matchingDone: "matchingDone",
+  serviceSelected: "serviceSelected",
+  profileDetails: {
+    path: "profileDetails",
+    // Assuming profileDetails keys are dynamic, we can't define static paths for them
+    // You would construct the path dynamically like `profileDetails/${key}`
+  },
+  serviceSelection: {
+    path: "serviceSelection",
+    gender: "serviceSelection/gender",
+    package: "serviceSelection/package",
+  },
+  feedbackDetails: "feedbackDetails",
+  companionFeedbackDetails: "companionFeedbackDetails",
+  isComplete: "isComplete",
+  serviceRunning: "serviceRunning",
+  companionQueueManage: {
+    path: "companionQueueManage",
+    queueActivated: "companionQueueManage/queueActivated",
+    currentPosition: "companionQueueManage/currentPosition",
+  },
+  companionRestaurantManage: {
+    path: "companionRestaurantManage",
+    isActive: "companionRestaurantManage/isActive",
+    clientMsg: "companionRestaurantManage/clientMsg",
+    // Assuming clientMsg is an array of objects, individual message paths would be dynamic like `companionRestaurantManage/clientMsg/${index}`
+  },
+  ClientActivityMonitor: {
+    path: "ClientActivityMonitor",
+    modeTitle: "ClientActivityMonitor/modeTitle",
+    currentMode: "ClientActivityMonitor/currentMode",
+    currentStatus: "ClientActivityMonitor/currentStatus",
+    statusInfo: {
+      path: "ClientActivityMonitor/statusInfo",
+      QUEUE: {
+        path: "ClientActivityMonitor/statusInfo/QUEUE",
+        active: "ClientActivityMonitor/statusInfo/QUEUE/active",
+        currentPosition: "ClientActivityMonitor/statusInfo/QUEUE/currentPosition",
+        approxTime: "ClientActivityMonitor/statusInfo/QUEUE/approxTime",
+        actionButtons: "ClientActivityMonitor/statusInfo/QUEUE/actionButtons",
+      },
+      PAYMENT_CALL: {
+        path: "ClientActivityMonitor/statusInfo/PAYMENT_CALL",
+        active: "ClientActivityMonitor/statusInfo/PAYMENT_CALL/active",
+        time: "ClientActivityMonitor/statusInfo/PAYMENT_CALL/time",
+        actionButtons: "ClientActivityMonitor/ClientActivityMonitor/statusInfo/PAYMENT_CALL/actionButtons",
+      },
+      WAIT_ITEM: { path: "ClientActivityMonitor/statusInfo/WAIT_ITEM", active: "ClientActivityMonitor/statusInfo/WAIT_ITEM/active", time: "ClientActivityMonitor/statusInfo/WAIT_ITEM/time", actionButtons: "ClientActivityMonitor/statusInfo/WAIT_ITEM/actionButtons" },
+      WAIT_OP: { path: "ClientActivityMonitor/statusInfo/WAIT_OP", active: "ClientActivityMonitor/statusInfo/WAIT_OP/active", actionButtons: "ClientActivityMonitor/statusInfo/WAIT_OP/actionButtons" },
+      WITH_YOU: { path: "ClientActivityMonitor/statusInfo/WITH_YOU", active: "ClientActivityMonitor/statusInfo/WITH_YOU/active", actionButtons: "ClientActivityMonitor/statusInfo/WITH_YOU/actionButtons" },
+    },
+    companionFlow: { path: "ClientActivityMonitor/companionFlow", selectedMode: "ClientActivityMonitor/companionFlow/selectedMode" },
+  },
+};
 
 export function extractDataFromStore(storeObject: any): any {
   const data: any = {};
@@ -111,4 +171,19 @@ export async function updateCompanionSessionIdInClient(clientSessionId: string, 
   }
 }
 
+
+export async function updateValueInClient(updateObj: { path: string, val: any }) {
+  const clientSessionId = useCompanionStore.getState().getClientSessionId();
+  try {
+    // Construct the reference to the specific path within the client's object
+    const pathRef = ref(database, `storeObjects/${clientSessionId}`);
+    // Update the value at the specified path
+    console.log('path to be updated', updateObj.path)
+    await update(pathRef, { [updateObj.path]: updateObj.val });
+    console.log(`Value updated successfully for client ${clientSessionId} at path ${updateObj.path}`);
+   } catch (error) {
+    console.error(`Error updating value for client ${clientSessionId} at path ${updateObj.path}:`, error);
+    // Optionally re-throw the error or handle it based on your needs
+   }
+}
 

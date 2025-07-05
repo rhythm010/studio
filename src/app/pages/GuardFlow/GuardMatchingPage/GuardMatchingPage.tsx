@@ -3,8 +3,7 @@
 import { useEffect, useState, useRef } from 'react';
 import { Html5Qrcode } from 'html5-qrcode';
 import { useCompanionStore } from '@/store/store'; // Import the store
-import { checkIfSessionExistsAndMatch, updateCompanionSessionIdInClient, updateStoreInFirebase, updateQueuePositionInFirebase } from '@/lib/utils'; // Import the utility method
-import ErrorBanner from '@/components/ErrorBanner';
+import { checkIfSessionExistsAndMatch, updateStoreInFirebase, updateCompanionSessionIdInClient,updateValueInClient, storePaths } from '@/lib/utils'; // Import the utility method
 import { useRouter } from 'next/navigation';
 import { useModal } from '@/components/ui/Modal';
 
@@ -176,6 +175,13 @@ const GuardMatchingPage: React.FC = () => {
     console.log("Restaurant mode activated", companionRestaurantManage.isActive);
   };
 
+  const activateCafeMode = () => {
+    updateValueInClient({
+      path: storePaths.ClientActivityMonitor.currentMode,
+      val: 'CAFE'
+    });
+  }
+
   const showClientMsg = () => {
     console.log("Showing client messages...");
     openModal(<div>Restaurant Messages</div>);
@@ -220,7 +226,7 @@ const GuardMatchingPage: React.FC = () => {
         >
           Activate Queue mode
         </button>
-        {/* <button
+        <button
           style={{
             backgroundColor: 'rgb(31 41 55 / var(--tw-bg-opacity, 1))',
             color: 'white',
@@ -229,9 +235,9 @@ const GuardMatchingPage: React.FC = () => {
             cursor: 'pointer',
             marginTop: '1rem',
           }}
-          onClick={activateRestaurantMode}
-        >Activate Restaurant mode
-        </button> */}
+          onClick={activateCafeMode}
+        >Activate Cafe Mode
+        </button>
       </div>}
 
       {companionQueueManage.queueActivated && (<div id="Queue_mode" style={{ border: '1px solid black', marginTop: '20px', width: '70%', maxWidth: '500px', textAlign: 'center', paddingBottom: '5px' }}>
