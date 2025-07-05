@@ -44,8 +44,13 @@ const InService: React.FC = () => {
     setIsRunning(!isRunning);
   };
 
-  const updateAcvityData = () => {
-    
+  const updateAcvityData = (activityMode:string) => {
+    useCompanionStore.getState().setClientActivityMonitor({
+       currentMode: activityMode, 
+       modeTitle:`${activityMode} MODE ACTIVE`, 
+       currentStatus:'DEFAULT'
+      
+      }); // Update the store
   }
 
   useEffect(() => {
@@ -77,10 +82,19 @@ const InService: React.FC = () => {
     console.log(modeRef);
     // console.log(`storeObjects/${useCompanionStore.getState().getSessionId()}/ClientActivityMonitor`);
 
+    // look for activity monitor value change 
+
+    // see if mode is changed or not
+
+    // if not, then see if status is changed
+
+    // if not 
+
     const listener:any = onValue(modeRef, (snapshot) => {
       const activityMode = snapshot.val().currentMode;
       if (snapshot.exists() && activityMode !== firebaseCurrentMode) {
         setFirebaseCurrentMode(activityMode);
+        updateAcvityData(activityMode);
       } else {
         setFirebaseCurrentMode(""); // Or a default value if appropriate
       }
@@ -88,6 +102,9 @@ const InService: React.FC = () => {
 
     return () => off(modeRef, listener);
   }, [useCompanionStore.getState().getSessionId()]);
+
+
+
 
   return (
     <div className="flex flex-col h-screen">

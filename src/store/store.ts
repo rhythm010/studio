@@ -53,33 +53,43 @@ interface ClientActivityMonitor {
       currentPosition: number;
       approxTime: number;
       actionButtons: {
-        addItem: string;
+        addItem: boolean;
+        cancel: boolean;
       };
     };
     PAYMENT_CALL: { 
       active: boolean;
       time: string;
       actionButtons: {
-        addItem: string;
+        addItem: boolean;
+        cancel: boolean;
       };
     };
     WAIT_ITEM: {
       active: boolean;
       time: string;
       actionButtons: {
-        addItem: string;
+        addItem: boolean;
       };
     };
     WAIT_OP: {
       active: boolean;
       actionButtons: {
-        addItem: string;
+        addItem: boolean;
+        complete: boolean;
       };
     };
     WITH_YOU: {
       active: boolean;
       actionButtons: {
-        addItem: string;
+        addItem: boolean;
+      };
+    },
+    DEFAULT: {
+      active:boolean;
+      actionButtons: {
+        addItem: boolean;
+        cancel: boolean;
       };
     }
   };
@@ -175,36 +185,53 @@ const useCompanionStore = create<CompanionStore>((set) => ({
     }],
   },
   ClientActivityMonitor: { // Initialize the new property
-    modeTitle: "WITH_YOU",
-    currentStatus: "WITH_YOU",
-    currentMode: 'WITH_YOU',
+    modeTitle: "QUEUE MODE",
+    currentStatus: "DEFAULT",
+    currentMode: 'CAFE',
     statusInfo: {
       QUEUE: {
         currentPosition: 2,
         active: false,
         approxTime: 0,
         actionButtons: {
-          addItem: "",
+          addItem: false,
+          cancel: true,
         },
       },
       PAYMENT_CALL: {
         active: false,
         time: "",
         actionButtons: {
-          addItem: "",
+          addItem: false,
+          cancel: true,
         },
       },
       WAIT_ITEM: {
         active: false,
         time: "",
-        actionButtons: { addItem: "" },
+        actionButtons: { 
+          addItem: true 
+        },
       },
       WAIT_OP: { 
         active: false,
-        actionButtons: { addItem: "" } },
+        actionButtons: {
+           addItem: true,
+           complete: true
+        } 
+      },
       WITH_YOU: {
         active: false,
-        actionButtons: { addItem: "" }}
+        actionButtons: { 
+          addItem: false 
+        }},
+      DEFAULT: {
+          active: false,
+          actionButtons: {
+             addItem: false, 
+             cancel: true 
+            }
+      },
     },
     companionFlow: {
       selectedMode: "WITH_YOU"

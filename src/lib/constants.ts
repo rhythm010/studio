@@ -11,6 +11,7 @@ export const ACTIVITY_STATUS = {
     'PAYMENT_CALL':'PAYMENT_CALL',
     'WAIT_ITEM':'WAIT_ITEM',
     'WAIT_OP':'WAIT_OP',
+    'DEFAULT': 'DEFAULT',
 };
 
 export const MODE_ACTIVITY_MAP = {
