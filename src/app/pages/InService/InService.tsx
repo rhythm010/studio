@@ -24,8 +24,6 @@ const InService: React.FC = () => {
     setIsRunning(true);
   };
 
-  console.log('in-service loop');
-
   const onEndService = () => {
           setIsRunning(false); // Stop the timer
  useCompanionStore.getState().setServiceRunning(false)
@@ -46,20 +44,25 @@ const InService: React.FC = () => {
     setIsRunning(!isRunning);
   };
 
+  const updateAcvityData = () => {
+    
+  }
+
   useEffect(() => {
-    let intervalId: NodeJS.Timeout | null = null;
-    if (isRunning) {
-      intervalId = setInterval(() => {
-        setElapsedTime((prevTime) => prevTime + 10);
-      }, 10);
-    } else if (!isRunning && intervalId) {
-      clearInterval(intervalId);
-    }
-    return () => {
-      if (intervalId) {
-        clearInterval(intervalId);
-      }
-    };
+    // commenting it: this is causing multiple re-renders for the in service component
+    // let intervalId: NodeJS.Timeout | null = null;
+    // if (isRunning) {
+    //   intervalId = setInterval(() => {
+    //     setElapsedTime((prevTime) => prevTime + 10);
+    //   }, 10);
+    // } else if (!isRunning && intervalId) {
+    //   clearInterval(intervalId);
+    // }
+    // return () => {
+    //   if (intervalId) {
+    //     clearInterval(intervalId);
+    //   }
+    // };
   }, [isRunning]);
 
   useEffect(() => {
@@ -67,23 +70,28 @@ const InService: React.FC = () => {
   }, []);
 
   useEffect(() => {
-    const modeRef = ref(database, `storeObjects/${useCompanionStore.getState().getSessionId()}/clientActivityMonitor/currentMode`);
+    console.log('Session ID before ref:', useCompanionStore.getState().getSessionId());
+    const modeRef = ref(database, `storeObjects/${useCompanionStore.getState().getSessionId()}/ClientActivityMonitor`);
+
+    console.log('mode ref');
+    console.log(modeRef);
+    // console.log(`storeObjects/${useCompanionStore.getState().getSessionId()}/ClientActivityMonitor`);
 
     const listener:any = onValue(modeRef, (snapshot) => {
-      if (snapshot.exists()) {
-        console.log('ACTIVITY MODE CHANGED = ', snapshot.val())
-        setFirebaseCurrentMode(snapshot.val());
+      const activityMode = snapshot.val().currentMode;
+      if (snapshot.exists() && activityMode !== firebaseCurrentMode) {
+        setFirebaseCurrentMode(activityMode);
       } else {
         setFirebaseCurrentMode(""); // Or a default value if appropriate
       }
     });
 
     return () => off(modeRef, listener);
-  }, []);
+  }, [useCompanionStore.getState().getSessionId()]);
 
   return (
     <div className="flex flex-col h-screen">
-      {/* <SelectedMode /> */}
+      <SelectedMode />
       <div id="stopwatch_section" className="h-[90%] flex flex-col items-center justify-center border-gray-700 mt-4">
         <StopWatch
           isRunning={isRunning}

@@ -1,14 +1,16 @@
-import React, { useMemo } from 'react';
+import React from 'react';
 import { useCompanionStore } from '@/store/store';
 
 const selectedMode: React.FC = () => {
-  const { modeTitle, currentMode } = {modeTitle: '1', currentMode: '2'};
-  console.log('Selected Mode:', { modeTitle, currentMode });
+  const clientActivityMonitor = useCompanionStore((state) => state.ClientActivityMonitor);
+  console.log('client activity monitor');
+  console.log(clientActivityMonitor);
+
   return (
     <div className="flex flex-col h-[30vh] border border-black m-4 rounded-lg mt-24">
       {/* Top Section: Mode Type */}
       <div className="h-1/4 flex items-center justify-center border-b border-black">
-        <h2 className="text-lg font-bold">{modeTitle}</h2>
+        <h2 className="text-lg font-bold">{clientActivityMonitor.modeTitle}</h2>
       </div>
 
       {/* Middle Section: Status - Conditionally render based on mode */}
@@ -16,11 +18,11 @@ const selectedMode: React.FC = () => {
         <h3 className="text-md font-semibold">Status:</h3>
         {/* Placeholder for status content */}
        <div>
-       {modeTitle === 'QUEUE' && (
+       {clientActivityMonitor.modeTitle === 'QUEUE' && (
         <div className="flex flex-col items-center justify-center">
-          {/* <p>Current Position: {clientActivityMonitor.statusInfo.QUEUE.currentPosition}</p> */}
-          {/* <p>Approx. Time: {clientActivityMonitor.statusInfo.QUEUE.approxTime}</p> */}
-        </div>) /* You will need to handle statusInfo separately if needed */ }
+          <p>Current Position: {clientActivityMonitor.statusInfo.QUEUE.currentPosition}</p>
+          <p>Approx. Time: {clientActivityMonitor.statusInfo.QUEUE.approxTime}</p>
+        </div>)}
        </div>
       </div>
       {/* Bottom Section: Circular Buttons */}

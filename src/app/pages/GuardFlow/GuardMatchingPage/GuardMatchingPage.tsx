@@ -31,7 +31,9 @@ const GuardMatchingPage: React.FC = () => {
   const setClientSessionId = useCompanionStore((state) => state.setClientSessionId); // Get the setter for clientSessionId
   const {
     setQueueActivated, // Get the setter for queueActivated
+    isDevMode,
   } = useCompanionStore();
+  const [manualSessionId, setManualSessionId] = useState(''); // State for manual session ID input
   const router = useRouter();
   const companionRole = getCompanionProfileDetails().companionRole; // Get the companion role
 
@@ -61,13 +63,21 @@ const GuardMatchingPage: React.FC = () => {
     router.push('/guard-feedback');
   };
 
+  const onceClientSessionIdFound = (ClientSessionId: any) => {
+    const companionSessionId = useCompanionStore.getState().getSessionId();
+    // console.log("Manual session ID found:", ClientSessionId); // Add logging for manual session ID
+    setClientSessionId(ClientSessionId);
+    updateCompanionSessionIdInClient(ClientSessionId, companionSessionId, companionRole);
+    updateStoreInFirebase();
+    scanSuccess();
+  }
+
   const QRCodeAnalyze = async (decodedData: string) => {
     if (decodedData) {
       const ClientSessionId = await checkIfSessionExistsAndMatch(decodedData);
       if (ClientSessionId) {
         setClientSessionId(ClientSessionId); // Set the clientSessionId in the store
-        const companionSessionId = useCompanionStore.getState().getSessionId();
-        updateCompanionSessionIdInClient(ClientSessionId, companionSessionId, companionRole);
+        onceClientSessionIdFound(ClientSessionId);
         updateStoreInFirebase();
         scanSuccess();
       } else {
@@ -176,6 +186,25 @@ const GuardMatchingPage: React.FC = () => {
       {companionRole && <p style={{ width: '16rem', textAlign: 'center', backgroundColor: 'rgb(31 41 55 / var(--tw-bg-opacity, 1))', color: 'white', padding: '0.5rem', fontSize: '1.2rem' }}>Role: {companionRole} Companion</p>}
 
       {/* Div for Activate Queue Mode button */}
+
+      {/* Input for manual session ID */}
+     {isDevMode && <div style={{ display: 'flex', alignItems: 'center', marginTop: '20px' }}>
+        <input
+          type="text"
+          placeholder="Enter Client Session ID"
+          value={manualSessionId}
+          onChange={(e) => setManualSessionId(e.target.value)}
+          style={{ marginRight: '10px', padding: '0.5rem' }}
+        />
+        <button
+          onClick={() => onceClientSessionIdFound(manualSessionId)} // Call onceClientSessionIdFound with input value
+          style={{
+            backgroundColor: 'rgb(31 41 55 / var(--tw-bg-opacity, 1))',
+            color: 'white',
+            padding: '0.5rem 1rem',
+          }}
+        >Submit Session ID</button>
+      </div>}
 
       {!serviceContinue && <div id="action_buttons" style={{ border: '1px solid black', marginTop: '20px', padding: '10px' }}>
         <button

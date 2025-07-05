@@ -90,7 +90,10 @@ interface ClientActivityMonitor {
 
 
 interface CompanionStore {
+  isDevMode: boolean;
   sessionId: string;
+  setIsDevMode: (isDev: boolean) => void; // Setter for isDevMode
+  getIsDevMode: () => boolean; // Getter for isDevMode
   matchingId: string;
   serviceSelected: string;
   profileDetails: ProfileDetails;
@@ -140,6 +143,9 @@ interface CompanionStore {
 }
 
 const useCompanionStore = create<CompanionStore>((set) => ({
+  isDevMode: true,
+  setIsDevMode: (isDev) => set({ isDevMode: isDev }), // Implement setter
+  getIsDevMode: () => useCompanionStore.getState().isDevMode, // Implement getter
   sessionId: '',
   matchingId: '',
   dev_session: false, // Add the dev_session key with initial value
