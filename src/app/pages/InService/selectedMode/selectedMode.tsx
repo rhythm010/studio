@@ -3,7 +3,6 @@ import { useCompanionStore } from '@/store/store';
 import { database } from '@/lib/firebase'; // Assuming you have your firebase instance exported as 'database'
 import { ref, onValue, off } from 'firebase/database';
 import { storePaths } from '@/lib/utils'; // Assuming storePaths is in utils.ts
-
 const selectedMode: React.FC = () => {
   // Define local states
   const [currentMode, setCurrentMode] = useState<string>('');
@@ -38,7 +37,7 @@ const selectedMode: React.FC = () => {
       console.log("Firebase currentMode changed:", modeValue);
       // Update local state if the value is different to avoid unnecessary re-renders
       // if (modeValue !== currentMode) {
-        setCurrentMode(modeValue);
+      setCurrentMode(modeValue);
       // }
     });
 
@@ -61,13 +60,13 @@ const selectedMode: React.FC = () => {
       console.log("Firebase status changed:", modeValue);
       // Update local state if the value is different to avoid unnecessary re-renders
       // if (modeValue !== currentStatus) {
-        setCurrentStatus(modeValue);
+      setCurrentStatus(modeValue);
       // }
     });
 
     return () => off(modeRef, 'value', listener as any); // Explicitly specify 'value' event type
   }, [useCompanionStore.getState().getSessionId()]); // Re-run effect if session ID changes
-  
+
   // Effect to listen for changes in Firebase statusInfo based on currentStatus
   useEffect(() => {
     const sessionId = useCompanionStore.getState().getSessionId();
@@ -126,22 +125,23 @@ const selectedMode: React.FC = () => {
           {/* CAFE MODE AND QUEUE STATUS */}
           {clientActivityMonitor.currentMode === 'CAFE' && clientActivityMonitor.currentStatus === 'QUEUE' && (
             <div className="flex flex-col items-center justify-center">
-               <p>getting into queue</p>
+              <p>getting into queue</p>
+              <p>position: {clientActivityMonitor.statusInfo.QUEUE.currentPosition}</p>
             </div>)}
           {/* CAFE MODE AND PAYMENT STATUS */}
           {clientActivityMonitor.currentMode === 'CAFE' && clientActivityMonitor.currentStatus === 'PAYMENT_CALL' && (
             <div className="flex flex-col items-center justify-center">
-               <p>come and pake payment</p>
+              <p>come and pake payment</p>
             </div>)}
           {/* CAFE MODE AND WAIT_ITEM STATUS */}
           {clientActivityMonitor.currentMode === 'CAFE' && clientActivityMonitor.currentStatus === 'WAIT_ITEM' && (
             <div className="flex flex-col items-center justify-center">
-               <p>waiting for items to collect</p>
+              <p>waiting for items to collect</p>
             </div>)}
           {/* CAFE MODE AND WAIT_OP STATUS */}
           {clientActivityMonitor.currentMode === 'CAFE' && clientActivityMonitor.currentStatus === 'WAIT_OP' && (
             <div className="flex flex-col items-center justify-center">
-               <p>waiting at OP</p>
+              <p>waiting at OP</p>
             </div>)}
 
         </div>
@@ -152,7 +152,7 @@ const selectedMode: React.FC = () => {
       {/* Bottom Section: Circular Buttons */}
       <div className="h-1/3 flex items-center justify-evenly p-2">
         {/* Button 2 */}
-        { currentStatusValues?.actionButtons?.addItem && <button className="rounded-full w-12 h-12 bg-gray-300 flex items-center justify-center border border-black">
+        {currentStatusValues?.actionButtons?.addItem && <button className="rounded-full w-12 h-12 bg-gray-300 flex items-center justify-center border border-black">
           add Item
         </button>}
         {/* Button 3 */}

@@ -43,6 +43,34 @@ interface CompanionRestaurantManage {
   }[];
 }
 
+interface CompanionAcvitiyMonitor {
+  selectedMode: string;
+  companionCurrentStatus: string;
+  QUEUE: {
+    currentPosition: number;
+  };
+  PAYMENT_CALL: {
+    active: boolean;
+  };
+  WAIT_ITEM: {
+    active: boolean;
+  };
+  WAIT_OP: {
+    active: boolean;
+  };
+  WITH_YOU: {
+    active: boolean;
+  };
+  DEFAULT: {
+    active: boolean;
+  };
+}
+
+
+interface CompanionAcvitiyMonitor {
+  [key: string]: any; // Allow any string key with any value type
+}
+
 interface ClientActivityMonitor {
   modeTitle: string;
   currentMode: string;
@@ -57,7 +85,7 @@ interface ClientActivityMonitor {
         cancel: boolean;
       };
     };
-    PAYMENT_CALL: { 
+    PAYMENT_CALL: {
       active: boolean;
       time: string;
       actionButtons: {
@@ -86,17 +114,16 @@ interface ClientActivityMonitor {
       };
     },
     DEFAULT: {
-      active:boolean;
+      active: boolean;
       actionButtons: {
         addItem: boolean;
         cancel: boolean;
       };
     }
   };
-  companionFlow: {
-    selectedMode: string;
-  };
 }
+
+
 
 
 interface CompanionStore {
@@ -116,6 +143,9 @@ interface CompanionStore {
   clientCompanionDetails: ClientCompanionDetails;
   companionRestaurantManage: CompanionRestaurantManage; // Add the new property
   companionQueueManage: CompanionQueueManage; // Add the new property
+  CompanionAcvitiyMonitor: CompanionAcvitiyMonitor; // Add the new property
+  setCompanionAcvitiyMonitor: (details: Partial<CompanionAcvitiyMonitor>) => void; // Add setter for CompanionAcvitiyMonitor
+  getCompanionAcvitiyMonitor: () => CompanionAcvitiyMonitor; // Add getter for CompanionAcvitiyMonitor
   ClientActivityMonitor: ClientActivityMonitor; // Add the new property
   setProfileDetails: (details: Partial<ProfileDetails>) => void;
   setMatchingDone: (done: boolean) => void;
@@ -184,6 +214,28 @@ const useCompanionStore = create<CompanionStore>((set) => ({
       comments: 'make it spicy',
     }],
   },
+  CompanionAcvitiyMonitor: { // Initialize the new property
+    selectedMode: '',
+    companionCurrentStatus: '',
+    QUEUE: {
+      currentPosition: 0,
+    },
+    PAYMENT_CALL: {
+      active: false,
+    },
+    WAIT_ITEM: {
+      active: false,
+    },
+    WAIT_OP: {
+      active: false,
+    },
+    WITH_YOU: {
+      active: false,
+    },
+    DEFAULT: {
+      active: false,
+    },
+  },
   ClientActivityMonitor: { // Initialize the new property
     modeTitle: "QUEUE MODE",
     currentStatus: "DEFAULT",
@@ -209,32 +261,30 @@ const useCompanionStore = create<CompanionStore>((set) => ({
       WAIT_ITEM: {
         active: false,
         time: "",
-        actionButtons: { 
-          addItem: true 
+        actionButtons: {
+          addItem: true
         },
       },
-      WAIT_OP: { 
+      WAIT_OP: {
         active: false,
         actionButtons: {
-           addItem: true,
-           complete: true
-        } 
+          addItem: true,
+          complete: true
+        }
       },
       WITH_YOU: {
         active: false,
-        actionButtons: { 
-          addItem: false 
-        }},
-      DEFAULT: {
-          active: false,
-          actionButtons: {
-             addItem: false, 
-             cancel: true 
-            }
+        actionButtons: {
+          addItem: false
+        }
       },
-    },
-    companionFlow: {
-      selectedMode: "WITH_YOU"
+      DEFAULT: {
+        active: false,
+        actionButtons: {
+          addItem: false,
+          cancel: true
+        }
+      },
     },
   },
   setProfileDetails: (details) =>
@@ -297,9 +347,23 @@ const useCompanionStore = create<CompanionStore>((set) => ({
 
   setCurrentPosition: (position) => set(state => ({ companionQueueManage: { ...state.companionQueueManage, currentPosition: position } })),
 
+  // Implement the new getters and setters for CompanionAcvitiyMonitor
+  setCompanionAcvitiyMonitor: (details) =>
+    set((state) => ({
+      CompanionAcvitiyMonitor: { ...state.CompanionAcvitiyMonitor, ...details },
+    })),
+  getCompanionAcvitiyMonitor: () => useCompanionStore.getState().CompanionAcvitiyMonitor,
+
   setClientActivityMonitor: (details) =>
     set((state) => ({
-      ClientActivityMonitor: { ...state.ClientActivityMonitor, ...details },
+      // Start with the current ClientActivityMonitor state
+      ClientActivityMonitor: {
+        ...state.ClientActivityMonitor,
+        // Merge top-level properties from details. This will overwrite
+        // existing top-level properties if they are also in details.
+        ...details,
+        // Explicitly handle companionFlow to perform a deep merge
+      },
     })),
 
   getClientActivityMonitor: () => useCompanionStore.getState().ClientActivityMonitor,

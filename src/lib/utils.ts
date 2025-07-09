@@ -66,6 +66,31 @@ export const storePaths = {
     },
     companionFlow: { path: "ClientActivityMonitor/companionFlow", selectedMode: "ClientActivityMonitor/companionFlow/selectedMode" },
   },
+  CompanionAcvitiyMonitor: {
+    path: "CompanionAcvitiyMonitor",
+    selectedMode: "CompanionAcvitiyMonitor/selectedMode",
+    companionCurrentStatus: "CompanionAcvitiyMonitor/companionCurrentStatus",
+    PAYMENT_CALL: {
+      path: "CompanionAcvitiyMonitor/PAYMENT_CALL",
+      active: "CompanionAcvitiyMonitor/PAYMENT_CALL/active",
+    },
+    WAIT_ITEM: {
+      path: "CompanionAcvitiyMonitor/WAIT_ITEM",
+      active: "CompanionAcvitiyMonitor/WAIT_ITEM/active",
+    },
+    WAIT_OP: {
+      path: "CompanionAcvitiyMonitor/WAIT_OP",
+      active: "CompanionAcvitiyMonitor/WAIT_OP/active",
+    },
+    WITH_YOU: {
+      path: "CompanionAcvitiyMonitor/WITH_YOU",
+      active: "CompanionAcvitiyMonitor/WITH_YOU/active",
+    },
+    DEFAULT: {
+      path: "CompanionAcvitiyMonitor/DEFAULT",
+      active: "CompanionAcvitiyMonitor/DEFAULT/active",
+    },
+  },
 };
 
 export function extractDataFromStore(storeObject: any): any {

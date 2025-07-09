@@ -3,9 +3,10 @@
 import { useEffect, useState, useRef } from 'react';
 import { Html5Qrcode } from 'html5-qrcode';
 import { useCompanionStore } from '@/store/store'; // Import the store
-import { checkIfSessionExistsAndMatch, updateStoreInFirebase, updateCompanionSessionIdInClient,updateValueInClient, storePaths } from '@/lib/utils'; // Import the utility method
+import { checkIfSessionExistsAndMatch, updateStoreInFirebase, updateCompanionSessionIdInClient, updateValueInClient, storePaths } from '@/lib/utils'; // Import the utility method
 import { useRouter } from 'next/navigation';
 import { useModal } from '@/components/ui/Modal';
+import CompanionActivityMode from '../CompanionActivityMode/CompanionActivityMode';
 
 const GuardMatchingPage: React.FC = () => {
   const qrCodeRef = useRef<string>('reader');
@@ -15,21 +16,17 @@ const GuardMatchingPage: React.FC = () => {
   const [scanning, setScanning] = useState(false);
   const {
     companionQueueManage, // Get the companionQueueManage object
-    setCompanionQueueManage, // Get the setter for companionQueueManage
   } = useCompanionStore(); // Ensure you are getting the setCompanionQueueManage setter
   const {
     companionRestaurantManage, // Get the companionRestaurantManage object
     setCompanionRestaurantManage, // Get the setter for companionRestaurantManage
   } = useCompanionStore(); // Ensure you are getting the setCompanionQueueManage setter
-  const [currentPosition, setCurrentPosition] = useState(0); // State for queue position
   const { openModal, closeModal } = useModal();
-  const setCompanionQueuePosition = useCompanionStore((state) => state.setCompanionQueuePosition);
   const [serviceContinue, setserviceContinue] = useState(true);
   const [qrData, setQrData] = useState('');
   const setMatchingDone = useCompanionStore((state) => state.setMatchingDone); // Get the setter from the store
   const setClientSessionId = useCompanionStore((state) => state.setClientSessionId); // Get the setter for clientSessionId
   const {
-    setQueueActivated, // Get the setter for queueActivated
     isDevMode,
   } = useCompanionStore();
   const [manualSessionId, setManualSessionId] = useState(''); // State for manual session ID input
@@ -134,53 +131,17 @@ const GuardMatchingPage: React.FC = () => {
     setserviceContinue(false);
   };
 
-  const resetQueue = () => {
-    setCurrentPosition(0);
-    // Update the store
-    setCompanionQueueManage({
-      ...companionQueueManage,
-      currentPosition: 0,
-      queueActivated: false // Assuming you want to deactivate the queue on reset
+  const activateActivityMode = (mode: 'QUEUE' | 'CAFE') => {
+    // Update the selectedMode within clientActivityMonitor.companionFlow in the store
+    useCompanionStore.getState().setCompanionAcvitiyMonitor({
+      selectedMode: mode, // Assuming selectedMode is a direct property of CompanionAcvitiyMonitor
     });
 
-  }
-
-  const EndQueueMode = () => {
-    console.log("Ending Queue Mode.");
-    setQueueActivated(false);
-    resetQueue();
-  };
-
-  const updateQueueValue = (delta: number) => {
-    setCurrentPosition(prevPosition => {
-      const newPosition = prevPosition + delta;
-      return Math.max(0, Math.min(15, newPosition)); // Ensure value stays between 0 and 10
-    });
-    // Update the store
-    setCompanionQueueManage({
-      ...companionQueueManage,
-      currentPosition: Math.max(0, Math.min(10, currentPosition + delta))
-    });
-  };
-
-  const activateQueueMode = () => {
-    setQueueActivated(true);
-  };
-
-  const activateRestaurantMode = () => {
-    setCompanionRestaurantManage({
-      ...companionRestaurantManage,
-      isActive: true,
-    });
-    console.log("Restaurant mode activated", companionRestaurantManage.isActive);
-  };
-
-  const activateCafeMode = () => {
     updateValueInClient({
       path: storePaths.ClientActivityMonitor.currentMode,
-      val: 'CAFE'
+      val: mode,
     });
-  }
+  };
 
   const showClientMsg = () => {
     console.log("Showing client messages...");
@@ -194,7 +155,7 @@ const GuardMatchingPage: React.FC = () => {
       {/* Div for Activate Queue Mode button */}
 
       {/* Input for manual session ID */}
-     {isDevMode && <div style={{ display: 'flex', alignItems: 'center', marginTop: '20px' }}>
+      {isDevMode && <div style={{ display: 'flex', alignItems: 'center', marginTop: '20px' }}>
         <input
           type="text"
           placeholder="Enter Client Session ID"
@@ -221,7 +182,7 @@ const GuardMatchingPage: React.FC = () => {
             fontSize: '0.9rem', // Slightly smaller font size
             cursor: companionQueueManage.queueActivated ? 'not-allowed' : 'pointer',
           }}
-          onClick={companionQueueManage.queueActivated ? undefined : activateQueueMode}
+          onClick={companionQueueManage.queueActivated ? undefined : ()=>activateActivityMode('QUEUE')}
           disabled={companionQueueManage.queueActivated}
         >
           Activate Queue mode
@@ -235,33 +196,10 @@ const GuardMatchingPage: React.FC = () => {
             cursor: 'pointer',
             marginTop: '1rem',
           }}
-          onClick={activateCafeMode}
+          onClick={() => activateActivityMode('CAFE')}
         >Activate Cafe Mode
         </button>
       </div>}
-
-      {companionQueueManage.queueActivated && (<div id="Queue_mode" style={{ border: '1px solid black', marginTop: '20px', width: '70%', maxWidth: '500px', textAlign: 'center', paddingBottom: '5px' }}>
-        <div style={{ borderBottom: '1px solid black', paddingBottom: '5px', padding: '10px' }}>
-          <h3 style={{ fontSize: '1.5rem' }}>Queue Mode Active</h3>
-        </div>
-        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', width: '100%' }}>
-          <button style={{ fontSize: '2rem', padding: '10px 20px' }} onClick={() => updateQueueValue(-1)}>-</button>
-          <div style={{ fontSize: '3rem', fontWeight: 'bold' }}>{currentPosition}</div>
-          <button style={{ fontSize: '2rem', padding: '10px 20px' }} onClick={() => updateQueueValue(1)}>+</button>
-        </div>
-        <button
-          style={{
-            backgroundColor: 'rgb(31 41 55 / var(--tw-bg-opacity, 1))',
-            padding: '0.5rem',
-            marginTop: '10px',
-            color: 'white',
-          }}
-          onClick={EndQueueMode} // Call EndQueueMode function
-        >
-          End Queue mode
-        </button>
-      </div>)}
-      {/* {errorMessage && <ErrorBanner errorMessage={errorMessage} />} Display error banner */}
 
       {companionRestaurantManage.isActive && (<div id="Restaurant_mode" style={{ border: '1px solid black', marginTop: '20px', width: '70%', maxWidth: '500px', textAlign: 'center', paddingBottom: '5px' }}>
         <div style={{ borderBottom: '1px solid black', paddingBottom: '5px', padding: '10px' }}>
@@ -277,7 +215,8 @@ const GuardMatchingPage: React.FC = () => {
             backgroundColor: 'rgb(31 41 55 / var(--tw-bg-opacity, 1))',
             color: 'white',
             marginLeft: 'auto',
-            marginRight: 'auto' }}>Msgs</button>
+            marginRight: 'auto'
+          }}>Msgs</button>
         </div>
         <button
           style={{
@@ -286,11 +225,14 @@ const GuardMatchingPage: React.FC = () => {
             marginTop: '10px',
             color: 'white',
           }}
-          onClick={() => setCompanionRestaurantManage({...companionRestaurantManage, isActive: false})} // Call EndQueueMode function
+          onClick={() => setCompanionRestaurantManage({ ...companionRestaurantManage, isActive: false })} // Call EndQueueMode function
         >
           End Restaurant Mode
         </button>
       </div>)}
+
+
+      <CompanionActivityMode />
       <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', width: '100%', maxWidth: '500px' }}>
         <div id={qrCodeRef.current} style={{ width: '100%', maxWidth: '500px' }}></div>
         {qrData && <p>Scanned Data: {qrData}</p>}
