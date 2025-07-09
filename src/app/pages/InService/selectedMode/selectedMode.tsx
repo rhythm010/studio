@@ -3,6 +3,8 @@ import { useCompanionStore } from '@/store/store';
 import { database } from '@/lib/firebase'; // Assuming you have your firebase instance exported as 'database'
 import { ref, onValue, off } from 'firebase/database';
 import { storePaths } from '@/lib/utils'; // Assuming storePaths is in utils.ts
+import ActivityStatusQueue from '../ActivityStatusQueue/ActivityStatusQueue';
+
 const selectedMode: React.FC = () => {
   // Define local states
   const [currentMode, setCurrentMode] = useState<string>('');
@@ -96,7 +98,7 @@ const selectedMode: React.FC = () => {
   }, [useCompanionStore.getState().getSessionId(), currentStatus]); // Re-run effect if session ID or currentStatus changes
 
   return (
-    <div className="flex flex-col h-[30vh] border border-black m-4 rounded-lg mt-24">
+    <div className="flex flex-col h-[50vh] border border-black m-4 rounded-lg mt-24">
       {/* Top Section: Mode Type */}
       <div className="h-1/4 flex items-center justify-center border-b border-black">
         <h2 className="text-lg font-bold">{clientActivityMonitor.modeTitle}</h2>
@@ -144,6 +146,9 @@ const selectedMode: React.FC = () => {
               <p>waiting at OP</p>
             </div>)}
 
+        </div>
+        <div>
+        <ActivityStatusQueue />
         </div>
       </div>
 
