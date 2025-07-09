@@ -1,5 +1,5 @@
-import React, { useState } from 'react';
-
+import React, { useState, useEffect } from 'react';
+import './ActivityStatusQueue.css'; // Import CSS for transitions
 const ActivityStatusQueue: React.FC = () => {
   const [currentPosition, setCurrentPosition] = useState(0);
 

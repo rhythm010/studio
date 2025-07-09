@@ -2,7 +2,6 @@
 import React, { useState, useEffect } from "react";
 import StopWatch from "./StopWatch";
 import { ref, onValue, off } from "firebase/database";
-import { getDatabase } from "firebase/database"; // Import getDatabase
 import SelectedMode from "./selectedMode/selectedMode";
 import { useTranslation } from 'react-i18next';
 import { useModal } from '../../../components/ui/Modal'; // Assuming useModal is exported from Modal.tsx
@@ -11,7 +10,7 @@ import { useCompanionStore } from '../../../store/store';
 import { getStoreRef, updateStoreInFirebase } from '../../../lib/utils';
 import { useRouter } from 'next/navigation'
 import { database } from '@/lib/firebase';
-``
+
 const InService: React.FC = () => {
 
   const router = useRouter()
@@ -91,10 +90,12 @@ const InService: React.FC = () => {
     // if not 
 
     const listener:any = onValue(modeRef, (snapshot) => {
-      const activityMode = snapshot.val().currentMode;
-      if (snapshot.exists() && activityMode !== firebaseCurrentMode) {
-        setFirebaseCurrentMode(activityMode);
-        updateAcvityData(activityMode);
+      if (snapshot.exists()) {
+        const activityMode = snapshot.val().currentMode;
+        if (activityMode !== firebaseCurrentMode) {
+          setFirebaseCurrentMode(activityMode);
+          updateAcvityData(activityMode);
+        }
       } else {
         setFirebaseCurrentMode(""); // Or a default value if appropriate
       }

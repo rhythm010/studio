@@ -24,10 +24,6 @@ const nextConfig: NextConfig = {
       },
     ];
   },
- allowedDevOrigins: [
- '8080-idx-companion1-1746542574812.cluster-6frnii43o5blcu522sivebzpii.cloudworkstations.dev',
- '8080-idx-studio-1744702027161.cluster-c23mj7ubf5fxwq6nrbev4ugaxa.cloudworkstations.dev'
-  ],
 };
 
 export default nextConfig;
