@@ -3,10 +3,23 @@ import { useCompanionStore } from '@/store/store';
 import { database } from '@/lib/firebase'; // Assuming you have your firebase instance exported as 'database'
 import { ref, onValue, off } from 'firebase/database';
 import { storePaths, updateValueInPrimaryCompanion } from '@/lib/utils'; // Assuming storePaths is in utils.ts
+import { cn } from '@/lib/utils'; // Assuming cn is in utils.ts
 import ActivityStatusQueue from '../ActivityStatusQueue/ActivityStatusQueue';
 import { ACTIVITY_STATUS, ACTIVITY_MODES } from '@/lib/constants';
 
 const selectedMode: React.FC = () => {
+  // Add a keyframes rule for the blinking animation
+  const blinkingAnimation = `
+    @keyframes blink {
+      0%, 100% { opacity: 1; }
+      50% { opacity: 0; }
+    }
+  `;
+
+  // Add a style tag with the animation
+  const animationStyle = document.createElement('style');
+  animationStyle.innerHTML = blinkingAnimation;
+  document.head.appendChild(animationStyle);
   // Define local states
   // Click handler for the Restaurant Mode button
 
@@ -67,8 +80,6 @@ const selectedMode: React.FC = () => {
     const listener = onValue(modeRef, (snapshot) => {
       const modeValue = snapshot.val();
       console.log("Firebase status changed:", modeValue);
-      // Update local state if the value is different to avoid unnecessary re-renders
-      // if (modeValue !== currentStatus) {
       setCurrentStatus(modeValue);
       // }
     });
@@ -106,28 +117,41 @@ const selectedMode: React.FC = () => {
 
   const handleRestaurantButtonClick = async () => {
     // Add an empty object to the CompanionMsgQueue in Firebase for the primary companion
-    await updateValueInPrimaryCompanion({ path: storePaths.CompanionMsgQueue, val: {id:'123', val:'something'} });
+    await updateValueInPrimaryCompanion({ path: storePaths.CompanionMsgQueue, val: { id: '123', val: 'something' } });
     console.log('Added empty object to CompanionMsgQueue for primary companion');
   };
 
   return (
-    <div className="flex flex-col m-4 rounded-lg mt-24">
+    <div className="flex flex-col m-4 rounded-lg h-full">
       {/* Top Section: Mode Type (40% height) */}
-      <div id="title_section" className="flex flex-grow-[0.4] flex-shrink-0 items-center justify-center border border-black mb-3">
+      <div
+        className="flex flex-grow-[0.2] flex-shrink-0 items-center justify-center mb-3">
         <h2 className="text-lg font-bold">{`${clientActivityMonitor.currentMode} MODE`}</h2>
       </div>
 
       {/* Middle Section: Status - Conditionally render based on mode (remaining height) */}
-      {/* Using flex-grow to take up the remaining space */}
-      <div id="status_section" className="flex flex-grow flex-col items-center justify-center border border-black mb-3">
-        <h3 className="text-md font-semibold">Current Status: {clientActivityMonitor.currentStatus} </h3>
-        {/* Placeholder for status content */}
+      <div id="section_2"
+        className={cn(
+          "flex flex-grow flex-col items-center mb-3",
+          "h-full overflow-hidden", // Ensure it takes 100% of the available height and prevent overflow
+          "rounded-xl shadow-lg" // Added rounded corners and elevated style
+        )}
+      >
+
         <div>
           {/* QUEUE MODE AND QUEUE STATUS */}
-          {clientActivityMonitor.currentMode === 'QUEUE' && clientActivityMonitor.currentStatus === 'QUEUE' && (
-            <div className="flex flex-col items-center justify-center">
-              <p>Approx. Time: {clientActivityMonitor.statusInfo.QUEUE?.approxTime}</p>
-            </div>)}
+
+          {((clientActivityMonitor.currentMode === ACTIVITY_MODES.CAFE && clientActivityMonitor.currentStatus === ACTIVITY_STATUS.QUEUE) ||
+            (clientActivityMonitor.currentMode === ACTIVITY_MODES.QUEUE)) && (
+              <div id="queue_container" className="flex flex-col items-center justify-between h-full">
+                <div id="companion_status" className="text-sm font-normal self-start">companion position</div>
+                <div id="companion_pos_val" className="text-[7rem]">{clientActivityMonitor.statusInfo.QUEUE?.currentPosition}</div>
+                <div id="companion_pos_time" className="self-end"><span className="text-sm">Approx. Time: </span>
+                  <span className="text-[2rem]">{clientActivityMonitor.statusInfo.QUEUE?.approxTime}</span>
+                  <span className="text-sm">min</span>
+                </div>
+              </div>
+            )}
 
           {/* CAFE MODE AND DEFAULT STATUS */}
 
@@ -136,51 +160,64 @@ const selectedMode: React.FC = () => {
               <p>default status for cafe</p>
             </div>)}
 
-          {/* CAFE MODE AND QUEUE STATUS */}
-          {clientActivityMonitor.currentMode === 'CAFE' && clientActivityMonitor.currentStatus === 'QUEUE' && (
-            <div className="flex flex-col items-center justify-center">
-              <p>getting into queue</p>
-              <p>position: {clientActivityMonitor.statusInfo.QUEUE?.currentPosition}</p>
-            </div>)}
-          {/* CAFE MODE AND PAYMENT STATUS */}
-          {clientActivityMonitor.currentMode === 'CAFE' && clientActivityMonitor.currentStatus === 'PAYMENT_CALL' && (
-            <div className="flex flex-col items-center justify-center">
-              <p>come and pake payment</p>
-            </div>)}
+          {clientActivityMonitor.currentMode === 'CAFE' && clientActivityMonitor.currentStatus === 'PAYMENT_CALL' &&
+            (
+              <div id="payment_container" className="flex flex-col items-center justify-center h-full">
+                <img src="/icons/mode_cafe_status_payment.png"
+                  alt="Payment Status Icon" className="w-[12rem] h-[12rem] object-contain"
+                  style={{ animation: 'blink 2s infinite', borderRadius: '10%' }} // Apply the blinking animation and rounded corners
+                />
+              </div>
+            )}
           {/* CAFE MODE AND WAIT_ITEM STATUS */}
+
           {clientActivityMonitor.currentMode === 'CAFE' && clientActivityMonitor.currentStatus === 'WAIT_ITEM' && (
-            <div className="flex flex-col items-center justify-center">
-              <p>waiting for items to collect</p>
-            </div>)}
+            <div id="payment_container" className="flex flex-col items-center justify-center h-full">
+              <img src="/icons/cafe_wait_item_english.png"
+                alt="Payment Status Icon" className="w-[12rem] h-[12rem] object-contain"
+                style={{ animation: 'blink 2s infinite', borderRadius: '10%' }} // Apply the blinking animation and rounded corners
+              />
+            </div>
+          )}
           {/* CAFE MODE AND WAIT_OP STATUS */}
-          {clientActivityMonitor.currentMode === 'CAFE' && clientActivityMonitor.currentStatus === 'WAIT_OP' && (
-            <div className="flex flex-col items-center justify-center">
-              <p>waiting at OP</p>
-            </div>)}
+
+          {(
+            <div id="queue_container_wait_OP" className="flex flex-col items-center justify-center h-full p-[3rem]">
+              {/* <div id="companion_status" className="text-sm font-normal self-start">companion position</div> */}
+              <div id="companion_at_service_txt" className="text-[3rem] font-bold text-center">Waiting for instructions</div>
+            </div>
+          )}
 
         </div>
-        {((clientActivityMonitor.currentMode === ACTIVITY_MODES.CAFE && clientActivityMonitor.currentStatus === ACTIVITY_STATUS.QUEUE) ||
-          (clientActivityMonitor.currentMode === ACTIVITY_MODES.QUEUE)) && <div>
-            <ActivityStatusQueue />
-          </div>}
+        {
+          (
+            (clientActivityMonitor.currentMode === ACTIVITY_MODES.CAFE && clientActivityMonitor.currentStatus === ACTIVITY_STATUS.QUEUE) ||
+            (clientActivityMonitor.currentMode === ACTIVITY_MODES.QUEUE)) && (
+            <div>
+              <ActivityStatusQueue />
+            </div>
+          )
+        }
       </div>
-
-
 
       {/* Bottom Section: Circular Buttons */}
       {/* Bottom Section: Action Buttons (40% height) */}
-      <div id="action_section" className="flex flex-grow-[0.4] flex-shrink-0 items-center justify-evenly p-2 border border-black">
+      <div id="action_section" className={cn(
+        "flex flex-grow-[0.4] flex-shrink-0 items-center justify-evenly p-2",
+        "rounded-xl shadow-lg" // Added rounded corners and elevated style
+      )}
+      >
         {(currentStatusValues?.actionButtons?.addItem ||
-          clientActivityMonitor.statusInfo[clientActivityMonitor.currentStatus]?.actionButtons?.addItem) && 
+          clientActivityMonitor.statusInfo[clientActivityMonitor.currentStatus]?.actionButtons?.addItem) &&
           <button className="rounded-full w-12 h-12 bg-gray-300 flex items-center justify-center border border-black"
-           onClick={handleRestaurantButtonClick}>
+            onClick={handleRestaurantButtonClick}>
             add Item
           </button>}
         {/* Button 3 */}
         {(currentStatusValues?.actionButtons?.cancel ||
           clientActivityMonitor.statusInfo[clientActivityMonitor.currentStatus]?.actionButtons?.cancel
         ) && <button className="rounded-full w-12 h-12 bg-gray-300 flex items-center justify-center border border-black">
-            cancel 
+            cancel
           </button>}
         {<button className="rounded-full w-12 h-12 bg-gray-300 flex items-center justify-center border border-black">
           End Mode

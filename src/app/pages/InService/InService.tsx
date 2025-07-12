@@ -129,9 +129,12 @@ const InService: React.FC = () => {
 
 
   return (
-    <div className="flex flex-col h-screen">
+    <div className="flex flex-col h-screen pt-[6rem]">
+      <div className="h-[50%]">
       <SelectedMode />
-      <div id="stopwatch_section" className="h-[90%] flex flex-col items-center justify-center border-gray-700 mt-4">
+      </div>
+  
+      <div id="stopwatch_section" className="h-[40%] flex flex-col items-center justify-center border-gray-700 mt-4">
         <StopWatch
           isRunning={isRunning}
           startStop={handleStartStop}
@@ -140,7 +143,7 @@ const InService: React.FC = () => {
         />
       </div>
 
-      <div id="action_section" className="flex items-center justify-evenly rounded-lg m-4 p-4 h-[10%] mb-32">
+      <div id="action_section" className="flex items-center justify-evenly rounded-lg m-4 p-4 h-[10%] mb-20 mt-10">
         {/* Three rounded buttons */}
         <div id="assist_button" className="flex flex-col items-center mx-2">
           <button onClick={() => openModal()} className="rounded-full w-16 h-16 mb-1 shadow-md flex items-center justify-center">
