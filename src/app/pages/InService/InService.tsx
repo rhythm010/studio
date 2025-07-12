@@ -1,5 +1,6 @@
 "use client"
 import React, { useState, useEffect } from "react";
+import { ACTIVITY_STATUS, ACTIVITY_MODES } from '@/lib/constants';
 import StopWatch from "./StopWatch";
 import { ref, onValue, off } from "firebase/database";
 import SelectedMode from "./selectedMode/selectedMode";
@@ -24,11 +25,11 @@ const InService: React.FC = () => {
   };
 
   const onEndService = () => {
-          setIsRunning(false); // Stop the timer
- useCompanionStore.getState().setServiceRunning(false)
-          updateStoreInFirebase();
-      closeModal();
-      router.push('/end-service')
+    setIsRunning(false); // Stop the timer
+    useCompanionStore.getState().setServiceRunning(false)
+    updateStoreInFirebase();
+    closeModal();
+    router.push('/end-service')
   }
 
   const openEndServiceModal = () => {
@@ -43,13 +44,13 @@ const InService: React.FC = () => {
     setIsRunning(!isRunning);
   };
 
-  const updateAcvityData = (activityMode:string) => {
+  const updateAcvityDataInStoreFromFirebase = (activityMode: string, activityObjectFull: any) => {
     useCompanionStore.getState().setClientActivityMonitor({
        currentMode: activityMode, 
        modeTitle:`${activityMode} MODE ACTIVE`, 
        currentStatus:'DEFAULT'
       
-      }); // Update the store
+    }); // Update the store
   }
 
   useEffect(() => {
@@ -68,6 +69,25 @@ const InService: React.FC = () => {
     //   }
     // };
   }, [isRunning]);
+
+  useEffect(() => {
+    if (useCompanionStore.getState().getSessionId()) {
+      console.log('session id is updated inside use effect')
+      const clientCompanionDetailsRef = ref(database, `storeObjects/${useCompanionStore.getState().getSessionId()}/clientCompanionDetails`);
+      const listener:any = onValue(clientCompanionDetailsRef, (snapshot) => {
+        if(snapshot.exists()){
+          const clientCompanionVal = snapshot.val();
+          useCompanionStore.getState().setClientCompanionDetails(clientCompanionVal);
+        } else {
+          console.log('no snapshot value is there');
+        }
+      });
+
+      // Clean up the listener when the component unmounts
+      return () => off(clientCompanionDetailsRef, listener);
+    }
+  }, [useCompanionStore.getState().getSessionId()]); // Empty dependency array ensures this effect runs only once on mount
+
 
   useEffect(() => {
     startTimer();
@@ -89,12 +109,13 @@ const InService: React.FC = () => {
 
     // if not 
 
-    const listener:any = onValue(modeRef, (snapshot) => {
+    const listener: any = onValue(modeRef, (snapshot) => {
       if (snapshot.exists()) {
         const activityMode = snapshot.val().currentMode;
+        const activityObjectFull = snapshot.val();
         if (activityMode !== firebaseCurrentMode) {
           setFirebaseCurrentMode(activityMode);
-          updateAcvityData(activityMode);
+          updateAcvityDataInStoreFromFirebase(activityMode, activityObjectFull);
         }
       } else {
         setFirebaseCurrentMode(""); // Or a default value if appropriate
@@ -130,8 +151,8 @@ const InService: React.FC = () => {
         <div id="play_pause_button" className="flex flex-col items-center">
           <button onClick={handleStartStop} className="rounded-full w-16 h-16 mb-1 flex items-center justify-center text-2xl shadow-md">
             {isRunning ? (
- <img src="/icons/icon_pause.png" alt="Pause Icon" className="w-8 h-8" />
- ) : (<img src="/icons/icon_play.png" alt="Play Icon" className="w-8 h-8" />)}
+              <img src="/icons/icon_pause.png" alt="Pause Icon" className="w-8 h-8" />
+            ) : (<img src="/icons/icon_play.png" alt="Play Icon" className="w-8 h-8" />)}
           </button>
           <span className="text-sm font-bold mt-4">{isRunning ? t('timer_stop') : t('timer_start')}</span>
         </div>

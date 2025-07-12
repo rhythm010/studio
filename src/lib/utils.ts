@@ -28,6 +28,9 @@ export const storePaths = {
   feedbackDetails: "feedbackDetails",
   companionFeedbackDetails: "companionFeedbackDetails",
   isComplete: "isComplete",
+ ClientCompanionDetails: {
+ path: "clientCompanionDetails",
+  },
   serviceRunning: "serviceRunning",
   companionQueueManage: {
     path: "companionQueueManage",
@@ -91,6 +94,8 @@ export const storePaths = {
       active: "CompanionAcvitiyMonitor/DEFAULT/active",
     },
   },
+  ClientMsgQueue: "ClientMsgQueue",
+  CompanionMsgQueue: "CompanionMsgQueue",
 };
 
 export function extractDataFromStore(storeObject: any): any {
@@ -212,4 +217,44 @@ export async function updateValueInClient(updateObj: { path: string, val: any })
     // Optionally re-throw the error or handle it based on your needs
    }
 }
+
+export async function updateValueInPrimaryCompanion(updateObj: { path: string, val: any }) {
+  const primaryCompanionSessionId = useCompanionStore.getState().clientCompanionDetails.primaryCompanionSessionId;
+  if (!primaryCompanionSessionId) {
+    console.error("Primary companion session ID is not available. Cannot update.");
+    return;
+  }
+  try {
+    // Construct the reference to the specific path within the primary companion's object
+    const pathRef = ref(database, `storeObjects/${primaryCompanionSessionId}`);
+    // Update the value at the specified path
+    console.log('path to be updated in primary companion', updateObj.path);
+    await update(pathRef, { [updateObj.path]: updateObj.val });
+    console.log(`Value updated successfully for primary companion ${primaryCompanionSessionId} at path ${updateObj.path}`);
+  } catch (error) {
+    console.error(`Error updating value for primary companion ${primaryCompanionSessionId} at path ${updateObj.path}:`, error);
+    // Optionally re-throw the error or handle it based on your needs
+  }
+}
+
+
+export async function updateValueInSecondaryCompanion(updateObj: { path: string, val: any }) {
+  const secondaryClientSessionId = useCompanionStore.getState().clientCompanionDetails.secondaryCompanionSessionId;
+  if (!secondaryClientSessionId) {
+    console.error("Secondary client session ID is not available. Cannot update.");
+    return;
+  }
+  try {
+    // Construct the reference to the specific path within the secondary client's object
+    const pathRef = ref(database, `storeObjects/${secondaryClientSessionId}`);
+    // Update the value at the specified path
+    console.log('path to be updated in secondary client', updateObj.path)
+    await update(pathRef, { [updateObj.path]: updateObj.val });
+    console.log(`Value updated successfully for secondary client ${secondaryClientSessionId} at path ${updateObj.path}`);
+   } catch (error) {
+    console.error(`Error updating value for secondary client ${secondaryClientSessionId} at path ${updateObj.path}:`, error);
+    // Optionally re-throw the error or handle it based on your needs
+   }
+}
+
 

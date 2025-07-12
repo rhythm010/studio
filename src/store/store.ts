@@ -1,4 +1,4 @@
-import { ACTIVITY_MODES } from '@/lib/constants';
+import { ACTIVITY_STATUS, ACTIVITY_MODES } from '@/lib/constants';
 import { create } from 'zustand';
 
 interface ProfileDetails {
@@ -18,7 +18,9 @@ interface FeedbackDetails {
 
 interface ClientCompanionDetails {
   primaryCompanionSessionId: string | null;
-  secondaryCompanionSessionId: string | null;
+ secondaryCompanionSessionId: string | null;
+ getPrimaryCompanionSessionId: () => string | null; // Getter for primaryCompanionSessionId
+ getSecondaryCompanionSessionId: () => string | null; // Getter for secondaryCompanionSessionId
 }
 
 interface CompanionProfileDetails {
@@ -66,6 +68,22 @@ interface CompanionAcvitiyMonitor {
   };
 }
 
+
+interface ClientMsgQueue {
+  id?: string;
+  type?: string;
+  content?: string;
+  timestamp?: string;
+  acted?: boolean;
+}
+
+interface CompanionMsgQueue {
+  id?: string;
+  type?: string;
+  content?: string;
+  timestamp?: string;
+  acted?: boolean;
+}
 
 interface CompanionAcvitiyMonitor {
   [key: string]: any; // Allow any string key with any value type
@@ -144,6 +162,8 @@ interface CompanionStore {
   companionRestaurantManage: CompanionRestaurantManage; // Add the new property
   companionQueueManage: CompanionQueueManage; // Add the new property
   CompanionAcvitiyMonitor: CompanionAcvitiyMonitor; // Add the new property
+  CompanionMsgQueue: CompanionMsgQueue[]; // Add the new key for the companion message queue
+  ClientMsgQueue: ClientMsgQueue[]; // Add the new key for the client message queue
   setCompanionAcvitiyMonitor: (details: Partial<CompanionAcvitiyMonitor>) => void; // Add setter for CompanionAcvitiyMonitor
   getCompanionAcvitiyMonitor: () => CompanionAcvitiyMonitor; // Add getter for CompanionAcvitiyMonitor
   ClientActivityMonitor: ClientActivityMonitor; // Add the new property
@@ -173,6 +193,8 @@ interface CompanionStore {
   setCompanionRole: (role: string) => void;
   getCompanionRole: () => string;
   setCompanionQueueManage: (details: Partial<CompanionQueueManage>) => void; // Add setter
+ getPrimaryCompanionSessionId: () => string | null; // Getter for primaryCompanionSessionId
+ getSecondaryCompanionSessionId: () => string | null; // Getter for secondaryCompanionSessionId
   getCompanionQueueManage: () => CompanionQueueManage; // Add getter
   setCompanionRestaurantManage: (details: Partial<CompanionRestaurantManage>) => void; // Add setter
   getCompanionRestaurantManage: () => CompanionRestaurantManage; // Add getter
@@ -180,6 +202,10 @@ interface CompanionStore {
   setCurrentPosition: (position: number) => void; // Add setter for currentPosition
   setClientActivityMonitor: (details: Partial<ClientActivityMonitor>) => void; // Add setter
   getClientActivityMonitor: () => ClientActivityMonitor; // Add getter
+  setClientMsgQueue: (queue: ClientMsgQueue[]) => void; // Setter for ClientMsgQueue
+  getClientMsgQueue: () => ClientMsgQueue[]; // Getter for ClientMsgQueue
+  setCompanionMsgQueue: (message: CompanionMsgQueue) => void; // Setter for CompanionMsgQueue
+  getCompanionMsgQueue: () => CompanionMsgQueue[]; // Getter for CompanionMsgQueue
 }
 
 const useCompanionStore = create<CompanionStore>((set) => ({
@@ -237,16 +263,16 @@ const useCompanionStore = create<CompanionStore>((set) => ({
     },
   },
   ClientActivityMonitor: { // Initialize the new property
-    modeTitle: "QUEUE MODE",
-    currentStatus: "DEFAULT",
-    currentMode: 'CAFE',
+    modeTitle: "",
+    currentStatus: ACTIVITY_STATUS.DEFAULT,
+    currentMode: ACTIVITY_MODES.WITH_YOU,
     statusInfo: {
       QUEUE: {
         currentPosition: 2,
         active: false,
         approxTime: 0,
         actionButtons: {
-          addItem: false,
+          addItem: true,
           cancel: true,
         },
       },
@@ -262,7 +288,7 @@ const useCompanionStore = create<CompanionStore>((set) => ({
         active: false,
         time: "",
         actionButtons: {
-          addItem: true
+          addItem: false
         },
       },
       WAIT_OP: {
@@ -287,6 +313,10 @@ const useCompanionStore = create<CompanionStore>((set) => ({
       },
     },
   },
+  // Initialize the new client message queue
+  CompanionMsgQueue: [{id:'dummy'}], // Initialize the new companion message queue
+  // Initialize the new client message queue
+  ClientMsgQueue: [{id:'dummy'}],
   setProfileDetails: (details) =>
     set((state) => ({
       profileDetails: { ...state.profileDetails, ...details },
@@ -325,6 +355,10 @@ const useCompanionStore = create<CompanionStore>((set) => ({
   setClientCompanionDetails: (details) =>
     set((state) => ({
       clientCompanionDetails: { ...state.clientCompanionDetails, ...details },
+ getPrimaryCompanionSessionId: () =>
+ useCompanionStore.getState().clientCompanionDetails.primaryCompanionSessionId,
+ getSecondaryCompanionSessionId: () =>
+ useCompanionStore.getState().clientCompanionDetails.secondaryCompanionSessionId,
     })),
   getClientCompanionDetails: () => useCompanionStore.getState().clientCompanionDetails,
   setCompanionRole: (role) => set(state => ({ companionProfileDetails: { ...state.companionProfileDetails, companionRole: role } })),
@@ -367,6 +401,21 @@ const useCompanionStore = create<CompanionStore>((set) => ({
     })),
 
   getClientActivityMonitor: () => useCompanionStore.getState().ClientActivityMonitor,
+
+  // Implement the new getters and setters for ClientMsgQueue
+  // The setter for ClientMsgQueue now adds a new message to the array
+ setClientMsgQueue: (newMessage: ClientMsgQueue) =>
+ set((state) => ({
+ ClientMsgQueue: [...state.ClientMsgQueue, newMessage],
+ })),
+ // Implement the new getters and setters for CompanionMsgQueue
+ // The setter for CompanionMsgQueue now adds a new message to the array
+ setCompanionMsgQueue: (newMessage: CompanionMsgQueue) =>
+ set((state) => ({
+ // Append the new message to the existing array
+ CompanionMsgQueue: [...state.CompanionMsgQueue, newMessage],
+ })),
+ getClientMsgQueue: () => useCompanionStore.getState().ClientMsgQueue,
 
   reset: () =>
     set({

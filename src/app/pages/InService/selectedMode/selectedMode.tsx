@@ -2,25 +2,32 @@ import React, { useEffect, useState } from 'react';
 import { useCompanionStore } from '@/store/store';
 import { database } from '@/lib/firebase'; // Assuming you have your firebase instance exported as 'database'
 import { ref, onValue, off } from 'firebase/database';
-import { storePaths } from '@/lib/utils'; // Assuming storePaths is in utils.ts
+import { storePaths, updateValueInPrimaryCompanion } from '@/lib/utils'; // Assuming storePaths is in utils.ts
 import ActivityStatusQueue from '../ActivityStatusQueue/ActivityStatusQueue';
+import { ACTIVITY_STATUS, ACTIVITY_MODES } from '@/lib/constants';
 
 const selectedMode: React.FC = () => {
   // Define local states
+  // Click handler for the Restaurant Mode button
+
   const [currentMode, setCurrentMode] = useState<string>('');
   const [currentStatus, setCurrentStatus] = useState<string>('');
   const [currentStatusValues, setCurrentStatusValues] = useState<any | {}>({});
   const clientActivityMonitor = useCompanionStore((state) => state.ClientActivityMonitor);
 
-  // Effect to update store when local states currentMode or currentStatusValues change
-  useEffect(() => {
-    // Update the store's clientActivityMonitor with the latest local state values
+  const syncLocalModeWithFirebase = () => {
     useCompanionStore.getState().setClientActivityMonitor({
       currentMode: currentMode,
       currentStatus: currentStatus,
       // Assuming you want to update statusInfo based on the fetched currentStatusValues
       statusInfo: { ...clientActivityMonitor.statusInfo, [currentStatus]: currentStatusValues },
     });
+  }
+
+  // Effect to update store when local states currentMode or currentStatusValues change in firebase
+  useEffect(() => {
+    // Update the store's clientActivityMonitor with the latest local state values
+    syncLocalModeWithFirebase();
   }, [currentMode, currentStatus, currentStatusValues]); // Re-run effect when local states change
 
   useEffect(() => {
@@ -97,24 +104,29 @@ const selectedMode: React.FC = () => {
     };
   }, [useCompanionStore.getState().getSessionId(), currentStatus]); // Re-run effect if session ID or currentStatus changes
 
+  const handleRestaurantButtonClick = async () => {
+    // Add an empty object to the CompanionMsgQueue in Firebase for the primary companion
+    await updateValueInPrimaryCompanion({ path: storePaths.CompanionMsgQueue, val: {id:'123', val:'something'} });
+    console.log('Added empty object to CompanionMsgQueue for primary companion');
+  };
+
   return (
-    <div className="flex flex-col h-[50vh] border border-black m-4 rounded-lg mt-24">
-      {/* Top Section: Mode Type */}
-      <div className="h-1/4 flex items-center justify-center border-b border-black">
-        <h2 className="text-lg font-bold">{clientActivityMonitor.modeTitle}</h2>
+    <div className="flex flex-col m-4 rounded-lg mt-24">
+      {/* Top Section: Mode Type (40% height) */}
+      <div id="title_section" className="flex flex-grow-[0.4] flex-shrink-0 items-center justify-center border border-black mb-3">
+        <h2 className="text-lg font-bold">{`${clientActivityMonitor.currentMode} MODE`}</h2>
       </div>
 
-
-
-      {/* Middle Section: Status - Conditionally render based on mode */}
-      <div className="h-1/2 flex flex-col items-center justify-center border-b border-black">
+      {/* Middle Section: Status - Conditionally render based on mode (remaining height) */}
+      {/* Using flex-grow to take up the remaining space */}
+      <div id="status_section" className="flex flex-grow flex-col items-center justify-center border border-black mb-3">
         <h3 className="text-md font-semibold">Current Status: {clientActivityMonitor.currentStatus} </h3>
         {/* Placeholder for status content */}
         <div>
           {/* QUEUE MODE AND QUEUE STATUS */}
           {clientActivityMonitor.currentMode === 'QUEUE' && clientActivityMonitor.currentStatus === 'QUEUE' && (
             <div className="flex flex-col items-center justify-center">
-              <p>Approx. Time: {clientActivityMonitor.statusInfo.QUEUE.approxTime}</p>
+              <p>Approx. Time: {clientActivityMonitor.statusInfo.QUEUE?.approxTime}</p>
             </div>)}
 
           {/* CAFE MODE AND DEFAULT STATUS */}
@@ -128,7 +140,7 @@ const selectedMode: React.FC = () => {
           {clientActivityMonitor.currentMode === 'CAFE' && clientActivityMonitor.currentStatus === 'QUEUE' && (
             <div className="flex flex-col items-center justify-center">
               <p>getting into queue</p>
-              <p>position: {clientActivityMonitor.statusInfo.QUEUE.currentPosition}</p>
+              <p>position: {clientActivityMonitor.statusInfo.QUEUE?.currentPosition}</p>
             </div>)}
           {/* CAFE MODE AND PAYMENT STATUS */}
           {clientActivityMonitor.currentMode === 'CAFE' && clientActivityMonitor.currentStatus === 'PAYMENT_CALL' && (
@@ -147,22 +159,31 @@ const selectedMode: React.FC = () => {
             </div>)}
 
         </div>
-        <div>
-        <ActivityStatusQueue />
-        </div>
+        {((clientActivityMonitor.currentMode === ACTIVITY_MODES.CAFE && clientActivityMonitor.currentStatus === ACTIVITY_STATUS.QUEUE) ||
+          (clientActivityMonitor.currentMode === ACTIVITY_MODES.QUEUE)) && <div>
+            <ActivityStatusQueue />
+          </div>}
       </div>
 
 
 
       {/* Bottom Section: Circular Buttons */}
-      <div className="h-1/3 flex items-center justify-evenly p-2">
-        {/* Button 2 */}
-        {currentStatusValues?.actionButtons?.addItem && <button className="rounded-full w-12 h-12 bg-gray-300 flex items-center justify-center border border-black">
-          add Item
-        </button>}
+      {/* Bottom Section: Action Buttons (40% height) */}
+      <div id="action_section" className="flex flex-grow-[0.4] flex-shrink-0 items-center justify-evenly p-2 border border-black">
+        {(currentStatusValues?.actionButtons?.addItem ||
+          clientActivityMonitor.statusInfo[clientActivityMonitor.currentStatus]?.actionButtons?.addItem) && 
+          <button className="rounded-full w-12 h-12 bg-gray-300 flex items-center justify-center border border-black"
+           onClick={handleRestaurantButtonClick}>
+            add Item
+          </button>}
         {/* Button 3 */}
-        {currentStatusValues?.actionButtons?.cancel && <button className="rounded-full w-12 h-12 bg-gray-300 flex items-center justify-center border border-black">
-          cancel
+        {(currentStatusValues?.actionButtons?.cancel ||
+          clientActivityMonitor.statusInfo[clientActivityMonitor.currentStatus]?.actionButtons?.cancel
+        ) && <button className="rounded-full w-12 h-12 bg-gray-300 flex items-center justify-center border border-black">
+            cancel 
+          </button>}
+        {<button className="rounded-full w-12 h-12 bg-gray-300 flex items-center justify-center border border-black">
+          End Mode
         </button>}
       </div>
     </div>

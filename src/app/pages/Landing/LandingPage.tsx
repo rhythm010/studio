@@ -1,8 +1,13 @@
 "use client";
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import DisplaySection from './DisplaySection';
 import SelectionSection from './SelectionSection';
+import { useCompanionStore } from '@/store/store';
+import { ref, onValue, off } from 'firebase/database';
+import { database } from '@/lib/firebase';
+import { storePaths } from '@/lib/utils';
+import { AnyARecord } from 'dns';
 
 const LandingPage: React.FC = () => {
   const [selectedGender, setSelectedGender] = useState<string | null>('male');
@@ -15,7 +20,6 @@ const LandingPage: React.FC = () => {
   const handleOptionChange = (option: string | null) => {
     setSelectedOption(option);
   };
-
 
   return (
     <div className="bg-gray-900 min-h-screen flex flex-col pt-[4rem] pb-[3rem]">
