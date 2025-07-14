@@ -50,7 +50,7 @@ const InService: React.FC = () => {
        modeTitle:`${activityMode} MODE ACTIVE`, 
        currentStatus:'DEFAULT'
       
-    }); // Update the store
+    }); // Update the local store
   }
 
   useEffect(() => {
@@ -135,7 +135,7 @@ const InService: React.FC = () => {
       </div>
   
       <div id="stopwatch_section" className="h-[40%] flex flex-col items-center justify-center border-gray-700 mt-4">
-        <StopWatch
+      <StopWatch
           isRunning={isRunning}
           startStop={handleStartStop}
           elapsedTime={elapsedTime}
@@ -146,19 +146,20 @@ const InService: React.FC = () => {
       <div id="action_section" className="flex items-center justify-evenly rounded-lg m-4 p-4 h-[10%] mb-20 mt-10">
         {/* Three rounded buttons */}
         <div id="assist_button" className="flex flex-col items-center mx-2">
-          <button onClick={() => openModal()} className="rounded-full w-16 h-16 mb-1 shadow-md flex items-center justify-center">
+          <button onClick={() => openModal()} 
+           className="rounded-full w-16 h-16 mb-1 shadow-md flex items-center justify-center">
             <img src="/icons/icon_light_bulb.png" alt="Assist Icon" className="w-8 h-8" />
           </button>
           <span className="text-sm font-bold mt-4">{t("Assist")}</span>
         </div>
-        <div id="play_pause_button" className="flex flex-col items-center">
+        {/* <div id="play_pause_button" className="flex flex-col items-center">
           <button onClick={handleStartStop} className="rounded-full w-16 h-16 mb-1 flex items-center justify-center text-2xl shadow-md">
             {isRunning ? (
               <img src="/icons/icon_pause.png" alt="Pause Icon" className="w-8 h-8" />
             ) : (<img src="/icons/icon_play.png" alt="Play Icon" className="w-8 h-8" />)}
           </button>
           <span className="text-sm font-bold mt-4">{isRunning ? t('timer_stop') : t('timer_start')}</span>
-        </div>
+        </div> */}
         <div id="end_service_button" className="flex flex-col items-center mx-2">
           {/* <button className=\"rounded-full w-16 h-16 border border-black mb-1\"> */}
           <button

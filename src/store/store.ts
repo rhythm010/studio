@@ -100,6 +100,7 @@ interface ClientActivityMonitor {
       approxTime: number;
       actionButtons: {
         addItem: boolean;
+        complete?:boolean;
         cancel: boolean;
       };
     };
@@ -108,6 +109,7 @@ interface ClientActivityMonitor {
       time: string;
       actionButtons: {
         addItem: boolean;
+        complete?:boolean;
         cancel: boolean;
       };
     };
@@ -116,25 +118,28 @@ interface ClientActivityMonitor {
       time: string;
       actionButtons: {
         addItem: boolean;
+        complete?:boolean;
       };
     };
     WAIT_OP: {
       active: boolean;
       actionButtons: {
         addItem: boolean;
-        complete: boolean;
+        complete?:boolean;
       };
     };
     WITH_YOU: {
       active: boolean;
       actionButtons: {
         addItem: boolean;
+        complete?:boolean;
       };
     },
     DEFAULT: {
       active: boolean;
       actionButtons: {
         addItem: boolean;
+        complete?:boolean;
         cancel: boolean;
       };
     }
@@ -193,8 +198,8 @@ interface CompanionStore {
   setCompanionRole: (role: string) => void;
   getCompanionRole: () => string;
   setCompanionQueueManage: (details: Partial<CompanionQueueManage>) => void; // Add setter
- getPrimaryCompanionSessionId: () => string | null; // Getter for primaryCompanionSessionId
- getSecondaryCompanionSessionId: () => string | null; // Getter for secondaryCompanionSessionId
+  getPrimaryCompanionSessionId: () => string | null; // Getter for primaryCompanionSessionId
+  getSecondaryCompanionSessionId: () => string | null; // Getter for secondaryCompanionSessionId
   getCompanionQueueManage: () => CompanionQueueManage; // Add getter
   setCompanionRestaurantManage: (details: Partial<CompanionRestaurantManage>) => void; // Add setter
   getCompanionRestaurantManage: () => CompanionRestaurantManage; // Add getter
@@ -295,7 +300,7 @@ const useCompanionStore = create<CompanionStore>((set) => ({
         active: false,
         actionButtons: {
           addItem: true,
-          complete: true
+          complete: true,
         }
       },
       WITH_YOU: {

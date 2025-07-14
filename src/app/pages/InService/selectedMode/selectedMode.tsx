@@ -4,7 +4,6 @@ import { database } from '@/lib/firebase'; // Assuming you have your firebase in
 import { ref, onValue, off } from 'firebase/database';
 import { storePaths, updateValueInPrimaryCompanion } from '@/lib/utils'; // Assuming storePaths is in utils.ts
 import { cn } from '@/lib/utils'; // Assuming cn is in utils.ts
-import ActivityStatusQueue from '../ActivityStatusQueue/ActivityStatusQueue';
 import { ACTIVITY_STATUS, ACTIVITY_MODES } from '@/lib/constants';
 
 const selectedMode: React.FC = () => {
@@ -140,27 +139,28 @@ const selectedMode: React.FC = () => {
 
         <div>
           {/* QUEUE MODE AND QUEUE STATUS */}
-
-          {((clientActivityMonitor.currentMode === ACTIVITY_MODES.CAFE && clientActivityMonitor.currentStatus === ACTIVITY_STATUS.QUEUE) ||
-            (clientActivityMonitor.currentMode === ACTIVITY_MODES.QUEUE)) && (
+         
+          { ((clientActivityMonitor.currentMode === ACTIVITY_MODES.CAFE && clientActivityMonitor.currentStatus === ACTIVITY_STATUS.QUEUE) ||
+          (clientActivityMonitor.currentMode === ACTIVITY_MODES.QUEUE)) && (
               <div id="queue_container" className="flex flex-col items-center justify-between h-full">
                 <div id="companion_status" className="text-sm font-normal self-start">companion position</div>
-                <div id="companion_pos_val" className="text-[7rem]">{clientActivityMonitor.statusInfo.QUEUE?.currentPosition}</div>
-                <div id="companion_pos_time" className="self-end"><span className="text-sm">Approx. Time: </span>
+                <div id="companion_pos_val" className="text-[7rem] leading-none">{clientActivityMonitor.statusInfo.QUEUE?.currentPosition}</div>
+                <div id="companion_pos_time" className="self-end">
+                  <span className="text-sm font-thin">Approx. Time: </span>
                   <span className="text-[2rem]">{clientActivityMonitor.statusInfo.QUEUE?.approxTime}</span>
-                  <span className="text-sm">min</span>
+                  <span className="text-sm font-thin">min</span>
                 </div>
               </div>
             )}
 
           {/* CAFE MODE AND DEFAULT STATUS */}
 
-          {clientActivityMonitor.currentMode === 'CAFE' && clientActivityMonitor.currentStatus === 'DEFAULT' && (
+          {clientActivityMonitor.currentMode === ACTIVITY_MODES.CAFE && clientActivityMonitor.currentStatus === 'DEFAULT' && (
             <div className="flex flex-col items-center justify-center">
               <p>default status for cafe</p>
             </div>)}
 
-          {clientActivityMonitor.currentMode === 'CAFE' && clientActivityMonitor.currentStatus === 'PAYMENT_CALL' &&
+          {clientActivityMonitor.currentMode === ACTIVITY_MODES.CAFE && clientActivityMonitor.currentStatus === 'PAYMENT_CALL' &&
             (
               <div id="payment_container" className="flex flex-col items-center justify-center h-full">
                 <img src="/icons/mode_cafe_status_payment.png"
@@ -171,7 +171,7 @@ const selectedMode: React.FC = () => {
             )}
           {/* CAFE MODE AND WAIT_ITEM STATUS */}
 
-          {clientActivityMonitor.currentMode === 'CAFE' && clientActivityMonitor.currentStatus === 'WAIT_ITEM' && (
+          {clientActivityMonitor.currentMode === ACTIVITY_MODES.CAFE && clientActivityMonitor.currentStatus === 'WAIT_ITEM' && (
             <div id="payment_container" className="flex flex-col items-center justify-center h-full">
               <img src="/icons/cafe_wait_item_english.png"
                 alt="Payment Status Icon" className="w-[12rem] h-[12rem] object-contain"
@@ -181,7 +181,7 @@ const selectedMode: React.FC = () => {
           )}
           {/* CAFE MODE AND WAIT_OP STATUS */}
 
-          {(
+          {clientActivityMonitor.currentMode === ACTIVITY_MODES.CAFE && clientActivityMonitor.currentStatus === 'WAIT_OP' && (
             <div id="queue_container_wait_OP" className="flex flex-col items-center justify-center h-full p-[3rem]">
               {/* <div id="companion_status" className="text-sm font-normal self-start">companion position</div> */}
               <div id="companion_at_service_txt" className="text-[3rem] font-bold text-center">Waiting for instructions</div>
@@ -189,12 +189,12 @@ const selectedMode: React.FC = () => {
           )}
 
         </div>
-        {
+        {/* clientActivityMonitor.currentMode === ACTIVITY_MODES.WITH_YOU && */}
+        { clientActivityMonitor.currentMode === ACTIVITY_MODES.WITH_YOU &&
           (
-            (clientActivityMonitor.currentMode === ACTIVITY_MODES.CAFE && clientActivityMonitor.currentStatus === ACTIVITY_STATUS.QUEUE) ||
-            (clientActivityMonitor.currentMode === ACTIVITY_MODES.QUEUE)) && (
-            <div>
-              <ActivityStatusQueue />
+            <div id="with_you_container" className="flex flex-col items-center justify-between h-full">
+              {/* <div id="companion_status" className="text-sm font-normal self-start">companion position</div> */}
+              <div id="with_you_val" className="text-[3rem] font-bold text-center">With you</div>
             </div>
           )
         }
@@ -204,24 +204,45 @@ const selectedMode: React.FC = () => {
       {/* Bottom Section: Action Buttons (40% height) */}
       <div id="action_section" className={cn(
         "flex flex-grow-[0.4] flex-shrink-0 items-center justify-evenly p-2",
-        "rounded-xl shadow-lg" // Added rounded corners and elevated style
+        "" // Added rounded corners and elevated style
       )}
       >
-        {(currentStatusValues?.actionButtons?.addItem ||
-          clientActivityMonitor.statusInfo[clientActivityMonitor.currentStatus]?.actionButtons?.addItem) &&
-          <button className="rounded-full w-12 h-12 bg-gray-300 flex items-center justify-center border border-black"
-            onClick={handleRestaurantButtonClick}>
-            add Item
-          </button>}
-        {/* Button 3 */}
-        {(currentStatusValues?.actionButtons?.cancel ||
-          clientActivityMonitor.statusInfo[clientActivityMonitor.currentStatus]?.actionButtons?.cancel
-        ) && <button className="rounded-full w-12 h-12 bg-gray-300 flex items-center justify-center border border-black">
-            cancel
-          </button>}
-        {<button className="rounded-full w-12 h-12 bg-gray-300 flex items-center justify-center border border-black">
-          End Mode
-        </button>}
+        
+        {/* Add Item Button */}
+        {/* <div id="add_item_button" className="flex flex-col items-center mx-2">
+          <button className="rounded-full w-12 h-12 mb-1 shadow-md flex items-center justify-center"
+            onClick={handleRestaurantButtonClick}
+          >
+            <img src="/icons/add_item.png" alt="Add Item Icon" className="w-6 h-6 object-contain" />
+          </button>
+          <span className="text-sm font-bold mt-4">Add Item</span>
+        </div> */}
+        
+        { (currentStatusValues?.actionButtons?.cancel ||
+          clientActivityMonitor.statusInfo[clientActivityMonitor.currentStatus]?.actionButtons?.cancel) &&
+          <div id="cancel_status_button" className="flex flex-col items-center mx-2">
+          <button className="rounded-full w-12 h-12 mb-1 shadow-md flex items-center justify-center">
+            <img src="/icons/cancel_mode.png" alt="Add Item Icon" className="w-6 h-6 object-contain" />
+          </button>
+         
+          <span className="text-sm font-bold mt-4">Cancel</span>
+        </div>
+        }
+
+        
+        
+       { (currentStatusValues?.actionButtons?.complete ||
+          clientActivityMonitor.statusInfo[clientActivityMonitor.currentStatus]?.actionButtons?.complete) && 
+        <div id="end_mode_button" className="flex flex-col items-center mx-2">
+          
+          <button className="rounded-full w-12 h-12 mb-1 shadow-md flex items-center justify-center">
+            
+            <img src="/icons/complete_mode.png" alt="Add Item Icon" className="w-6 h-6 object-contain" />
+          </button>
+          <span className="text-sm font-bold mt-4">Done</span>
+        </div>
+        }
+
       </div>
     </div>
   );
