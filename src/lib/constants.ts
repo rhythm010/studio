@@ -20,7 +20,8 @@ export const MODE_ACTIVITY_MAP = {
 
 export const COMPANION_MODE_STATUS_LINKER = {
    'WITH_YOU': ['DEFAULT'],
-   'CAFE': ['CAFE','PAYMENT_CALL','WAIT_ITEM','WAIT_OP' ],
+   'CAFE': ['QUEUE','CAFE','PAYMENT_CALL','WAIT_ITEM','WAIT_OP' ],
    'QUEUE': ['QUEUE'],
-   'STORE': ['DEFAULT']
+   'STORE': ['DEFAULT'],
+   'WITH_CLIENT': ['DEFAULT'],
 }
