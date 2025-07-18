@@ -65,6 +65,12 @@ const Header: React.FC<HeaderProps> = ({ showBack = true }) => {
     console.log('Current store state:', store);
   };
 
+  const devModeChange = (val:boolean) => {
+    useCompanionStore.getState().setIsDevMode(val);
+    setIsDevMode(val);
+    console.log(useCompanionStore.getState());
+  };
+
   return (
     <header className="bg-gray-800 shadow-lg h-16 w-full flex items-center justify-between">
       {showBack && isDevMode && (
@@ -89,7 +95,7 @@ const Header: React.FC<HeaderProps> = ({ showBack = true }) => {
           <TooltipContent className="flex flex-col items-start">
             {/* Dev mode  */}
             <div className='flex flex-row items-center space-x-2'>
-              <Switch id="dev-mode" checked={isDevMode} onCheckedChange={setIsDevMode} />
+              <Switch id="dev-mode" checked={isDevMode} onCheckedChange={devModeChange} />
               <label htmlFor="dev-mode">dev-mode</label>
             </div>
             {/* Companion mode */}

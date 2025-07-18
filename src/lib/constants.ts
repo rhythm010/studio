@@ -17,3 +17,10 @@ export const ACTIVITY_STATUS = {
 export const MODE_ACTIVITY_MAP = {
     [ACTIVITY_MODES.QUEUE] : [ACTIVITY_STATUS.QUEUE]
 };
+
+export const COMPANION_MODE_STATUS_LINKER = {
+   'WITH_YOU': ['DEFAULT'],
+   'CAFE': ['CAFE','PAYMENT_CALL','WAIT_ITEM','WAIT_OP' ],
+   'QUEUE': ['QUEUE'],
+   'STORE': ['DEFAULT']
+}

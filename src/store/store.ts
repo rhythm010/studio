@@ -214,7 +214,7 @@ interface CompanionStore {
 }
 
 const useCompanionStore = create<CompanionStore>((set) => ({
-  isDevMode: true,
+  isDevMode: false,
   setIsDevMode: (isDev) => set({ isDevMode: isDev }), // Implement setter
   getIsDevMode: () => useCompanionStore.getState().isDevMode, // Implement getter
   sessionId: '',
@@ -231,7 +231,7 @@ const useCompanionStore = create<CompanionStore>((set) => ({
   feedbackDetails: [],
   companionFeedbackDetails: [],
   isComplete: false, // Initialize isComplete to false
-  serviceRunning: true,
+  serviceRunning: false,
   companionQueueManage: { // Initialize the new property
     queueActivated: false,
     currentPosition: 0,
@@ -249,6 +249,7 @@ const useCompanionStore = create<CompanionStore>((set) => ({
     selectedMode: '',
     companionCurrentStatus: '',
     QUEUE: {
+      active: false,
       currentPosition: 0,
     },
     PAYMENT_CALL: {

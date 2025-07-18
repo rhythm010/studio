@@ -9,22 +9,6 @@ const CompanionActivityMode: React.FC = () => {
   // Base button styling derived from "Activate cafe mode" but smaller
   const buttonStyle = "w-20 h-10 bg-gray-300 flex items-center justify-center border border-black text-xs text-center px-2 py-1";
 
-  // Method to handle button clicks and set activity status
-  const setCompanionActivityStatus = (status: string) => {
-    useCompanionStore.setState(state => ({
-      ...state,
-      CompanionAcvitiyMonitor: {
-        ...state.CompanionAcvitiyMonitor,
-        companionCurrentStatus: status
-      }
-    }));
-
-    updateValueInClient({
-      path: storePaths.ClientActivityMonitor.currentStatus,
-      val: status,
-    });
-  };
-
   const updateQueueValue = (delta: number) => {
     useCompanionStore.setState((state) => {
       const newPosition = state.CompanionAcvitiyMonitor.QUEUE.currentPosition + delta;
@@ -65,44 +49,36 @@ const CompanionActivityMode: React.FC = () => {
       {companionFlow?.selectedMode && <div style={{ marginTop: '10px', fontSize: '1rem' }}>
         Current Active Mode: {companionFlow?.selectedMode}
       </div>}
-      {/* Mode container */}
-      <div id="activity_status_buttons" className="grid grid-cols-2 gap-8 items-center">
-        {/* Row 1 */}
+      {/* <div id="activity_status_buttons" className="grid grid-cols-2 gap-8 items-center">
+        
         {
           (companionFlow?.selectedMode === ACTIVITY_MODES.CAFE ||
             companionFlow?.selectedMode === ACTIVITY_MODES.QUEUE
           ) && <div className="flex items-center">
-            {/* Button 1 */}
+           
             <button className={buttonStyle}
               onClick={() => setCompanionActivityStatus(ACTIVITY_STATUS.QUEUE)}>
               Get into Q
             </button>
-            {/* Arrow 1 to 2 */}
+            
           </div>}
-        {/* Button 2 */}
         {companionFlow?.selectedMode === ACTIVITY_MODES.CAFE && <button className={buttonStyle}
           onClick={() => setCompanionActivityStatus(ACTIVITY_STATUS.PAYMENT_CALL)}>
           Payment Call
         </button>}
 
-        {/* Row 2 */}
         <div className="flex items-center">
-          {/* Button 3 */}
           {companionFlow?.selectedMode === ACTIVITY_MODES.CAFE && <button className={buttonStyle}
             onClick={() => setCompanionActivityStatus(ACTIVITY_STATUS.WAIT_ITEM)}>
             item waiting
           </button>}
-          {/* Button 4 */}
           {companionFlow?.selectedMode === ACTIVITY_MODES.CAFE && <button className={buttonStyle}
             onClick={() => setCompanionActivityStatus(ACTIVITY_STATUS.WAIT_OP)}>
             waiting OP
           </button>}
-          {/* Arrow 4 to 3 */}
           <div className="arrow left"></div>
-          {/* Arrow 4 to 3 */}
-
         </div>
-      </div>
+      </div> */}
 
       <div id="activity_status_container">
         {companionFlow.companionCurrentStatus}

@@ -7,21 +7,17 @@ import { checkIfSessionExistsAndMatch, updateStoreInFirebase, updateCompanionSes
 import { useRouter } from 'next/navigation';
 import { useModal } from '@/components/ui/Modal';
 import CompanionActivityMode from '../CompanionActivityMode/CompanionActivityMode';
+import ActivityStatusQueue from '../../InService/ActivityStatusQueue/ActivityStatusQueue';
+import { ACTIVITY_STATUS, COMPANION_MODE_STATUS_LINKER } from '@/lib/constants';
 
 const GuardMatchingPage: React.FC = () => {
+  // Reusable classes for the mode selection buttons, similar to the 'Start Scan' button style
+ const selectedButtonClasses = "border border-black w-20 h-10 m-1 flex items-center justify-center bg-green-600 text-white text-sm"; // Dark green background for selected button
+  const buttonClasses = "border border-black w-20 h-10 m-1 flex items-center justify-center bg-gray-800 text-white text-sm";
   const qrCodeRef = useRef<string>('reader');
   const { getCompanionProfileDetails } = useCompanionStore();
   const html5Qrcode = useRef<Html5Qrcode | null>(null);
-  const [error, setError] = useState<string | null>(null);
   const [scanning, setScanning] = useState(false);
-  const {
-    companionQueueManage, // Get the companionQueueManage object
-  } = useCompanionStore(); // Ensure you are getting the setCompanionQueueManage setter
-  const {
-    companionRestaurantManage, // Get the companionRestaurantManage object
-    setCompanionRestaurantManage, // Get the setter for companionRestaurantManage
-  } = useCompanionStore(); // Ensure you are getting the setCompanionQueueManage setter
-  const { openModal, closeModal } = useModal();
   const [serviceContinue, setserviceContinue] = useState(true);
   const [qrData, setQrData] = useState('');
   const setMatchingDone = useCompanionStore((state) => state.setMatchingDone); // Get the setter from the store
@@ -32,6 +28,10 @@ const GuardMatchingPage: React.FC = () => {
   const [manualSessionId, setManualSessionId] = useState(''); // State for manual session ID input
   const router = useRouter();
   const companionRole = getCompanionProfileDetails().companionRole; // Get the companion role
+  // Get the selected mode from the store for conditional styling
+  // Get the selected mode and current status from the store for conditional styling
+  const { selectedMode, companionCurrentStatus } = useCompanionStore((state) => state.CompanionAcvitiyMonitor);
+  const companionActivityStatus = useCompanionStore.getState().CompanionAcvitiyMonitor.companionCurrentStatus;
 
   useEffect(() => {
     // Create an instance of Html5Qrcode
@@ -141,14 +141,41 @@ const GuardMatchingPage: React.FC = () => {
       path: storePaths.ClientActivityMonitor.currentMode,
       val: mode,
     });
+  };  
+
+  // Common click handler for mode selection buttons
+  const handleModeSelection = (mode: string) => {
+    console.log(`Mode selected: ${mode}`);
+    // Update the selectedMode within clientActivityMonitor.companionFlow in the store
+    useCompanionStore.getState().setCompanionAcvitiyMonitor({
+      selectedMode: mode, // Assuming selectedMode is a direct property of CompanionAcvitiyMonitor
+    });
+
+    updateValueInClient({
+      path: storePaths.ClientActivityMonitor.currentMode,
+      val: mode,
+    });
   };
 
-  const showClientMsg = () => {
-    console.log("Showing client messages...");
-    openModal(<div>Restaurant Messages</div>);
-    // You can add logic here to fetch or process client messages if needed
+  const handleStatusSelection = (status: string) => {
+    // Update the selectedMode within clientActivityMonitor.companionFlow in the store
+    useCompanionStore.getState().setCompanionAcvitiyMonitor({
+      companionCurrentStatus: status, // Assuming selectedMode is a direct property of CompanionAcvitiyMonitor
+    });
+
+    updateValueInClient({
+      path: storePaths.ClientActivityMonitor.currentStatus,
+      val: status,
+    });
   };
+
+  // Helper function to determine button class based on selected mode/status
+  const getButtonClass = (item: string, selectedItem: string | null) => {
+    return item === selectedItem ? selectedButtonClasses : buttonClasses;
+  };
+
   return (
+    // Main container with flex column layout
     <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', width: '100%' }}>
       {companionRole && <p style={{ width: '16rem', textAlign: 'center', backgroundColor: 'rgb(31 41 55 / var(--tw-bg-opacity, 1))', color: 'white', padding: '0.5rem', fontSize: '1.2rem' }}>Role: {companionRole} Companion</p>}
 
@@ -173,70 +200,98 @@ const GuardMatchingPage: React.FC = () => {
         >Submit Session ID</button>
       </div>}
 
-      {!serviceContinue && <div id="action_buttons" style={{ border: '1px solid black', marginTop: '20px', padding: '10px' }}>
-        <button
-          style={{
-            backgroundColor: companionQueueManage.queueActivated ? 'lightgray' : 'rgb(31 41 55 / var(--tw-bg-opacity, 1))',
-            color: 'white',
-            padding: '0.75rem 1.5rem',
-            fontSize: '0.9rem', // Slightly smaller font size
-            cursor: companionQueueManage.queueActivated ? 'not-allowed' : 'pointer',
-          }}
-          onClick={companionQueueManage.queueActivated ? undefined : ()=>activateActivityMode('QUEUE')}
-          disabled={companionQueueManage.queueActivated}
-        >
-          Activate Queue mode
-        </button>
-        <button
-          style={{
-            backgroundColor: 'rgb(31 41 55 / var(--tw-bg-opacity, 1))',
-            color: 'white',
-            padding: '0.75rem 1.5rem',
-            fontSize: '0.9rem', // Slightly smaller font size
-            cursor: 'pointer',
-            marginTop: '1rem',
-          }}
-          onClick={() => activateActivityMode('CAFE')}
-        >Activate Cafe Mode
-        </button>
-      </div>}
+      {!serviceContinue &&
+        <div id="action_buttons"
+          style={{ marginTop: '20px', padding: '10px' }}>
 
-      {companionRestaurantManage.isActive && (<div id="Restaurant_mode" style={{ border: '1px solid black', marginTop: '20px', width: '70%', maxWidth: '500px', textAlign: 'center', paddingBottom: '5px' }}>
-        <div style={{ borderBottom: '1px solid black', paddingBottom: '5px', padding: '10px' }}>
-          <h3 style={{ fontSize: '1.5rem' }}>Restaurant Mode Active</h3>
+          <div id="status_data_container">
+            {/* Container for displaying status data (e.g., queue position, time) */}
+            {companionActivityStatus === ACTIVITY_STATUS.QUEUE && <CompanionActivityMode/>}
+
+          </div>
+
+
+          <div id="modes_container">
+            <p>Activity Type Selector</p>
+
+            <div className="border border-black rounded-lg flex flex-wrap p-2 mr-[1rem] ml-[1rem]">
+              {/* Button for Queue mode, conditionally apply dark green background if selected */}
+              <button className={selectedMode === 'QUEUE' ? selectedButtonClasses : buttonClasses}
+                onClick={() => handleModeSelection('QUEUE')}>
+                Queue
+              </button>
+              <button className={selectedMode === 'CAFE' ? selectedButtonClasses : buttonClasses}
+                onClick={() => handleModeSelection('CAFE')}>
+                Cafe
+              </button>
+              <button className={selectedMode === 'STORE' ? selectedButtonClasses : buttonClasses}
+                onClick={() => handleModeSelection('STORE')}>
+                Store
+              </button>
+              <button className={selectedMode === 'WITH_CLIENT' ? selectedButtonClasses : buttonClasses}
+                onClick={() => handleModeSelection('WITH_CLIENT')}
+              >
+                With client
+              </button>
+            </div>
+
+          </div>
+
+          <p>Activity Status Selector</p>
+          {/* Status container with relative positioning for the overlay */}
+          <div id="status_container" style={{ position: 'relative' }}> {/* Added relative positioning for the overlay */}
+            {/* Overlay to prevent interaction when mode is not selected */}
+            {/* Show the overlay if selectedMode is not set, hide if it is set */}
+            {!selectedMode && (
+              <div
+                style={{
+                  position: 'absolute',
+                  top: 0, left: 0, right: 0, bottom: 0,
+                  backgroundColor: 'rgba(0, 0, 0, 0.5)', // Half-transparent black
+                  pointerEvents: 'auto', // Ensure the overlay captures clicks when visible
+                  zIndex: 10, // Ensure it's above the buttons
+                }}></div>
+            )}
+
+            <div className="border border-black rounded-lg flex flex-wrap p-2 mr-[1rem] ml-[1rem]">
+              {/* Status buttons, conditionally apply dark green background if status matches companionCurrentStatus */}
+              <button className={getButtonClass(ACTIVITY_STATUS.QUEUE, companionCurrentStatus)}
+                onClick={() => handleStatusSelection('QUEUE')}
+              >
+                Queue
+              </button>
+              <button className={getButtonClass(ACTIVITY_STATUS.PAYMENT_CALL, companionCurrentStatus)}
+                onClick={() => handleStatusSelection('PAYMENT_CALL')}>
+                Payment call
+              </button>
+              <button className={getButtonClass(ACTIVITY_STATUS.WAIT_ITEM, companionCurrentStatus)}
+                onClick={() => handleStatusSelection('WAIT_ITEM')}>
+                waiting for item
+              </button>
+              <button className={buttonClasses}
+              onClick={() => handleStatusSelection('WAIT_OP')}
+              >
+                waiting for call
+              </button>
+              <button className={buttonClasses}
+              onClick={() => handleStatusSelection('DEFAULT')}
+              >
+                Default
+              </button>
+            </div>
+
+          </div>
+
         </div>
-        <div style={{ display: 'flex', justifyContent: 'space-around', alignItems: 'center', width: '100%' }}>
-          <button onClick={() => {
-            showClientMsg(); // Call the new method
-          }} style={{
-            fontSize: '1rem',
-            padding: '1rem',
-            border: '1px solid black',
-            backgroundColor: 'rgb(31 41 55 / var(--tw-bg-opacity, 1))',
-            color: 'white',
-            marginLeft: 'auto',
-            marginRight: 'auto'
-          }}>Msgs</button>
-        </div>
-        <button
-          style={{
-            backgroundColor: 'rgb(31 41 55 / var(--tw-bg-opacity, 1))',
-            padding: '0.5rem',
-            marginTop: '10px',
-            color: 'white',
-          }}
-          onClick={() => setCompanionRestaurantManage({ ...companionRestaurantManage, isActive: false })} // Call EndQueueMode function
-        >
-          End Restaurant Mode
-        </button>
-      </div>)}
 
+      }
 
-      <CompanionActivityMode />
+      {/* <CompanionActivityMode /> */}
       <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', width: '100%', maxWidth: '500px' }}>
         <div id={qrCodeRef.current} style={{ width: '100%', maxWidth: '500px' }}></div>
         {qrData && <p>Scanned Data: {qrData}</p>}
       </div>
+      {/* Start/Stop Scan button */}
       {serviceContinue && <button onClick={scanning ? stopScanning : startScanning} style={{ position: 'fixed', bottom: '6rem', width: '70%', maxWidth: '500px', left: '50%', transform: 'translateX(-50%)', backgroundColor: 'rgb(31 41 55 / var(--tw-bg-opacity, 1))', color: 'white', padding: '1rem', marginLeft: 'auto', marginRight: 'auto' }}
       >{scanning ? 'Stop Scan' : 'Start Scan'}</button>}
       {!serviceContinue && <button style={{ position: 'fixed', bottom: '6rem', width: '70%', maxWidth: '500px', left: '50%', transform: 'translateX(-50%)', backgroundColor: 'red', color: 'white', padding: '1rem', marginLeft: 'auto', marginRight: 'auto' }}
