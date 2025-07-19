@@ -25,3 +25,8 @@ export const COMPANION_MODE_STATUS_LINKER = {
    'STORE': ['DEFAULT'],
    'WITH_CLIENT': ['DEFAULT'],
 }
+
+
+export const CLIENT_SEND_MSG = {
+    
+};

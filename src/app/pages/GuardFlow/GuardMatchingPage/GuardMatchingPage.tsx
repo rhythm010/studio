@@ -8,7 +8,7 @@ import { useRouter } from 'next/navigation';
 import { useModal } from '@/components/ui/Modal';
 import CompanionActivityMode from '../CompanionActivityMode/CompanionActivityMode';
 import ActivityStatusQueue from '../../InService/ActivityStatusQueue/ActivityStatusQueue';
-import { ACTIVITY_STATUS, COMPANION_MODE_STATUS_LINKER } from '@/lib/constants';
+import { ACTIVITY_MODES, ACTIVITY_STATUS, COMPANION_MODE_STATUS_LINKER } from '@/lib/constants';
 
 const GuardMatchingPage: React.FC = () => {
   // Reusable classes for the mode selection buttons, similar to the 'Start Scan' button style
@@ -218,20 +218,20 @@ const GuardMatchingPage: React.FC = () => {
 
             <div className="border border-black rounded-lg flex flex-wrap p-2 mr-[1rem] ml-[1rem]">
               {/* Button for Queue mode, conditionally apply dark green background if selected */}
-              <button className={selectedMode === 'QUEUE' ? selectedButtonClasses : buttonClasses}
-                onClick={() => handleModeSelection('QUEUE')}>
+              <button className={selectedMode === ACTIVITY_MODES.QUEUE ? selectedButtonClasses : buttonClasses}
+                onClick={() => handleModeSelection(ACTIVITY_MODES.QUEUE)}>
                 Queue
               </button>
-              <button className={selectedMode === 'CAFE' ? selectedButtonClasses : buttonClasses}
-                onClick={() => handleModeSelection('CAFE')}>
+              <button className={selectedMode === ACTIVITY_MODES.CAFE ? selectedButtonClasses : buttonClasses}
+                onClick={() => handleModeSelection(ACTIVITY_MODES.CAFE)}>
                 Cafe
               </button>
-              <button className={selectedMode === 'STORE' ? selectedButtonClasses : buttonClasses}
-                onClick={() => handleModeSelection('STORE')}>
+              <button className={selectedMode === ACTIVITY_MODES.STORE ? selectedButtonClasses : buttonClasses}
+                onClick={() => handleModeSelection(ACTIVITY_MODES.STORE)}>
                 Store
               </button>
-              <button className={selectedMode === 'WITH_CLIENT' ? selectedButtonClasses : buttonClasses}
-                onClick={() => handleModeSelection('WITH_CLIENT')}
+              <button className={selectedMode === ACTIVITY_MODES.WITH_YOU ? selectedButtonClasses : buttonClasses}
+                onClick={() => handleModeSelection(ACTIVITY_MODES.WITH_YOU)}
               >
                 With client
               </button>
@@ -260,32 +260,32 @@ const GuardMatchingPage: React.FC = () => {
               <button
                 className={getStatusButtonClass(ACTIVITY_STATUS.QUEUE, companionCurrentStatus, selectedMode)}
                 disabled={!COMPANION_MODE_STATUS_LINKER[selectedMode as keyof typeof COMPANION_MODE_STATUS_LINKER]?.includes(ACTIVITY_STATUS.QUEUE)}
-                onClick={() => handleStatusSelection('QUEUE')}
+                onClick={() => handleStatusSelection(ACTIVITY_STATUS.QUEUE)}
               >
                 Queue
               </button>
               <button
                 className={getStatusButtonClass(ACTIVITY_STATUS.PAYMENT_CALL, companionCurrentStatus, selectedMode)}
                 disabled={!COMPANION_MODE_STATUS_LINKER[selectedMode as keyof typeof COMPANION_MODE_STATUS_LINKER]?.includes(ACTIVITY_STATUS.PAYMENT_CALL)} // Disable if not allowed in selected mode
-                onClick={() => handleStatusSelection('PAYMENT_CALL')}>
+                onClick={() => handleStatusSelection(ACTIVITY_STATUS.PAYMENT_CALL)}>
                 Payment call
               </button>
               <button
                 className={getStatusButtonClass(ACTIVITY_STATUS.WAIT_ITEM, companionCurrentStatus, selectedMode)}
                 disabled={!COMPANION_MODE_STATUS_LINKER[selectedMode as keyof typeof COMPANION_MODE_STATUS_LINKER]?.includes(ACTIVITY_STATUS.WAIT_ITEM)} // Disable if not allowed in selected mode
-                onClick={() => handleStatusSelection('WAIT_ITEM')}>
+                onClick={() => handleStatusSelection(ACTIVITY_STATUS.WAIT_ITEM)}>
                 waiting for item
               </button>
               <button
                 className={getStatusButtonClass(ACTIVITY_STATUS.WAIT_OP, companionCurrentStatus, selectedMode)}
                 disabled={!COMPANION_MODE_STATUS_LINKER[selectedMode as keyof typeof COMPANION_MODE_STATUS_LINKER]?.includes(ACTIVITY_STATUS.WAIT_OP)} // Disable if not allowed in selected mode
-                onClick={() => handleStatusSelection('WAIT_OP')}>
+                onClick={() => handleStatusSelection(ACTIVITY_STATUS.WAIT_OP)}>
                 waiting OP
               </button>
               <button
                 className={getStatusButtonClass(ACTIVITY_STATUS.DEFAULT, companionCurrentStatus, selectedMode)}
                 disabled={!COMPANION_MODE_STATUS_LINKER[selectedMode as keyof typeof COMPANION_MODE_STATUS_LINKER]?.includes(ACTIVITY_STATUS.DEFAULT)} // Disable if not allowed in selected mode
-                onClick={() => handleStatusSelection('DEFAULT')}>
+                onClick={() => handleStatusSelection(ACTIVITY_STATUS.DEFAULT)}>
                 Default
               </button>
                {/* Add more status buttons here following the same pattern */}
