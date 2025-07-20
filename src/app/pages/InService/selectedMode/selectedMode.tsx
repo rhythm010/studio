@@ -114,12 +114,6 @@ const selectedMode: React.FC = () => {
     };
   }, [useCompanionStore.getState().getSessionId(), currentStatus]); // Re-run effect if session ID or currentStatus changes
 
-  const handleRestaurantButtonClick = async () => {
-    // Add an empty object to the CompanionMsgQueue in Firebase for the primary companion
-    await updateValueInPrimaryCompanion({ path: storePaths.CompanionMsgQueue, val: { id: '123', val: 'something' } });
-    console.log('Added empty object to CompanionMsgQueue for primary companion');
-  };
-
   return (
     <div className="flex flex-col m-4 rounded-lg h-full">
       {/* Top Section: Mode Type (40% height) */}

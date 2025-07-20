@@ -145,13 +145,13 @@ const InService: React.FC = () => {
 
       <div id="action_section" className="flex items-center justify-evenly rounded-lg m-4 p-4 h-[10%] mb-20 mt-10">
         {/* Three rounded buttons */}
-        <div id="assist_button" className="flex flex-col items-center mx-2">
+        {/* <div id="assist_button" className="flex flex-col items-center mx-2">
           <button onClick={() => openModal()} 
            className="rounded-full w-16 h-16 mb-1 shadow-md flex items-center justify-center">
             <img src="/icons/icon_light_bulb.png" alt="Assist Icon" className="w-8 h-8" />
           </button>
           <span className="text-sm font-bold mt-4">{t("Assist")}</span>
-        </div>
+        </div> */}
         {/* <div id="play_pause_button" className="flex flex-col items-center">
           <button onClick={handleStartStop} className="rounded-full w-16 h-16 mb-1 flex items-center justify-center text-2xl shadow-md">
             {isRunning ? (

@@ -3,7 +3,7 @@
 import { useEffect, useState, useRef } from 'react';
 import { Html5Qrcode } from 'html5-qrcode';
 import { useCompanionStore } from '@/store/store'; // Import the store
-import { checkIfSessionExistsAndMatch, updateStoreInFirebase, updateCompanionSessionIdInClient, updateValueInClient, storePaths } from '@/lib/utils'; // Import the utility method
+import { checkIfSessionExistsAndMatch, updateStoreInFirebase, updateCompanionSessionIdInClient, updateValueInClient, storePaths, sendMsgToClient, listenToClientMessages } from '@/lib/utils'; // Import the utility method
 import { useRouter } from 'next/navigation';
 import { useModal } from '@/components/ui/Modal';
 import CompanionActivityMode from '../CompanionActivityMode/CompanionActivityMode';
@@ -57,7 +57,8 @@ const GuardMatchingPage: React.FC = () => {
 
   const endCompanionService = () => {
     console.log("Ending companion service.");
-    router.push('/guard-feedback');
+    // router.push('/guard-feedback');
+    sendMsgToClient({id:`msg_${Date.now()}`,data:'msg coming'});
   };
 
   const onceClientSessionIdFound = (ClientSessionId: any) => {
@@ -67,6 +68,7 @@ const GuardMatchingPage: React.FC = () => {
     updateCompanionSessionIdInClient(ClientSessionId, companionSessionId, companionRole);
     updateStoreInFirebase();
     scanSuccess();
+    listenToClientMessages();
   }
 
   const QRCodeAnalyze = async (decodedData: string) => {
@@ -242,18 +244,6 @@ const GuardMatchingPage: React.FC = () => {
           <p>Activity Status Selector</p>
           {/* Status container with relative positioning for the overlay */}
           <div id="status_container" style={{ position: 'relative' }}> {/* Added relative positioning for the overlay */}
-            {/* Overlay to prevent interaction when mode is not selected */}
-            {/* Show the overlay if selectedMode is not set, hide if it is set */}
-            {!selectedMode && (
-              <div
-                style={{
-                  position: 'absolute',
-                  top: 0, left: 0, right: 0, bottom: 0,
-                  backgroundColor: 'rgba(0, 0, 0, 0.5)', // Half-transparent black
-                  pointerEvents: 'auto', // Ensure the overlay captures clicks when visible
-                  zIndex: 10, // Ensure it's above the buttons
-                }}></div>
-            )}
 
             <div className="border border-black rounded-lg flex flex-wrap p-2 mr-[1rem] ml-[1rem]">
               {/* Status buttons, conditionally apply dark green background if status matches companionCurrentStatus */}
@@ -306,7 +296,25 @@ const GuardMatchingPage: React.FC = () => {
       {/* Start/Stop Scan button */}
       {serviceContinue && <button onClick={scanning ? stopScanning : startScanning} style={{ position: 'fixed', bottom: '6rem', width: '70%', maxWidth: '500px', left: '50%', transform: 'translateX(-50%)', backgroundColor: 'rgb(31 41 55 / var(--tw-bg-opacity, 1))', color: 'white', padding: '1rem', marginLeft: 'auto', marginRight: 'auto' }}
       >{scanning ? 'Stop Scan' : 'Start Scan'}</button>}
-      {!serviceContinue && <button style={{ position: 'fixed', bottom: '6rem', width: '70%', maxWidth: '500px', left: '50%', transform: 'translateX(-50%)', backgroundColor: 'red', color: 'white', padding: '1rem', marginLeft: 'auto', marginRight: 'auto' }}
+      {!serviceContinue && <button id="end-service-button" 
+        style={
+          {
+            position: 'fixed',
+            bottom: '3rem', // Reduced bottom to 3rem
+            width: '40%', // Reduced width to 40%
+            left: '50%',
+            transform: 'translateX(-50%)',
+            backgroundColor: 'red',
+            color: 'white',
+            padding: '0.5rem', // Reduced padding for smaller height
+            borderRadius: '9999px', // Added rounded corners (full rounded)
+            fontSize: '0.9rem', // Reduced font size
+            marginLeft: 'auto',
+            marginRight: 'auto',
+            // Adjust height as needed, padding contributes to height
+            height: 'auto', // Set height to auto or a specific smaller value if preferred
+          }
+        }
         onClick={endCompanionService}>End Service</button>}
     </div>
   );

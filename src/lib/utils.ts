@@ -1,8 +1,9 @@
 import { clsx, type ClassValue } from "clsx"
 import { database } from "@/lib/firebase";
 import { useCompanionStore } from '@/store/store';
-import { ref, update, remove, get, child, DatabaseReference } from "firebase/database";
+import { ref, update, remove, get, child, DatabaseReference, onValue, off } from "firebase/database";
 import { twMerge } from "tailwind-merge"
+import { COMPANION_ROLES } from "./constants";
 
 export function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs))
@@ -44,6 +45,8 @@ export const storePaths = {
     // Assuming clientMsg is an array of objects, individual message paths would be dynamic like `companionRestaurantManage/clientMsg/${index}`
   },
   ClientActivityMonitor: {
+ sendClientMsgQueue: "ClientActivityMonitor/sendClientMsgQueue",
+ recieveClientMsgQueue: "ClientActivityMonitor/recieveClientMsgQueue",
     path: "ClientActivityMonitor",
     modeTitle: "ClientActivityMonitor/modeTitle",
     currentMode: "ClientActivityMonitor/currentMode",
@@ -71,6 +74,8 @@ export const storePaths = {
   },
   CompanionAcvitiyMonitor: {
     path: "CompanionAcvitiyMonitor",
+ sendCompanionMsgQueue: "CompanionAcvitiyMonitor/sendCompanionMsgQueue",
+ recieveCompanionMsgQueue: "CompanionAcvitiyMonitor/recieveCompanionMsgQueue",
     selectedMode: "CompanionAcvitiyMonitor/selectedMode",
     companionCurrentStatus: "CompanionAcvitiyMonitor/companionCurrentStatus",
     PAYMENT_CALL: {
@@ -207,10 +212,22 @@ export async function updateValueInClient(updateObj: { path: string, val: any })
   const clientSessionId = useCompanionStore.getState().getClientSessionId();
   try {
     // Construct the reference to the specific path within the client's object
-    const pathRef = ref(database, `storeObjects/${clientSessionId}`);
-    // Update the value at the specified path
-    console.log('path to be updated', updateObj.path)
-    await update(pathRef, { [updateObj.path]: updateObj.val });
+    const targetRef = ref(database, `storeObjects/${clientSessionId}/${updateObj.path}`);
+    console.log('path to be updated', updateObj.path);
+
+    // Read the existing data at the target path
+    const snapshot = await get(targetRef);
+    const existingData = snapshot.val();
+
+    // Check if the existing data is an array
+    if (Array.isArray(existingData)) {
+      // If it's an array, append the new value
+      const updatedArray = [...existingData, updateObj.val];
+      await update(ref(database, `storeObjects/${clientSessionId}`), { [updateObj.path]: updatedArray });
+    } else {
+      // If it's not an array, perform a regular update
+      await update(ref(database, `storeObjects/${clientSessionId}`), { [updateObj.path]: updateObj.val });
+    }
     console.log(`Value updated successfully for client ${clientSessionId} at path ${updateObj.path}`);
    } catch (error) {
     console.error(`Error updating value for client ${clientSessionId} at path ${updateObj.path}:`, error);
@@ -218,44 +235,151 @@ export async function updateValueInClient(updateObj: { path: string, val: any })
    }
 }
 
-export async function updateValueInPrimaryCompanion(updateObj: { path: string, val: any }) {
-  const primaryCompanionSessionId = useCompanionStore.getState().clientCompanionDetails.primaryCompanionSessionId;
-  if (!primaryCompanionSessionId) {
+export async function updateValueInCompanion(updateObj: { path: string, val: any }, role: string) {
+  const companionSessionId = role === COMPANION_ROLES.PRIMARY ? useCompanionStore.getState().clientCompanionDetails.primaryCompanionSessionId:
+                                  useCompanionStore.getState().clientCompanionDetails.secondaryCompanionSessionId;
+  if (!companionSessionId) {
     console.error("Primary companion session ID is not available. Cannot update.");
     return;
   }
   try {
-    // Construct the reference to the specific path within the primary companion's object
-    const pathRef = ref(database, `storeObjects/${primaryCompanionSessionId}`);
-    // Update the value at the specified path
-    console.log('path to be updated in primary companion', updateObj.path);
-    await update(pathRef, { [updateObj.path]: updateObj.val });
-    console.log(`Value updated successfully for primary companion ${primaryCompanionSessionId} at path ${updateObj.path}`);
+    const targetRef = ref(database, `storeObjects/${companionSessionId}/${updateObj.path}`);
+    console.log('path to be updated', updateObj.path);
+
+    // Read the existing data at the target path
+    const snapshot = await get(targetRef);
+    const existingData = snapshot.val();
+
+    // Check if the existing data is an array
+    if (Array.isArray(existingData)) {
+      // If it's an array, append the new value
+      const updatedArray = [...existingData, updateObj.val];
+      await update(ref(database, `storeObjects/${companionSessionId}`), { [updateObj.path]: updatedArray });
+    } else {
+      // If it's not an array, perform a regular update
+      await update(ref(database, `storeObjects/${companionSessionId}`), { [updateObj.path]: updateObj.val });
+    }
+    console.log(`Value updated successfully for client ${companionSessionId} at path ${updateObj.path}`);
   } catch (error) {
-    console.error(`Error updating value for primary companion ${primaryCompanionSessionId} at path ${updateObj.path}:`, error);
+    console.error(`Error updating value for primary companion ${companionSessionId} at path ${updateObj.path}:`, error);
     // Optionally re-throw the error or handle it based on your needs
   }
 }
 
 
-export async function updateValueInSecondaryCompanion(updateObj: { path: string, val: any }) {
-  const secondaryClientSessionId = useCompanionStore.getState().clientCompanionDetails.secondaryCompanionSessionId;
-  if (!secondaryClientSessionId) {
-    console.error("Secondary client session ID is not available. Cannot update.");
+// export async function updateValueInSecondaryCompanion(updateObj: { path: string, val: any }) {
+//   const secondaryClientSessionId = useCompanionStore.getState().clientCompanionDetails.secondaryCompanionSessionId;
+//   if (!secondaryClientSessionId) {
+//     console.error("Secondary client session ID is not available. Cannot update.");
+//     return;
+//   }
+//   try {
+//     // Construct the reference to the specific path within the secondary client's object
+//     const pathRef = ref(database, `storeObjects/${secondaryClientSessionId}`);
+//     // Update the value at the specified path
+//     console.log('path to be updated in secondary client', updateObj.path)
+//     await update(pathRef, { [updateObj.path]: updateObj.val });
+//     console.log(`Value updated successfully for secondary client ${secondaryClientSessionId} at path ${updateObj.path}`);
+//    } catch (error) {
+//     console.error(`Error updating value for secondary client ${secondaryClientSessionId} at path ${updateObj.path}:`, error);
+//     // Optionally re-throw the error or handle it based on your needs
+//    }
+// }
+
+
+// Async function to send messages to the client
+
+function formMessageObj(messageType: string, messageData: object, messageSender:string) {
+  const msgObj = {
+    id:`${messageSender}_${messageType}`,
+    type:messageType,
+    data:messageData,
+    timestamp:Date.now(),
+    processed: false,
+  };
+
+  return msgObj;
+}
+
+export async function sendMsgToClient(messageType: string, messageData: object) {
+  const messageObj = formMessageObj(messageType, messageData, 'CLIENT');
+  const clientSessionId = useCompanionStore.getState().getClientSessionId();
+  if (!clientSessionId) {
+    console.error("Client session ID is not available. Cannot send message.");
     return;
   }
   try {
-    // Construct the reference to the specific path within the secondary client's object
-    const pathRef = ref(database, `storeObjects/${secondaryClientSessionId}`);
-    // Update the value at the specified path
-    console.log('path to be updated in secondary client', updateObj.path)
-    await update(pathRef, { [updateObj.path]: updateObj.val });
-    console.log(`Value updated successfully for secondary client ${secondaryClientSessionId} at path ${updateObj.path}`);
-   } catch (error) {
-    console.error(`Error updating value for secondary client ${secondaryClientSessionId} at path ${updateObj.path}:`, error);
-    // Optionally re-throw the error or handle it based on your needs
-   }
+    console.log(`Sending message to client ${clientSessionId}:`, messageObj);
+    updateValueInClient({ path:storePaths.ClientActivityMonitor.recieveClientMsgQueue , val: messageObj});
+  } catch (error) {
+    console.error(`Error sending message to client ${clientSessionId}:`, error);
+  }
 }
 
 
+export async function sendMsgToCompanion(messageType: string, messageData: object, companionRole:string) {
+  const messageObj = formMessageObj(messageType, messageData, 'COMPANION');
+  const companionSessionId = companionRole === COMPANION_ROLES.PRIMARY ? useCompanionStore.getState().getPrimaryCompanionSessionId():
+                          useCompanionStore.getState().getSecondaryCompanionSessionId() ;
+  if (!companionSessionId) {
+    console.error("Client session ID is not available. Cannot send message.");
+    return;
+  }
+  try {
+    console.log(`Sending message to client ${companionSessionId}:`, messageObj);
+    updateValueInCompanion({ path:storePaths.CompanionAcvitiyMonitor.recieveCompanionMsgQueue , val: messageObj}, companionRole);
+  } catch (error) {
+    console.error(`Error sending message to client ${companionSessionId}:`, error);
+  }
+}
 
+function actionOnClientMessage(clientActionMessage: any) {
+  console.log('mesasge from client');
+  console.log(clientActionMessage);
+}
+
+export async function listenToClientMessages() {
+  // Get the client session ID from the store
+  const companionSessionId = useCompanionStore.getState().getSessionId();
+
+  if (!companionSessionId) {
+    console.error("Client session ID is not available. Cannot listen for messages.");
+    // Return a no-op unsubscribe function
+ return () => {};
+  }
+
+  // Construct the database reference to the recieveClientMsgQueue for this client session
+  const messagesRef = ref(database, `storeObjects/${companionSessionId}/${storePaths.CompanionAcvitiyMonitor.recieveCompanionMsgQueue}`);
+
+  // Set up the listener
+  onValue(messagesRef, (snapshot) => {
+    const messages = snapshot.val();
+    actionOnClientMessage(snapshot.val());
+    // You can add logic here to process the received messages, e.g., update the store
+  });
+}
+
+function actionOnCompanionMessage(companionActionMsg: any) {
+  console.log('mesasge from companion');
+  console.log(companionActionMsg);
+}
+
+export async function listenToPrimaryCompanionMessages() {
+  // Get the client session ID from the store
+  const clientSessionId = useCompanionStore.getState().getSessionId();
+
+  if (!clientSessionId) {
+    console.error("Client session ID is not available. Cannot listen for messages.");
+    // Return a no-op unsubscribe function
+ return () => {};
+  }
+
+  // Construct the database reference to the recieveClientMsgQueue for this client session
+  const messagesRef = ref(database, `storeObjects/${clientSessionId}/${storePaths.ClientActivityMonitor.recieveClientMsgQueue}`);
+
+  // Set up the listener
+  onValue(messagesRef, (snapshot) => {
+    actionOnCompanionMessage(snapshot.val());
+    // You can add logic here to process the received messages, e.g., update the store
+  });
+}

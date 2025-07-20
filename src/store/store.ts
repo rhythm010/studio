@@ -41,6 +41,8 @@ interface CompanionRestaurantManage {
 }
 
 interface CompanionAcvitiyMonitor {
+  sendCompanionMsgQueue: object[]; // Queue for messages to be sent by the companion
+  recieveCompanionMsgQueue: object[]; // Queue for messages received by the companion
   selectedMode: string;
   companionCurrentStatus: string;
   QUEUE: {
@@ -69,6 +71,8 @@ interface CompanionAcvitiyMonitor {
 }
 
 interface ClientActivityMonitor {
+  sendClientMsgQueue: object[]; // Queue for messages to be sent by the client
+  recieveClientMsgQueue: object[]; // Queue for messages received by the client
   modeTitle: string;
   currentMode: string;
   currentStatus: string;
@@ -208,6 +212,8 @@ const useCompanionStore = create<CompanionStore>((set) => ({
     }],
   },
   CompanionAcvitiyMonitor: { // Initialize the new property
+    sendCompanionMsgQueue: [{id:1,data:'initial_data'}],
+    recieveCompanionMsgQueue: [{id:1,data:'initial_data'}],
     selectedMode: '',
     companionCurrentStatus: '',
     QUEUE: {
@@ -231,6 +237,8 @@ const useCompanionStore = create<CompanionStore>((set) => ({
     },
   },
   ClientActivityMonitor: { // Initialize the new property
+    sendClientMsgQueue: [{id:1,data:'initial_data'}],
+    recieveClientMsgQueue: [{id:1,data:'initial_data'}],
     modeTitle: "",
     currentStatus: ACTIVITY_STATUS.DEFAULT,
     currentMode: ACTIVITY_MODES.WITH_YOU,
@@ -348,7 +356,44 @@ const useCompanionStore = create<CompanionStore>((set) => ({
       },
     })),
 
+ setProfileDetails: (details: Partial<ProfileDetails>) =>
+ set((state) => ({
+ profileDetails: { ...state.profileDetails, ...details },
+    })),
+
   getClientActivityMonitor: () => useCompanionStore.getState().ClientActivityMonitor,
+
+    // Getters for message queues
+    getSendCompanionMsgQueue: () => useCompanionStore.getState().CompanionAcvitiyMonitor.sendCompanionMsgQueue,
+    getRecieveCompanionMsgQueue: () => useCompanionStore.getState().CompanionAcvitiyMonitor.recieveCompanionMsgQueue,
+    // Setters for message queues - adds an object to the respective array
+    setSendCompanionMsgQueue: (message: object) =>
+      set((state) => ({
+        CompanionAcvitiyMonitor: {
+          ...state.CompanionAcvitiyMonitor,
+          sendCompanionMsgQueue: [...state.CompanionAcvitiyMonitor.sendCompanionMsgQueue, message],
+        },
+      })),
+    setRecieveCompanionMsgQueue: (message: object) =>
+      set((state) => ({
+        CompanionAcvitiyMonitor: { ...state.CompanionAcvitiyMonitor, recieveCompanionMsgQueue: [...state.CompanionAcvitiyMonitor.recieveCompanionMsgQueue, message] },
+      })),
+
+      getSendClientMsgQueue: () => useCompanionStore.getState().ClientActivityMonitor.sendClientMsgQueue,
+      getRecieveClientMsgQueue: () => useCompanionStore.getState().ClientActivityMonitor.recieveClientMsgQueue,
+      // Setters for client message queues - adds an object to the respective array
+     setSendClientMsgQueue: (message: object) =>
+     set((state) => ({
+     ClientActivityMonitor: {
+     ...state.ClientActivityMonitor,
+     sendClientMsgQueue: [...state.ClientActivityMonitor.sendClientMsgQueue, message],
+          },
+        })),
+     setRecieveClientMsgQueue: (message: object) =>
+     set((state) => ({
+     ClientActivityMonitor: { ...state.ClientActivityMonitor, recieveClientMsgQueue: [...state.ClientActivityMonitor.recieveClientMsgQueue, message] },
+        })),
+     
 
   reset: () =>
     set({

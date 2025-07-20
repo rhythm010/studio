@@ -1,6 +1,6 @@
 'use client'
 
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { Button } from '@/components/ui/button';
 import { Icons } from '@/components/icons';
 import { Tooltip, TooltipContent, TooltipTrigger } from '@/components/ui/tooltip';
@@ -10,6 +10,7 @@ import { useModal } from '@/components/ui/Modal';
 import { useRouter } from 'next/navigation'
 import { useCompanionStore } from '@/store/store';
 import React from 'react';
+import { listenToClientMessages } from '@/lib/utils';
 
 interface HeaderProps {
   showBack?: boolean;
@@ -41,6 +42,11 @@ const Header: React.FC<HeaderProps> = ({ showBack = true }) => {
       document.removeEventListener('mousedown', handleOutsideClick);
     };
   }, [isMenuOpen]); // Depend on isMenuOpen state
+
+  useEffect(() => {
+    // listenToClientMessages();
+  }, []);
+
   const { i18n, t } = useTranslation('common');
 
   const store = useCompanionStore();
