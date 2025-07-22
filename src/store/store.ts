@@ -214,8 +214,8 @@ const useCompanionStore = create<CompanionStore>((set) => ({
   CompanionAcvitiyMonitor: { // Initialize the new property
     sendCompanionMsgQueue: [{id:1,data:'initial_data'}],
     recieveCompanionMsgQueue: [{id:1,data:'initial_data'}],
-    selectedMode: '',
-    companionCurrentStatus: '',
+    selectedMode: ACTIVITY_MODES.WITH_YOU,
+    companionCurrentStatus: ACTIVITY_STATUS.DEFAULT,
     QUEUE: {
       active: false,
       currentPosition: 0,

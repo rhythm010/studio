@@ -9,17 +9,21 @@ import { useModal } from '@/components/ui/Modal';
 import CompanionActivityMode from '../CompanionActivityMode/CompanionActivityMode';
 import ActivityStatusQueue from '../../InService/ActivityStatusQueue/ActivityStatusQueue';
 import { ACTIVITY_MODES, ACTIVITY_STATUS, COMPANION_MODE_STATUS_LINKER } from '@/lib/constants';
+import StopWatch from '../../InService/StopWatch';
+import ConfirmationModalContent from '@/components/ConfirmationModalContent';
+import { vocab } from '@/lib/vocab_constants';
 
 const GuardMatchingPage: React.FC = () => {
   // Reusable classes for the mode selection buttons, similar to the 'Start Scan' button style
-  const selectedButtonClasses = "border border-black w-20 h-10 m-1 flex items-center justify-center bg-green-600 text-white text-sm"; // Dark green background for selected button
-  const disabledButtonClasses = "border border-black w-20 h-10 m-1 flex items-center justify-center bg-gray-400 text-gray-700 text-sm"; // Grey background for disabled buttons
-  const buttonClasses = "border border-black w-20 h-10 m-1 flex items-center justify-center bg-gray-800 text-white text-sm";
+  const selectedButtonClasses = "border w-20 h-10 m-1 flex items-center justify-center bg-green-600 text-white text-sm rounded-md"; // Dark green background for selected button
+  const disabledButtonClasses = "w-20 h-10 m-1 flex items-center justify-center bg-gray-400 text-gray-700 text-sm rounded-md"; // Grey background for disabled buttons
+  const buttonClasses = "w-20 h-10 m-1 flex items-center justify-center bg-gray-800 text-white text-sm rounded-md";
   const qrCodeRef = useRef<string>('reader');
   const { getCompanionProfileDetails } = useCompanionStore();
   const html5Qrcode = useRef<Html5Qrcode | null>(null);
   const [scanning, setScanning] = useState(false);
   const [serviceContinue, setserviceContinue] = useState(true);
+  const { openModal, closeModal } = useModal();
   const [qrData, setQrData] = useState('');
   const setMatchingDone = useCompanionStore((state) => state.setMatchingDone); // Get the setter from the store
   const setClientSessionId = useCompanionStore((state) => state.setClientSessionId); // Get the setter for clientSessionId
@@ -28,7 +32,7 @@ const GuardMatchingPage: React.FC = () => {
   } = useCompanionStore();
   const [manualSessionId, setManualSessionId] = useState(''); // State for manual session ID input
   const router = useRouter();
-  const companionRole = getCompanionProfileDetails().companionRole; // Get the companion role
+  const companionRole = getCompanionProfileDetails().companionRole || 'Primary'; // Get the companion role
   // Get the selected mode from the store for conditional styling
   // Get the selected mode and current status from the store for conditional styling
   const { selectedMode, companionCurrentStatus } = useCompanionStore((state) => state.CompanionAcvitiyMonitor);
@@ -57,8 +61,8 @@ const GuardMatchingPage: React.FC = () => {
 
   const endCompanionService = () => {
     console.log("Ending companion service.");
-    // router.push('/guard-feedback');
-    sendMsgToClient({id:`msg_${Date.now()}`,data:'msg coming'});
+    router.push('/guard-feedback');
+    // sendMsgToClient({id:`msg_${Date.now()}`,data:'msg coming'});
   };
 
   const onceClientSessionIdFound = (ClientSessionId: any) => {
@@ -134,20 +138,7 @@ const GuardMatchingPage: React.FC = () => {
     setserviceContinue(false);
   };
 
-  const activateActivityMode = (mode: 'QUEUE' | 'CAFE') => {
-    // Update the selectedMode within clientActivityMonitor.companionFlow in the store
-    useCompanionStore.getState().setCompanionAcvitiyMonitor({
-      selectedMode: mode, // Assuming selectedMode is a direct property of CompanionAcvitiyMonitor
-    });
-
-    updateValueInClient({
-      path: storePaths.ClientActivityMonitor.currentMode,
-      val: mode,
-    });
-  };  
-
-  // Common click handler for mode selection buttons
-  const handleModeSelection = (mode: string) => {
+  const modeSelectionConfirmation = (mode: string) => {
     console.log(`Mode selected: ${mode}`);
     // Update the selectedMode within clientActivityMonitor.companionFlow in the store
     useCompanionStore.getState().setCompanionAcvitiyMonitor({
@@ -158,9 +149,27 @@ const GuardMatchingPage: React.FC = () => {
       path: storePaths.ClientActivityMonitor.currentMode,
       val: mode,
     });
+
+    closeModal();
+  }
+
+  // Common click handler for mode selection buttons
+  const handleModeSelection = (mode: string) => {
+    openModal(
+      <ConfirmationModalContent
+        text={vocab.GuardMatchingPage.modeChangeModal[mode.toUpperCase()]} // Customize the confirmation text
+        onConfirm={() => {
+          modeSelectionConfirmation(mode);
+        }}
+        onCancel={() => {
+          console.log(`User cancelled mode selection for ${mode}`);
+          closeModal(); // Close the modal on cancellation
+        }}
+      />
+    );
   };
 
-  const handleStatusSelection = (status: string) => {
+  const statusSelectionConfirmation = (status: string) => {
     // Update the selectedMode within clientActivityMonitor.companionFlow in the store
     useCompanionStore.getState().setCompanionAcvitiyMonitor({
       companionCurrentStatus: status, // Assuming selectedMode is a direct property of CompanionAcvitiyMonitor
@@ -170,6 +179,24 @@ const GuardMatchingPage: React.FC = () => {
       path: storePaths.ClientActivityMonitor.currentStatus,
       val: status,
     });
+
+    closeModal();
+
+  }
+
+  const handleStatusSelection = (status: string) => {
+    openModal(
+      <ConfirmationModalContent
+        text={vocab.GuardMatchingPage.statusChangeModal[status.toUpperCase()]} // Customize the confirmation text
+        onConfirm={() => {
+          statusSelectionConfirmation(status);
+        }}
+        onCancel={() => {
+          console.log(`User cancelled status selection for ${status}`);
+          closeModal(); // Close the modal on cancellation
+        }}
+      />
+    );
   };
 
   // Helper function to determine button class based on selected mode/status
@@ -180,12 +207,40 @@ const GuardMatchingPage: React.FC = () => {
 
   return (
     // Main container with flex column layout
-    <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', width: '100%' }}>
-      {companionRole && <p style={{ width: '16rem', textAlign: 'center', backgroundColor: 'rgb(31 41 55 / var(--tw-bg-opacity, 1))', color: 'white', padding: '0.5rem', fontSize: '1.2rem' }}>Role: {companionRole} Companion</p>}
+    <div id="guard-matching-main-container"
+      style={{
+        display: 'flex',
+        flexDirection: 'column',
+        alignItems: 'center',
+        width: '100%'
+      }}>
 
-      {/* Div for Activate Queue Mode button */}
+      {!serviceContinue && selectedMode && (
+        <div style={{ marginBottom: '1rem', fontWeight: 'bold' }}>
+          Selected Mode: {selectedMode}
+        </div>
+      )}
 
-      {/* Input for manual session ID */}
+      {!serviceContinue && companionCurrentStatus && (
+        <div style={{ marginBottom: '1rem', fontWeight: 'bold' }}>
+          Selected Status: {companionCurrentStatus}
+        </div>
+      )}
+
+      {!serviceContinue && companionRole &&
+        <p id="companion_role_title" style={
+          {
+            width: '10rem',
+            textAlign: 'center',
+            backgroundColor: 'rgb(31 41 55 / var(--tw-bg-opacity, 1))',
+            color: 'white',
+            padding: '0.5rem',
+            fontSize: '1rem',
+            borderRadius: '2rem',
+          }}
+        >Your Role: {companionRole}
+        </p>}
+
       {isDevMode && <div style={{ display: 'flex', alignItems: 'center', marginTop: '20px' }}>
         <input
           type="text"
@@ -204,21 +259,21 @@ const GuardMatchingPage: React.FC = () => {
         >Submit Session ID</button>
       </div>}
 
-      {!serviceContinue &&
+      {!serviceContinue && <div>
+
+        <div id="stopwatch_section" className="h-[40%] flex flex-col items-center justify-center border-gray-700 mt-4">
+          <StopWatch
+            isRunning={true}
+            startStop={() => { }}
+            elapsedTime={2}
+            setElapsedTime={() => { }}
+          />
+
+        </div>
         <div id="action_buttons"
           style={{ marginTop: '20px', padding: '10px' }}>
-
-          <div id="status_data_container">
-            {/* Container for displaying status data (e.g., queue position, time) */}
-            {companionActivityStatus === ACTIVITY_STATUS.QUEUE && <CompanionActivityMode/>}
-
-          </div>
-
-
-          <div id="modes_container">
-            <p>Activity Type Selector</p>
-
-            <div className="border border-black rounded-lg flex flex-wrap p-2 mr-[1rem] ml-[1rem]">
+          <div id="modes_container" className="rounded-xl shadow-lg">
+            <div className="border rounded-lg flex flex-wrap p-2 mb-2">
               {/* Button for Queue mode, conditionally apply dark green background if selected */}
               <button className={selectedMode === ACTIVITY_MODES.QUEUE ? selectedButtonClasses : buttonClasses}
                 onClick={() => handleModeSelection(ACTIVITY_MODES.QUEUE)}>
@@ -240,12 +295,18 @@ const GuardMatchingPage: React.FC = () => {
             </div>
 
           </div>
+          <div id="mode_and_status_info" >
+            {companionActivityStatus === ACTIVITY_STATUS.QUEUE && <CompanionActivityMode />}
+            {companionActivityStatus !== ACTIVITY_STATUS.QUEUE &&
+              <div id="status_info_helper">
 
-          <p>Activity Status Selector</p>
+              </div>
+            }
+          </div>
           {/* Status container with relative positioning for the overlay */}
-          <div id="status_container" style={{ position: 'relative' }}> {/* Added relative positioning for the overlay */}
+          <div id="status_container" className="rounded-xl shadow-lg" style={{ position: 'relative' }}> {/* Added relative positioning for the overlay */}
 
-            <div className="border border-black rounded-lg flex flex-wrap p-2 mr-[1rem] ml-[1rem]">
+            <div className="border rounded-lg flex flex-wrap p-2">
               {/* Status buttons, conditionally apply dark green background if status matches companionCurrentStatus */}
               <button
                 className={getStatusButtonClass(ACTIVITY_STATUS.QUEUE, companionCurrentStatus, selectedMode)}
@@ -258,7 +319,7 @@ const GuardMatchingPage: React.FC = () => {
                 className={getStatusButtonClass(ACTIVITY_STATUS.PAYMENT_CALL, companionCurrentStatus, selectedMode)}
                 disabled={!COMPANION_MODE_STATUS_LINKER[selectedMode as keyof typeof COMPANION_MODE_STATUS_LINKER]?.includes(ACTIVITY_STATUS.PAYMENT_CALL)} // Disable if not allowed in selected mode
                 onClick={() => handleStatusSelection(ACTIVITY_STATUS.PAYMENT_CALL)}>
-                Payment call
+                Payment
               </button>
               <button
                 className={getStatusButtonClass(ACTIVITY_STATUS.WAIT_ITEM, companionCurrentStatus, selectedMode)}
@@ -278,13 +339,13 @@ const GuardMatchingPage: React.FC = () => {
                 onClick={() => handleStatusSelection(ACTIVITY_STATUS.DEFAULT)}>
                 Default
               </button>
-               {/* Add more status buttons here following the same pattern */}
+              {/* Add more status buttons here following the same pattern */}
 
             </div>
 
           </div>
-
         </div>
+      </div>
 
       }
 
@@ -293,10 +354,12 @@ const GuardMatchingPage: React.FC = () => {
         <div id={qrCodeRef.current} style={{ width: '100%', maxWidth: '500px' }}></div>
         {qrData && <p>Scanned Data: {qrData}</p>}
       </div>
-      {/* Start/Stop Scan button */}
+
+
       {serviceContinue && <button onClick={scanning ? stopScanning : startScanning} style={{ position: 'fixed', bottom: '6rem', width: '70%', maxWidth: '500px', left: '50%', transform: 'translateX(-50%)', backgroundColor: 'rgb(31 41 55 / var(--tw-bg-opacity, 1))', color: 'white', padding: '1rem', marginLeft: 'auto', marginRight: 'auto' }}
       >{scanning ? 'Stop Scan' : 'Start Scan'}</button>}
-      {!serviceContinue && <button id="end-service-button" 
+
+      {!serviceContinue && <button id="end-service-button"
         style={
           {
             position: 'fixed',

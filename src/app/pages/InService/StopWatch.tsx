@@ -8,10 +8,10 @@ interface StopWatchProps {
   elapsedTime: number;
     isRunning: boolean;
     startStop: () => void;
-  setElapsedTime:(time:number) => void
+    setElapsedTime:(time:number) => void
 }
 
-const StopWatch: React.FC<StopWatchProps> = ({ isRunning, startStop, elapsedTime ,setElapsedTime }) => {
+const StopWatch: React.FC<StopWatchProps> = ({ isRunning, startStop , elapsedTime = 1 ,setElapsedTime }) => {
 
   useEffect(() => {
     let intervalId: NodeJS.Timeout | null = null;

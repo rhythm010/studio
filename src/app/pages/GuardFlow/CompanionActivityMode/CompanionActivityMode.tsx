@@ -45,60 +45,28 @@ const CompanionActivityMode: React.FC = () => {
   };
 
   return (
-    <div className="flex flex-col items-center justify-center p-4 border border-black rounded-lg">
-      {companionFlow?.selectedMode && <div style={{ marginTop: '10px', fontSize: '1rem' }}>
-        Current Active Mode: {companionFlow?.selectedMode}
-      </div>}
-      {/* <div id="activity_status_buttons" className="grid grid-cols-2 gap-8 items-center">
-        
-        {
-          (companionFlow?.selectedMode === ACTIVITY_MODES.CAFE ||
-            companionFlow?.selectedMode === ACTIVITY_MODES.QUEUE
-          ) && <div className="flex items-center">
-           
-            <button className={buttonStyle}
-              onClick={() => setCompanionActivityStatus(ACTIVITY_STATUS.QUEUE)}>
-              Get into Q
-            </button>
-            
-          </div>}
-        {companionFlow?.selectedMode === ACTIVITY_MODES.CAFE && <button className={buttonStyle}
-          onClick={() => setCompanionActivityStatus(ACTIVITY_STATUS.PAYMENT_CALL)}>
-          Payment Call
-        </button>}
-
-        <div className="flex items-center">
-          {companionFlow?.selectedMode === ACTIVITY_MODES.CAFE && <button className={buttonStyle}
-            onClick={() => setCompanionActivityStatus(ACTIVITY_STATUS.WAIT_ITEM)}>
-            item waiting
-          </button>}
-          {companionFlow?.selectedMode === ACTIVITY_MODES.CAFE && <button className={buttonStyle}
-            onClick={() => setCompanionActivityStatus(ACTIVITY_STATUS.WAIT_OP)}>
-            waiting OP
-          </button>}
-          <div className="arrow left"></div>
-        </div>
-      </div> */}
+    <div className="flex flex-col items-center justify-center rounded-lg mb-2">
 
       <div id="activity_status_container">
-        {companionFlow.companionCurrentStatus}
         {companionFlow.companionCurrentStatus === ACTIVITY_STATUS.QUEUE && (<div id="Queue_mode"
-        style={{ border: '1px solid black', marginTop: '20px',
-        width: '70%', maxWidth: '500px', textAlign: 'center', paddingBottom: '5px' }}>
-        <div style={{ borderBottom: '1px solid black', paddingBottom: '5px', padding: '10px' }}>
-          <h3 style={{ fontSize: '1.5rem' }}>Queue Mode Active</h3>
+        style={{ border: '1px solid grey',
+        width: '100%', maxWidth: '500px', textAlign: 'center', paddingBottom: '5px', borderRadius: '14px' }}>
+        <div style={{ borderBottom: '1px solid black', padding: '7px' }}>
+          <div style={{ fontSize: '1rem' }}>Enter your position</div>
         </div>
         <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', width: '100%' }}>
           <button style={{ fontSize: '2rem', padding: '10px 20px' }} onClick={() => updateQueueValue(-1)}>-</button>
           <div style={{ fontSize: '3rem', fontWeight: 'bold' }}>{companionFlow.QUEUE.currentPosition}</div>
           <button style={{ fontSize: '2rem', padding: '10px 20px' }} onClick={() => updateQueueValue(1)}>+</button>
         </div>
-        <button
+        <button id="queue_position_status_btn"
           style={{
             backgroundColor: 'rgb(31 41 55 / var(--tw-bg-opacity, 1))',
             padding: '0.5rem',
-            marginTop: '10px',
+            marginTop: '2px',
             color: 'white',
+            borderRadius: '19px',
+            fontSize:'0.8rem',
           }}
           onClick={endQueue} // Call the new endQueue function
         >
