@@ -1,3 +1,6 @@
+
+"use client";
+
 import React, { useEffect, useState } from 'react';
 import { useCompanionStore } from '@/store/store';
 import { database } from '@/lib/firebase'; // Assuming you have your firebase instance exported as 'database'
@@ -7,25 +10,31 @@ import { cn } from '@/lib/utils'; // Assuming cn is in utils.ts
 import { ACTIVITY_STATUS, ACTIVITY_MODES } from '@/lib/constants';
 
 const selectedMode: React.FC = () => {
-  // Add a keyframes rule for the blinking animation
-  const blinkingAnimation = `
-    @keyframes blink {
-      0%, 100% { opacity: 1; }
-      50% { opacity: 0; }
-    }
-  `;
-
-  // Add a style tag with the animation
-  const animationStyle = document.createElement('style');
-  animationStyle.innerHTML = blinkingAnimation;
-  document.head.appendChild(animationStyle);
   // Define local states
-  // Click handler for the Restaurant Mode button
-
   const [currentMode, setCurrentMode] = useState<string>('');
   const [currentStatus, setCurrentStatus] = useState<string>('');
   const [currentStatusValues, setCurrentStatusValues] = useState<any | {}>({});
   const clientActivityMonitor = useCompanionStore((state) => state.ClientActivityMonitor);
+
+  useEffect(() => {
+    // Add a keyframes rule for the blinking animation
+    const blinkingAnimation = `
+      @keyframes blink {
+        0%, 100% { opacity: 1; }
+        50% { opacity: 0; }
+      }
+    `;
+
+    // Add a style tag with the animation
+    const animationStyle = document.createElement('style');
+    animationStyle.innerHTML = blinkingAnimation;
+    document.head.appendChild(animationStyle);
+
+    // Cleanup function to remove the style tag when the component unmounts
+    return () => {
+      document.head.removeChild(animationStyle);
+    };
+  }, []); // Empty dependency array ensures this effect runs only once on the client-side
 
   const syncLocalModeWithFirebase = () => {
     useCompanionStore.getState().setClientActivityMonitor({
@@ -213,7 +222,7 @@ const selectedMode: React.FC = () => {
         </div> */}
         
         { (currentStatusValues?.actionButtons?.cancel ||
-          clientActivityMonitor.statusInfo[clientActivityMonitor.currentStatus]?.actionButtons?.cancel) &&
+          clientActivityMonitor.statusInfo[clientActivityMonitor.currentStatus as keyof typeof clientActivityMonitor.statusInfo]?.actionButtons?.cancel) &&
           <div id="cancel_status_button" className="flex flex-col items-center mx-2">
           <button className="rounded-full w-12 h-12 mb-1 shadow-md flex items-center justify-center">
             <img src="/icons/cancel_mode.png" alt="Add Item Icon" className="w-6 h-6 object-contain" />
@@ -226,7 +235,7 @@ const selectedMode: React.FC = () => {
         
         
        { (currentStatusValues?.actionButtons?.complete ||
-          clientActivityMonitor.statusInfo[clientActivityMonitor.currentStatus]?.actionButtons?.complete) && 
+          clientActivityMonitor.statusInfo[clientActivityMonitor.currentStatus as keyof typeof clientActivityMonitor.statusInfo]?.actionButtons?.complete) && 
         <div id="end_mode_button" className="flex flex-col items-center mx-2">
           
           <button className="rounded-full w-12 h-12 mb-1 shadow-md flex items-center justify-center">
