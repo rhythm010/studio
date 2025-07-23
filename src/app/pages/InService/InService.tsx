@@ -8,7 +8,7 @@ import { useTranslation } from 'react-i18next';
 import { useModal } from '../../../components/ui/Modal'; // Assuming useModal is exported from Modal.tsx
 import ConfirmationModalContent from '../../../components/ConfirmationModalContent'; // Import the new component
 import { useCompanionStore } from '../../../store/store';
-import { getStoreRef, updateStoreInFirebase } from '../../../lib/utils';
+import { getStoreRef, updateStoreInFirebase, sendMsgToClient, sendMsgToCompanion } from '../../../lib/utils';
 import { useRouter } from 'next/navigation'
 import { database } from '@/lib/firebase';
 
@@ -52,6 +52,20 @@ const InService: React.FC = () => {
       
     }); // Update the local store
   }
+  const handleCancelInService = async () => {
+    // Create a random message
+    const randomMessage = {
+      id: Math.random().toString(36).substring(2, 15),
+      type: "text",
+      content: "This is a test message from InService page",
+      timestamp: Date.now(),
+    };
+
+    // Send the message to the client
+    // sendMsgToClient("test", randomMessage);
+    sendMsgToCompanion(randomMessage.type, {content: 'a value'}, 'PRIMARY' );
+    console.log("Sent a test message to the client.");
+  };
 
   useEffect(() => {
     // commenting it: this is causing multiple re-renders for the in service component
@@ -135,7 +149,7 @@ const InService: React.FC = () => {
       </div>
   
       <div id="stopwatch_section" className="h-[40%] flex flex-col items-center justify-center border-gray-700 mt-4">
-      <StopWatch
+        <StopWatch
           isRunning={isRunning}
           startStop={handleStartStop}
           elapsedTime={elapsedTime}
@@ -161,7 +175,7 @@ const InService: React.FC = () => {
           <span className="text-sm font-bold mt-4">{isRunning ? t('timer_stop') : t('timer_start')}</span>
         </div> */}
         <div id="end_service_button" className="flex flex-col items-center mx-2">
-          {/* <button className=\"rounded-full w-16 h-16 border border-black mb-1\"> */}
+          {/* <button className="rounded-full w-16 h-16 border border-black mb-1"> */}
           <button
             onClick={openEndServiceModal} className="rounded-full w-16 h-16 mb-1 flex items-center justify-center text-red-500 text-2xl shadow-md"
           >
@@ -173,6 +187,14 @@ const InService: React.FC = () => {
           <span className="text-sm font-bold mt-4">{t("end_service")}</span>
         </div>
       </div>
+               <button
+            id="cancel_in_service"
+            onClick={handleCancelInService} // Attach the click handler here
+            className="rounded-full w-16 h-16 mb-1 flex items-center justify-center text-red-500 text-2xl shadow-md"
+          >
+            {/* Cancel icon */}
+            Cancel 
+          </button>
       {/* Modal is now handled by the hook */}
 
     </div>

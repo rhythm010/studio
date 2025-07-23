@@ -106,7 +106,7 @@ const GuardMatchingPage: React.FC = () => {
           console.log(`QR code detected: ${decodedText}`);
           setQrData(decodedText);
           QRCodeAnalyze(decodedText); // Call QRCodeAnalyze with decoded data
-          // stopScanning(); // Stop scanning after a successful scan
+          stopScanning(); // Stop scanning after a successful scan
           // You can perform actions with the decodedText here, e.g., navigation
         },
         (errorMessage) => {

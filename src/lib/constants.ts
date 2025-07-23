@@ -36,3 +36,15 @@ export const COMPANION_ROLES = {
     'PRIMARY': 'PRIMARY',
     'SECONDARY': 'SECONDARY',
 };
+
+export const MESSAGE_TYPES_TO_COMPANION = {
+    'STOP_ACTIVITY': 'STOP_ACTIVITY',
+    'MODE_END': 'MODE_END',
+    'STAND_GUARD': 'STAND_GUARD',
+}
+
+export const MST_STATUS = {
+    'UNREAD': 'UNREAD',
+    'OPENED': 'OPENED',
+    'ACTIONED': 'ACTIONED'
+};

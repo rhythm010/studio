@@ -3,7 +3,7 @@ import { database } from "@/lib/firebase";
 import { useCompanionStore } from '@/store/store';
 import { ref, update, remove, get, child, DatabaseReference, onValue, off } from "firebase/database";
 import { twMerge } from "tailwind-merge"
-import { COMPANION_ROLES } from "./constants";
+import { COMPANION_ROLES, MST_STATUS } from "./constants";
 
 export function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs))
@@ -295,7 +295,8 @@ function formMessageObj(messageType: string, messageData: object, messageSender:
     type:messageType,
     data:messageData,
     timestamp:Date.now(),
-    processed: false,
+    active: true,
+    status: MST_STATUS.UNREAD,
   };
 
   return msgObj;

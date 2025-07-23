@@ -224,7 +224,9 @@ const selectedMode: React.FC = () => {
         { (currentStatusValues?.actionButtons?.cancel ||
           clientActivityMonitor.statusInfo[clientActivityMonitor.currentStatus as keyof typeof clientActivityMonitor.statusInfo]?.actionButtons?.cancel) &&
           <div id="cancel_status_button" className="flex flex-col items-center mx-2">
-          <button className="rounded-full w-12 h-12 mb-1 shadow-md flex items-center justify-center">
+          <button
+           id="cancel_in_service"
+           className="rounded-full w-12 h-12 mb-1 shadow-md flex items-center justify-center">
             <img src="/icons/cancel_mode.png" alt="Add Item Icon" className="w-6 h-6 object-contain" />
           </button>
          
