@@ -8,7 +8,7 @@ import { useRouter } from 'next/navigation';
 import { useModal } from '@/components/ui/Modal';
 import CompanionActivityMode from '../CompanionActivityMode/CompanionActivityMode';
 import ActivityStatusQueue from '../../InService/ActivityStatusQueue/ActivityStatusQueue';
-import { ACTIVITY_MODES, ACTIVITY_STATUS, COMPANION_MODE_STATUS_LINKER } from '@/lib/constants';
+import { ACTIVITY_MODES, ACTIVITY_STATUS, COMPANION_MODE_STATUS_LINKER, MSG_STATUS } from '@/lib/constants';
 import StopWatch from '../../InService/StopWatch';
 import ConfirmationModalContent from '@/components/ConfirmationModalContent';
 import { vocab } from '@/lib/vocab_constants';
@@ -37,6 +37,10 @@ const GuardMatchingPage: React.FC = () => {
   // Get the selected mode and current status from the store for conditional styling
   const { selectedMode, companionCurrentStatus } = useCompanionStore((state) => state.CompanionAcvitiyMonitor);
   const companionActivityStatus = useCompanionStore.getState().CompanionAcvitiyMonitor.companionCurrentStatus;
+  const receiveCompanionMsgQueue = useCompanionStore.getState().CompanionAcvitiyMonitor.recieveCompanionMsgQueue;
+
+  // State to hold the message to be displayed
+  const [displayeClientMessage, setDisplayeClientMessage] = useState<string | null>(null);
 
   useEffect(() => {
     // Create an instance of Html5Qrcode
@@ -53,6 +57,17 @@ const GuardMatchingPage: React.FC = () => {
       }
     };
   }, []);
+
+  // Effect to listen for changes in receiveCompanionMsgQueue
+  useEffect(() => {
+    // Check if there's any message with status 0
+    const currentMessageToDisplay = receiveCompanionMsgQueue;
+    if (currentMessageToDisplay) {
+      setDisplayeClientMessage(`Status: ${currentMessageToDisplay.status}`);
+    } else {
+      setDisplayeClientMessage(null); // Clear the message if no such message exists
+    }
+  }, [receiveCompanionMsgQueue]);
 
   const scanSuccess = () => {
     console.log("QR code matched. Updating matching status in store and Firebase.");
@@ -72,7 +87,6 @@ const GuardMatchingPage: React.FC = () => {
     updateCompanionSessionIdInClient(ClientSessionId, companionSessionId, companionRole);
     updateStoreInFirebase();
     scanSuccess();
-    listenToClientMessages();
   }
 
   const QRCodeAnalyze = async (decodedData: string) => {
@@ -215,8 +229,13 @@ const GuardMatchingPage: React.FC = () => {
         width: '100%'
       }}>
 
+        <div id="client_msg_container">
+          {/* Display the message if it exists */}
+          {displayeClientMessage && <p>{displayeClientMessage}</p>}
+        </div>
+
       {!serviceContinue && selectedMode && (
-        <div style={{ marginBottom: '1rem', fontWeight: 'bold' }}>
+        <div id="selected_mode_title" style={{ marginBottom: '1rem', fontWeight: 'bold' }}>
           Selected Mode: {selectedMode}
         </div>
       )}

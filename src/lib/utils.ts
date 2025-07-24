@@ -1,9 +1,10 @@
-import { clsx, type ClassValue } from "clsx"
+import { type ClassValue } from "tailwind-merge"
+import { clsx } from "clsx";
 import { database } from "@/lib/firebase";
 import { useCompanionStore } from '@/store/store';
 import { ref, update, remove, get, child, DatabaseReference, onValue, off } from "firebase/database";
 import { twMerge } from "tailwind-merge"
-import { COMPANION_ROLES, MST_STATUS } from "./constants";
+import { COMPANION_ROLES, MSG_STATUS } from "./constants";
 
 export function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs))
@@ -296,7 +297,7 @@ function formMessageObj(messageType: string, messageData: object, messageSender:
     data:messageData,
     timestamp:Date.now(),
     active: true,
-    status: MST_STATUS.UNREAD,
+    status: MSG_STATUS.UNREAD,
   };
 
   return msgObj;
@@ -337,6 +338,10 @@ export async function sendMsgToCompanion(messageType: string, messageData: objec
 function actionOnClientMessage(clientActionMessage: any) {
   console.log('mesasge from client');
   console.log(clientActionMessage);
+
+  const currentStore = useCompanionStore.getState();
+  // Set the incoming object directly to recieveCompanionMsgQueue
+  currentStore.setRecieveCompanionMsgQueue(clientActionMessage);
 }
 
 export async function listenToClientMessages() {
@@ -344,17 +349,14 @@ export async function listenToClientMessages() {
   const companionSessionId = useCompanionStore.getState().getSessionId();
 
   if (!companionSessionId) {
-    console.error("Client session ID is not available. Cannot listen for messages.");
-    // Return a no-op unsubscribe function
- return () => {};
+    return () => {}; // Return a no-op unsubscribe function
   }
 
   // Construct the database reference to the recieveClientMsgQueue for this client session
   const messagesRef = ref(database, `storeObjects/${companionSessionId}/${storePaths.CompanionAcvitiyMonitor.recieveCompanionMsgQueue}`);
 
-  // Set up the listener
+  // Set up the listener and return the unsubscribe function
   onValue(messagesRef, (snapshot) => {
-    const messages = snapshot.val();
     actionOnClientMessage(snapshot.val());
     // You can add logic here to process the received messages, e.g., update the store
   });
@@ -383,4 +385,25 @@ export async function listenToPrimaryCompanionMessages() {
     actionOnCompanionMessage(snapshot.val());
     // You can add logic here to process the received messages, e.g., update the store
   });
+}
+
+export function changeClientMsgStatus(status: any) {
+  const currentStore = useCompanionStore.getState();
+  const currentMsg = currentStore.CompanionAcvitiyMonitor.recieveCompanionMsgQueue;
+
+  // Check if currentMsg is an object and has a status property
+  if (currentMsg && typeof currentMsg === 'object' && currentMsg.hasOwnProperty('status')) {
+    // Create a new object with the updated status
+    const updatedMsg = { ...currentMsg, status: status };
+    // Update the local store with the new object
+    currentStore.setRecieveCompanionMsgQueue(updatedMsg);
+
+    console.log('Updated message status in local store');
+    console.log(useCompanionStore.getState().CompanionAcvitiyMonitor.recieveCompanionMsgQueue);
+
+    // Optionally, you might want to update this change in Firebase as well
+    // updateValueInCompanion({ path: storePaths.CompanionAcvitiyMonitor.recieveCompanionMsgQueue + '/status', val: status }, currentStore.getCompanionRole());
+  } else {
+    console.error('recieveCompanionMsgQueue is not a valid message object. Cannot change status.');
+  }
 }

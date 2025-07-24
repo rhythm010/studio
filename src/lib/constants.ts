@@ -43,7 +43,7 @@ export const MESSAGE_TYPES_TO_COMPANION = {
     'STAND_GUARD': 'STAND_GUARD',
 }
 
-export const MST_STATUS = {
+export const MSG_STATUS = {
     'UNREAD': 'UNREAD',
     'OPENED': 'OPENED',
     'ACTIONED': 'ACTIONED'

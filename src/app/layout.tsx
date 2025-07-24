@@ -1,5 +1,4 @@
 "use client";
-import type { Metadata } from 'next';
 import { Roboto } from 'next/font/google';
 import i18next from 'i18next'; 
 import { useTranslation } from 'react-i18next';
@@ -10,7 +9,11 @@ import { ModalProvider, Modal } from '@/components/ui/Modal';
 import  './globals.css';
 import Header from '@/components/Header';
 import { TooltipProvider } from '@/components/ui/tooltip';
-import React from 'react';
+import React, { useEffect } from 'react';
+import { useCompanionStore } from '@/store/store';
+import { database } from '@/lib/firebase';
+import { ref, onValue, off } from 'firebase/database';
+import { listenToClientMessages, storePaths } from '@/lib/utils';
 import './globals.css';
 
 const roboto = Roboto({
@@ -42,7 +45,18 @@ const RootLayout: React.FC<{ children: React.ReactNode }> = ({
   children,
 }) => {
   const { i18n } = useTranslation('common');
- 
+  const sessionId = useCompanionStore((state) => state.sessionId);
+
+  useEffect(() => {
+    let unsubscribe: () => void = () => {}; // Initialize with a no-op function
+    if (sessionId) {
+      // Only listen if sessionId exists
+      listenToClientMessages();
+    }
+  }, [sessionId]); // Re-run effect when sessionId changes
+
+  
+
   return (
       <html lang='en' className={roboto.className}>
       <body className="">

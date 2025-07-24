@@ -42,7 +42,7 @@ interface CompanionRestaurantManage {
 
 interface CompanionAcvitiyMonitor {
   sendCompanionMsgQueue: object[]; // Queue for messages to be sent by the companion
-  recieveCompanionMsgQueue: object[]; // Queue for messages received by the companion
+  recieveCompanionMsgQueue: any; // Queue for messages received by the companion (changed to any)
   selectedMode: string;
   companionCurrentStatus: string;
   QUEUE: {
@@ -71,8 +71,8 @@ interface CompanionAcvitiyMonitor {
 }
 
 interface ClientActivityMonitor {
-  sendClientMsgQueue: object[]; // Queue for messages to be sent by the client
-  recieveClientMsgQueue: object[]; // Queue for messages received by the client
+  sendClientMsgQueue: object; // Queue for messages to be sent by the client (changed to object)
+  recieveClientMsgQueue: any[]; // Queue for messages received by the client
   modeTitle: string;
   currentMode: string;
   currentStatus: string;
@@ -181,6 +181,7 @@ interface CompanionStore {
   setCurrentPosition: (position: number) => void; // Add setter for currentPosition
   setClientActivityMonitor: (details: Partial<ClientActivityMonitor>) => void; // Add setter
   getClientActivityMonitor: () => ClientActivityMonitor; // Add getter
+  setRecieveCompanionMsgQueue: (obj: any) => void; // Keep as any for now
 }
 
 const useCompanionStore = create<CompanionStore>((set) => ({
@@ -212,8 +213,9 @@ const useCompanionStore = create<CompanionStore>((set) => ({
     }],
   },
   CompanionAcvitiyMonitor: { // Initialize the new property
-    sendCompanionMsgQueue: [{id:1,data:'initial_data'}],
-    recieveCompanionMsgQueue: [{id:1,data:'initial_data'}],
+    sendCompanionMsgQueue: [{data:'initial_data'}],
+    // Initialize recieveCompanionMsgQueue as an empty object
+    recieveCompanionMsgQueue: {},
     selectedMode: ACTIVITY_MODES.WITH_YOU,
     companionCurrentStatus: ACTIVITY_STATUS.DEFAULT,
     QUEUE: {
@@ -237,8 +239,9 @@ const useCompanionStore = create<CompanionStore>((set) => ({
     },
   },
   ClientActivityMonitor: { // Initialize the new property
-    sendClientMsgQueue: [{id:1,data:'initial_data'}],
-    recieveClientMsgQueue: [{id:1,data:'initial_data'}],
+    // Initialize sendClientMsgQueue as an empty object
+    sendClientMsgQueue: {},
+    recieveClientMsgQueue: [{data:'initial_data'}],
     modeTitle: "",
     currentStatus: ACTIVITY_STATUS.DEFAULT,
     currentMode: ACTIVITY_MODES.WITH_YOU,
@@ -374,20 +377,19 @@ const useCompanionStore = create<CompanionStore>((set) => ({
           sendCompanionMsgQueue: [...state.CompanionAcvitiyMonitor.sendCompanionMsgQueue, message],
         },
       })),
-    setRecieveCompanionMsgQueue: (message: object) =>
+    // Setter for receiveCompanionMsgQueue - sets the object directly
+    setRecieveCompanionMsgQueue: (message: any) =>
       set((state) => ({
-        CompanionAcvitiyMonitor: { ...state.CompanionAcvitiyMonitor, recieveCompanionMsgQueue: [...state.CompanionAcvitiyMonitor.recieveCompanionMsgQueue, message] },
+        CompanionAcvitiyMonitor: { ...state.CompanionAcvitiyMonitor, recieveCompanionMsgQueue: message },
       })),
 
+      // Getter for sendClientMsgQueue (object)
       getSendClientMsgQueue: () => useCompanionStore.getState().ClientActivityMonitor.sendClientMsgQueue,
       getRecieveClientMsgQueue: () => useCompanionStore.getState().ClientActivityMonitor.recieveClientMsgQueue,
-      // Setters for client message queues - adds an object to the respective array
+      // Setter for sendClientMsgQueue - sets the object directly
      setSendClientMsgQueue: (message: object) =>
      set((state) => ({
-     ClientActivityMonitor: {
-     ...state.ClientActivityMonitor,
-     sendClientMsgQueue: [...state.ClientActivityMonitor.sendClientMsgQueue, message],
-          },
+     ClientActivityMonitor: { ...state.ClientActivityMonitor, sendClientMsgQueue: message }, // Set the object directly
         })),
      setRecieveClientMsgQueue: (message: object) =>
      set((state) => ({
@@ -402,7 +404,7 @@ const useCompanionStore = create<CompanionStore>((set) => ({
       serviceRunning: true,
       matchingId: "",
       serviceSelected: "",
-      profileDetails: {},
+      profileDetails: {}
     }),
 }));
 
