@@ -35,12 +35,8 @@ const GuardMatchingPage: React.FC = () => {
   const companionRole = getCompanionProfileDetails().companionRole || 'Primary'; // Get the companion role
   // Get the selected mode from the store for conditional styling
   // Get the selected mode and current status from the store for conditional styling
-  const { selectedMode, companionCurrentStatus } = useCompanionStore((state) => state.CompanionAcvitiyMonitor);
+  const { selectedMode, companionCurrentStatus, recieveCompanionMsgQueue } = useCompanionStore((state) => state.CompanionAcvitiyMonitor);
   const companionActivityStatus = useCompanionStore.getState().CompanionAcvitiyMonitor.companionCurrentStatus;
-  const receiveCompanionMsgQueue = useCompanionStore.getState().CompanionAcvitiyMonitor.recieveCompanionMsgQueue;
-
-  // State to hold the message to be displayed
-  const [displayeClientMessage, setDisplayeClientMessage] = useState<string | null>(null);
 
   useEffect(() => {
     // Create an instance of Html5Qrcode
@@ -57,17 +53,6 @@ const GuardMatchingPage: React.FC = () => {
       }
     };
   }, []);
-
-  // Effect to listen for changes in receiveCompanionMsgQueue
-  useEffect(() => {
-    // Check if there's any message with status 0
-    const currentMessageToDisplay = receiveCompanionMsgQueue;
-    if (currentMessageToDisplay) {
-      setDisplayeClientMessage(`Status: ${currentMessageToDisplay.status}`);
-    } else {
-      setDisplayeClientMessage(null); // Clear the message if no such message exists
-    }
-  }, [receiveCompanionMsgQueue]);
 
   const scanSuccess = () => {
     console.log("QR code matched. Updating matching status in store and Firebase.");
@@ -229,10 +214,10 @@ const GuardMatchingPage: React.FC = () => {
         width: '100%'
       }}>
 
-        <div id="client_msg_container">
+        {recieveCompanionMsgQueue.status && <div id="client_msg_container">
           {/* Display the message if it exists */}
-          {displayeClientMessage && <p>{displayeClientMessage}</p>}
-        </div>
+          {<p>{recieveCompanionMsgQueue.status}</p>}
+        </div>}
 
       {!serviceContinue && selectedMode && (
         <div id="selected_mode_title" style={{ marginBottom: '1rem', fontWeight: 'bold' }}>
