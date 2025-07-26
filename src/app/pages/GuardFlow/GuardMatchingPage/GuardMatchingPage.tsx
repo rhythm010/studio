@@ -3,11 +3,10 @@
 import { useEffect, useState, useRef } from 'react';
 import { Html5Qrcode } from 'html5-qrcode';
 import { useCompanionStore } from '@/store/store'; // Import the store
-import { checkIfSessionExistsAndMatch, updateStoreInFirebase, updateCompanionSessionIdInClient, updateValueInClient, storePaths, sendMsgToClient, listenToClientMessages } from '@/lib/utils'; // Import the utility method
+import { checkIfSessionExistsAndMatch, updateStoreInFirebase, updateCompanionSessionIdInClient, updateValueInClient, storePaths, updateInSelfFirebase } from '@/lib/utils'; // Import the utility method
 import { useRouter } from 'next/navigation';
 import { useModal } from '@/components/ui/Modal';
 import CompanionActivityMode from '../CompanionActivityMode/CompanionActivityMode';
-import ActivityStatusQueue from '../../InService/ActivityStatusQueue/ActivityStatusQueue';
 import { ACTIVITY_MODES, ACTIVITY_STATUS, COMPANION_MODE_STATUS_LINKER, MSG_STATUS, MESSAGE_TYPES_TO_COMPANION, STATUS_BUTTON_LABELS, ACTIVITY_SUB_MODE_LINKER, MODE_DEFAULT_STATUS } from '@/lib/constants';
 import StopWatch from '../../InService/StopWatch';
 import ConfirmationModalContent from '@/components/ConfirmationModalContent';
@@ -155,6 +154,9 @@ const GuardMatchingPage: React.FC = () => {
       path: storePaths.ClientActivityMonitor.currentStatus,
       val: defaultStatus,
     });
+    // Update in self Firebase as well
+    updateInSelfFirebase(storePaths.CompanionAcvitiyMonitor.selectedMode, mode);
+    updateInSelfFirebase(storePaths.CompanionAcvitiyMonitor.companionCurrentStatus, defaultStatus);
 
     closeModal();
   }
@@ -185,6 +187,8 @@ const GuardMatchingPage: React.FC = () => {
       path: storePaths.ClientActivityMonitor.currentStatus,
       val: status,
     });
+    // Update in self Firebase as well
+    updateInSelfFirebase(storePaths.CompanionAcvitiyMonitor.companionCurrentStatus, status);
 
     closeModal();
   };
@@ -223,7 +227,7 @@ const GuardMatchingPage: React.FC = () => {
     useCompanionStore.getState().setCompanionAcvitiyMonitor({
       recieveCompanionMsgQueue: {
         ...recieveCompanionMsgQueue,
-        status: 'OPENED'
+        status: MSG_STATUS.OPENED,
       }
     });
     openModal(
@@ -241,7 +245,7 @@ const GuardMatchingPage: React.FC = () => {
     useCompanionStore.getState().setCompanionAcvitiyMonitor({
       recieveCompanionMsgQueue: {
         ...recieveCompanionMsgQueue,
-        status: 'ACTIONED'
+        status: MSG_STATUS.ACTIONED,
       }
     });
     closeModal();
@@ -260,6 +264,8 @@ const GuardMatchingPage: React.FC = () => {
       path: storePaths.CompanionAcvitiyMonitor.selectedSubMode,
       val: subMode,
     });
+    // Update in self Firebase as well
+    updateInSelfFirebase(storePaths.CompanionAcvitiyMonitor.selectedSubMode, subMode);
   };
 
   return (
@@ -286,9 +292,9 @@ const GuardMatchingPage: React.FC = () => {
               backgroundColor: '#f9fafb', // subtle background
               border: '2px solid',
               borderColor:
-                recieveCompanionMsgQueue.status === 'UNREAD' ? 'red' :
-                recieveCompanionMsgQueue.status === 'OPENED' ? 'yellow' :
-                recieveCompanionMsgQueue.status === 'ACTIONED' ? 'green' :
+                recieveCompanionMsgQueue.status === MSG_STATUS.UNREAD ? 'red' :
+                recieveCompanionMsgQueue.status === MSG_STATUS.OPENED ? 'yellow' :
+                recieveCompanionMsgQueue.status === MSG_STATUS.ACTIONED ? 'green' :
                 '#d1d5db', // default gray
             }}
             onMouseEnter={(e) => {

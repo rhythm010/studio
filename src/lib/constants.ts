@@ -69,3 +69,23 @@ export const MODE_DEFAULT_STATUS: Record<string, string> = {
   [ACTIVITY_MODES.STORE]: ACTIVITY_STATUS.WAIT_OP,
   [ACTIVITY_MODES.WITH_YOU]: ACTIVITY_STATUS.DEFAULT,
 };
+
+export const CLIENT_INSTRUCTION_MANUAL = {
+    'WITH_YOU': {
+        'DEFAULT': 'DEFAULT',
+        'QUEUE': 'QUEUE',
+        'WAIT_OP': 'WAIT_OP',
+    },
+    'CAFE': {
+        'WAIT_OP': 'WAIT_OP',
+        'CLEAR_TABLE': 'CLEAR_TABLE',
+        'STAND_CLOSE': 'STAND_CLOSE',
+        'ORDER_CALL': 'ORDER_CALL',
+    },
+    'STORE': {
+        'QUEUE': 'QUEUE',
+        'PAYMENT_CALL': 'PAYMENT_CALL',
+        'WAIT_ITEM': 'WAIT_ITEM',
+        'WAIT_OP': 'WAIT_OP',
+    },
+}

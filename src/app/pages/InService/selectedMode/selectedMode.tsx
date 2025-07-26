@@ -4,9 +4,9 @@ import React, { useEffect, useState } from 'react';
 import { useCompanionStore } from '@/store/store';
 import { database } from '@/lib/firebase'; // Assuming you have your firebase instance exported as 'database'
 import { ref, onValue, off } from 'firebase/database';
-import { storePaths, updateValueInPrimaryCompanion, createClientFeatureProp, createCompanionMessageObject } from '@/lib/utils'; // Assuming storePaths and createClientFeatureProp are in utils.ts
+import { storePaths, updateValueInCompanion, createClientInstructionProp, createCompanionMessageObject, sendMsgToCompanion } from '@/lib/utils'; // Assuming storePaths and createClientInstructionProp are in utils.ts
 import { cn } from '@/lib/utils'; // Assuming cn is in utils.ts
-import { ACTIVITY_STATUS, ACTIVITY_MODES } from '@/lib/constants';
+import { ACTIVITY_STATUS, ACTIVITY_MODES, CLIENT_INSTRUCTION_MANUAL, COMPANION_ROLES } from '@/lib/constants';
 import ClientFeatureExplainer from '../ClientFeatureExplainer';
 import { useModal } from '@/components/ui/Modal';
 
@@ -15,7 +15,7 @@ const selectedMode: React.FC = () => {
   const [currentMode, setCurrentMode] = useState<string>('');
   const [currentStatus, setCurrentStatus] = useState<string>('');
   const [currentStatusValues, setCurrentStatusValues] = useState<any | {}>({});
-  const clientActivityMonitor = useCompanionStore((state) => state.ClientActivityMonitor);
+  const clientActivityMonitor = useCompanionStore((state: any) => state.ClientActivityMonitor);
   
   const { openModal, closeModal } = useModal();
 
@@ -127,19 +127,19 @@ const selectedMode: React.FC = () => {
   }, [useCompanionStore.getState().getSessionId(), currentStatus]); // Re-run effect if session ID or currentStatus changes
 
 
-  const activateCompanionInstruction = () => {
-    // TODO: Implement the logic for activating companion instruction
+  const activateCompanionInstruction = (instruction: string) => {
     console.log('activateCompanionInstruction called');
-    createCompanionMessageObject();
+    // Pass the instruction as the message type to sendMsgToCompanion
+    sendMsgToCompanion(instruction, {}, COMPANION_ROLES.PRIMARY);
   };
 
-  const clientFeatureLaunchHandler = () => {
-    const explainerProps = createClientFeatureProp();
-    openModal(<ClientFeatureExplainer {...explainerProps} closeModal={closeModal} handleYes={activateCompanionInstruction} />);
+  const clientInstructionLaunchHandler = (instruction: string) => {
+    const explainerProps = createClientInstructionProp(instruction);
+    openModal(<ClientFeatureExplainer {...explainerProps} closeModal={closeModal} handleYes={() => activateCompanionInstruction(instruction)} />);
   };
 
   return (
-    <div className="flex flex-col m-4 rounded-lg h-full">
+    <div id="selected_mode_container" className="flex flex-col m-4 rounded-lg h-full">
       {/* Top Section: Mode Type (40% height) */}
       <div
         className="flex flex-grow-[0.2] flex-shrink-0 items-center justify-center mb-3">
@@ -236,13 +236,12 @@ const selectedMode: React.FC = () => {
           <span className="text-sm font-bold mt-4">Add Item</span>
         </div> */}
         
-        { (currentStatusValues?.actionButtons?.cancel ||
-          clientActivityMonitor.statusInfo[clientActivityMonitor.currentStatus as keyof typeof clientActivityMonitor.statusInfo]?.actionButtons?.cancel) &&
+        { 
           <div id="cancel_status_button" className="flex flex-col items-center mx-2">
           <button
            id="cancel_mode_service"
            className="rounded-full w-12 h-12 mb-1 shadow-md flex items-center justify-center"
-           onClick={clientFeatureLaunchHandler}
+           onClick={() => clientInstructionLaunchHandler(CLIENT_INSTRUCTION_MANUAL['WITH_YOU']['DEFAULT'])}
           >
             <img src="/icons/cancel_mode.png" alt="Add Item Icon" className="w-6 h-6 object-contain" />
           </button>
@@ -253,11 +252,13 @@ const selectedMode: React.FC = () => {
 
         
         
-       { (currentStatusValues?.actionButtons?.complete ||
-          clientActivityMonitor.statusInfo[clientActivityMonitor.currentStatus as keyof typeof clientActivityMonitor.statusInfo]?.actionButtons?.complete) && 
+       { 
         <div id="end_mode_button" className="flex flex-col items-center mx-2">
           
-          <button className="rounded-full w-12 h-12 mb-1 shadow-md flex items-center justify-center">
+          <button 
+            className="rounded-full w-12 h-12 mb-1 shadow-md flex items-center justify-center"
+            onClick={() => clientInstructionLaunchHandler(CLIENT_INSTRUCTION_MANUAL['WITH_YOU']['QUEUE'])}
+          >
             
             <img src="/icons/complete_mode.png" alt="Add Item Icon" className="w-6 h-6 object-contain" />
           </button>

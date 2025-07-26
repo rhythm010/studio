@@ -4,7 +4,7 @@ import { database } from "@/lib/firebase";
 import { useCompanionStore } from '@/store/store';
 import { ref, update, remove, get, child, DatabaseReference, onValue, off } from "firebase/database";
 import { twMerge } from "tailwind-merge"
-import { COMPANION_ROLES, MSG_STATUS } from "./constants";
+import { COMPANION_ROLES, MSG_STATUS, CLIENT_INSTRUCTION_MANUAL } from "./constants";
 
 export function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs))
@@ -268,6 +268,37 @@ export async function updateValueInCompanion(updateObj: { path: string, val: any
   }
 }
 
+/**
+ * Updates a value in Firebase at the given key path for the current running session.
+ * @param {string} path - The key path in the session's Firebase object to update (e.g., 'profileDetails/name').
+ * @param {any} val - The value to set at the specified path.
+ */
+export async function updateInSelfFirebase(path: string, val: any) {
+  const sessionId = useCompanionStore.getState().getSessionId();
+  if (!sessionId) {
+    console.error("Session ID is not available. Cannot update.");
+    return;
+  }
+  try {
+    const targetRef = ref(database, `storeObjects/${sessionId}/${path}`);
+    // Read the existing data at the target path
+    const snapshot = await get(targetRef);
+    const existingData = snapshot.val();
+
+    // If the existing data is an array, append the new value
+    if (Array.isArray(existingData)) {
+      const updatedArray = [...existingData, val];
+      await update(ref(database, `storeObjects/${sessionId}`), { [path]: updatedArray });
+    } else {
+      // Otherwise, just update the value
+      await update(ref(database, `storeObjects/${sessionId}`), { [path]: val });
+    }
+    console.log(`Value updated successfully for session ${sessionId} at path ${path}`);
+  } catch (error) {
+    console.error(`Error updating value for session ${sessionId} at path ${path}:`, error);
+  }
+}
+
 
 // Async function to send messages to the client
 
@@ -389,15 +420,32 @@ export function changeClientMsgStatus(status: any) {
   }
 }
 
-// Utility method to create an empty object for ClientFeatureExplainer props
-export function createClientFeatureProp() {
-  return {};
+
+
+
+
+export function createClientInstructionProp(instruction: string) {
+  // Get the current mode and status from the store
+  const currentStore = useCompanionStore.getState();
+  const currentMode = currentStore.ClientActivityMonitor.currentMode;
+  const currentStatus = currentStore.ClientActivityMonitor.currentStatus;
+  
+  // Get the instruction title from CLIENT_INSTRUCTION_MANUAL based on mode and status
+  const modeInstructions = CLIENT_INSTRUCTION_MANUAL[currentMode as keyof typeof CLIENT_INSTRUCTION_MANUAL];
+  const instructionTitle = modeInstructions?.[currentStatus as keyof typeof modeInstructions] || instruction;
+  
+  return { title: instructionTitle };
 }
 
-export function createCompanionMessageObject() {
-  return {};
+export function createCompanionMessageObject(instruction: string) {
+  const currentStore = useCompanionStore.getState();
+  const currentMode = currentStore.ClientActivityMonitor.currentMode;
+  const currentStatus = currentStore.ClientActivityMonitor.currentStatus;
+  
+  return {
+    instruction: instruction,
+    mode: currentMode,
+    status: currentStatus,
+    clientSessionId: currentStore.getSessionId()
+  };
 }
-
-
-
-
