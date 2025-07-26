@@ -1,0 +1,2 @@
+# Ignore locale files from Turbopack HMR
+public/locales/**/*.json 

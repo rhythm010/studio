@@ -49,30 +49,77 @@ const CompanionActivityMode: React.FC = () => {
 
       <div id="activity_status_container">
         {companionFlow.companionCurrentStatus === ACTIVITY_STATUS.QUEUE && (<div id="Queue_mode"
-        style={{ border: '1px solid grey',
-        width: '100%', maxWidth: '500px', textAlign: 'center', paddingBottom: '5px', borderRadius: '14px' }}>
-        <div style={{ borderBottom: '1px solid black', padding: '7px' }}>
-          <div style={{ fontSize: '1rem' }}>Enter your position</div>
-        </div>
-        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', width: '100%' }}>
-          <button style={{ fontSize: '2rem', padding: '10px 20px' }} onClick={() => updateQueueValue(-1)}>-</button>
-          <div style={{ fontSize: '3rem', fontWeight: 'bold' }}>{companionFlow.QUEUE.currentPosition}</div>
-          <button style={{ fontSize: '2rem', padding: '10px 20px' }} onClick={() => updateQueueValue(1)}>+</button>
-        </div>
-        <button id="queue_position_status_btn"
-          style={{
-            backgroundColor: 'rgb(31 41 55 / var(--tw-bg-opacity, 1))',
-            padding: '0.5rem',
-            marginTop: '2px',
-            color: 'white',
-            borderRadius: '19px',
-            fontSize:'0.8rem',
-          }}
-          onClick={endQueue} // Call the new endQueue function
-        >
-          End Queue mode
-        </button>
-      </div>)}
+        style={{ 
+          border: '1px solid grey',
+          width: '100%', 
+          maxWidth: '400px', 
+          padding: '8px', 
+          borderRadius: '8px',
+          display: 'flex',
+          alignItems: 'center',
+          gap: '8px'
+        }}>
+          <div style={{ 
+            fontSize: '1rem', 
+            color: '#6b7280',
+            fontWeight: '500',
+            lineHeight: '1.2',
+            width: '80px',
+            textAlign: 'center'
+          }}>
+            Your<br/>Queue<br/>Position
+          </div>
+          <button 
+            style={{ 
+              fontSize: '1.5rem', 
+              padding: '8px 12px',
+              backgroundColor: '#f3f4f6',
+              border: '1px solid #d1d5db',
+              borderRadius: '4px',
+              cursor: 'pointer'
+            }} 
+            onClick={() => updateQueueValue(1)}
+          >
+            +
+          </button>
+          <div style={{ 
+            fontSize: '1.5rem', 
+            fontWeight: 'bold',
+            flex: '1',
+            textAlign: 'center',
+            padding: '8px'
+          }}>
+            {companionFlow.QUEUE.currentPosition}
+          </div>
+          <button 
+            style={{ 
+              fontSize: '1.5rem', 
+              padding: '8px 12px',
+              backgroundColor: '#f3f4f6',
+              border: '1px solid #d1d5db',
+              borderRadius: '4px',
+              cursor: 'pointer'
+            }} 
+            onClick={() => updateQueueValue(-1)}
+          >
+            -
+          </button>
+          <button 
+            id="queue_position_status_btn"
+            style={{
+              backgroundColor: 'rgb(31 41 55 / var(--tw-bg-opacity, 1))',
+              padding: '8px 12px',
+              color: 'white',
+              borderRadius: '4px',
+              fontSize: '0.8rem',
+              cursor: 'pointer',
+              border: 'none'
+            }}
+            onClick={endQueue}
+          >
+            End
+          </button>
+        </div>)}
       </div>
 
     </div>

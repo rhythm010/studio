@@ -1,4 +1,4 @@
-import { ACTIVITY_STATUS, ACTIVITY_MODES } from '@/lib/constants';
+import { ACTIVITY_STATUS, ACTIVITY_MODES, MSG_STATUS } from '@/lib/constants';
 import { create } from 'zustand';
 
 interface ProfileDetails {
@@ -45,6 +45,7 @@ interface CompanionAcvitiyMonitor {
   recieveCompanionMsgQueue: any; // Queue for messages received by the companion (changed to any)
   selectedMode: string;
   companionCurrentStatus: string;
+  selectedSubMode: string;
   QUEUE: {
     currentPosition: number;
   };
@@ -215,7 +216,13 @@ const useCompanionStore = create<CompanionStore>((set) => ({
   CompanionAcvitiyMonitor: { // Initialize the new property
     sendCompanionMsgQueue: [{data:'initial_data'}],
     // Initialize recieveCompanionMsgQueue as an empty object
-    recieveCompanionMsgQueue: {},
+    recieveCompanionMsgQueue: {
+      type: 'STAND_GUARD',
+      data: 'initial_data',
+      timestamp: Date.now(),
+      active: true,
+      status: MSG_STATUS.UNREAD,
+    },
     selectedMode: ACTIVITY_MODES.WITH_YOU,
     companionCurrentStatus: ACTIVITY_STATUS.DEFAULT,
     QUEUE: {

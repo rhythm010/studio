@@ -5,6 +5,11 @@ export const ACTIVITY_MODES = {
    'STORE': 'STORE'
 };
 
+export const ACTIVITY_SUB_MODE_LINKER = {
+   'CAFE': ['SELF', 'WAITER'],
+   'STORE': ['LARGE', 'MEDIUM', 'SMALL'],
+ };
+
 
 export const ACTIVITY_STATUS = {
     'QUEUE':'QUEUE',
@@ -19,8 +24,8 @@ export const MODE_ACTIVITY_MAP = {
 };
 
 export const COMPANION_MODE_STATUS_LINKER = {
-   'WITH_YOU': ['DEFAULT'],
-   'CAFE': ['QUEUE','PAYMENT_CALL','WAIT_ITEM','WAIT_OP' ],
+   'WITH_YOU': ['DEFAULT', 'QUEUE', 'WAIT_OP' ],
+   'CAFE': ['QUEUE','PAYMENT_CALL','WAIT_ITEM','WAIT_OP'],
    'QUEUE': ['QUEUE'],
    'STORE': ['QUEUE','PAYMENT_CALL','WAIT_ITEM','WAIT_OP'],
    'WITH_CLIENT': ['DEFAULT'],
@@ -40,7 +45,7 @@ export const COMPANION_ROLES = {
 export const MESSAGE_TYPES_TO_COMPANION = {
     'STOP_ACTIVITY': 'STOP_ACTIVITY',
     'MODE_END': 'MODE_END',
-    'STAND_GUARD': 'STAND_GUARD',
+    'STAND_GUARD': 'WAIT_OP',
 }
 
 export const MSG_STATUS = {
@@ -48,3 +53,12 @@ export const MSG_STATUS = {
     'OPENED': 'OPENED',
     'ACTIONED': 'ACTIONED'
 };
+
+ // Status button labels mapping
+ export const STATUS_BUTTON_LABELS = {
+    [ACTIVITY_STATUS.QUEUE]: 'Queue',
+    [ACTIVITY_STATUS.PAYMENT_CALL]: 'Payment',
+    [ACTIVITY_STATUS.WAIT_ITEM]: 'waiting for item',
+    [ACTIVITY_STATUS.WAIT_OP]: 'waiting OP',
+    [ACTIVITY_STATUS.DEFAULT]: 'Default',
+  };

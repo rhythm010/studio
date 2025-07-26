@@ -8,7 +8,7 @@ import { useRouter } from 'next/navigation';
 import { useModal } from '@/components/ui/Modal';
 import CompanionActivityMode from '../CompanionActivityMode/CompanionActivityMode';
 import ActivityStatusQueue from '../../InService/ActivityStatusQueue/ActivityStatusQueue';
-import { ACTIVITY_MODES, ACTIVITY_STATUS, COMPANION_MODE_STATUS_LINKER, MSG_STATUS } from '@/lib/constants';
+import { ACTIVITY_MODES, ACTIVITY_STATUS, COMPANION_MODE_STATUS_LINKER, MSG_STATUS, MESSAGE_TYPES_TO_COMPANION, STATUS_BUTTON_LABELS } from '@/lib/constants';
 import StopWatch from '../../InService/StopWatch';
 import ConfirmationModalContent from '@/components/ConfirmationModalContent';
 import { vocab } from '@/lib/vocab_constants';
@@ -168,10 +168,10 @@ const GuardMatchingPage: React.FC = () => {
     );
   };
 
-  const statusSelectionConfirmation = (status: string) => {
-    // Update the selectedMode within clientActivityMonitor.companionFlow in the store
+  // Handler for confirming status selection in the modal
+  const handleStatusSelectionConfirm = (status: string) => {
     useCompanionStore.getState().setCompanionAcvitiyMonitor({
-      companionCurrentStatus: status, // Assuming selectedMode is a direct property of CompanionAcvitiyMonitor
+      companionCurrentStatus: status,
     });
 
     updateValueInClient({
@@ -180,16 +180,22 @@ const GuardMatchingPage: React.FC = () => {
     });
 
     closeModal();
-
-  }
+  };
 
   const handleStatusSelection = (status: string) => {
+    // If status matches MESSAGE_TYPES_TO_COMPANION[recieveCompanionMsgQueue.type], confirm directly
+    if (
+      typeof MESSAGE_TYPES_TO_COMPANION !== 'undefined' &&
+      recieveCompanionMsgQueue?.type &&
+      status === MESSAGE_TYPES_TO_COMPANION[String(recieveCompanionMsgQueue.type) as keyof typeof MESSAGE_TYPES_TO_COMPANION]
+    ) {
+      handleStatusSelectionConfirm(status);
+      return;
+    }
     openModal(
       <ConfirmationModalContent
-        text={vocab.GuardMatchingPage.statusChangeModal[status.toUpperCase()]} // Customize the confirmation text
-        onConfirm={() => {
-          statusSelectionConfirmation(status);
-        }}
+        text={`You have not received instructions for ${status}, Are you sure you want to proceed?`} // Customize the confirmation text
+        onConfirm={() => handleStatusSelectionConfirm(status)}
         onCancel={() => {
           console.log(`User cancelled status selection for ${status}`);
           closeModal(); // Close the modal on cancellation
@@ -204,6 +210,41 @@ const GuardMatchingPage: React.FC = () => {
     return isDisabled ? disabledButtonClasses : (status === currentStatus ? selectedButtonClasses : buttonClasses);
   };
 
+  // Handler for clicking the client message container
+  const handleClientMsgClick = () => {
+    // Immediately set status to OPENED on click
+    useCompanionStore.getState().setCompanionAcvitiyMonitor({
+      recieveCompanionMsgQueue: {
+        ...recieveCompanionMsgQueue,
+        status: 'OPENED'
+      }
+    });
+    openModal(
+      <ConfirmationModalContent
+        text="Do you want to open this message?"
+        onConfirm={handleClientMsgConfirm}
+        onCancel={handleClientMsgCancel}
+      />
+    );
+  };
+
+  // Handler for confirming opening the client message
+  const handleClientMsgConfirm = () => {
+    // Set status to ACTIONED when user clicks Yes
+    useCompanionStore.getState().setCompanionAcvitiyMonitor({
+      recieveCompanionMsgQueue: {
+        ...recieveCompanionMsgQueue,
+        status: 'ACTIONED'
+      }
+    });
+    closeModal();
+  };
+
+  // Handler for cancelling opening the client message
+  const handleClientMsgCancel = () => {
+    closeModal();
+  };
+
   return (
     // Main container with flex column layout
     <div id="guard-matching-main-container"
@@ -214,10 +255,37 @@ const GuardMatchingPage: React.FC = () => {
         width: '100%'
       }}>
 
-        {recieveCompanionMsgQueue.status && <div id="client_msg_container">
-          {/* Display the message if it exists */}
-          {<p>{recieveCompanionMsgQueue.status}</p>}
-        </div>}
+        {recieveCompanionMsgQueue?.status && (
+          <div 
+            id="client_msg_container"
+            style={{ 
+              cursor: 'pointer',
+              padding: '0.5rem',
+              borderRadius: '0.25rem',
+              transition: 'background-color 0.2s, border-color 0.2s',
+              marginBottom: '1rem',
+              width: '90%',
+              maxWidth: '500px',
+              backgroundColor: '#f9fafb', // subtle background
+              border: '2px solid',
+              borderColor:
+                recieveCompanionMsgQueue.status === 'UNREAD' ? 'red' :
+                recieveCompanionMsgQueue.status === 'OPENED' ? 'yellow' :
+                recieveCompanionMsgQueue.status === 'ACTIONED' ? 'green' :
+                '#d1d5db', // default gray
+            }}
+            onMouseEnter={(e) => {
+              e.currentTarget.style.backgroundColor = '#f3f4f6';
+            }}
+            onMouseLeave={(e) => {
+              e.currentTarget.style.backgroundColor = '#f9fafb';
+            }}
+            onClick={handleClientMsgClick}
+          >
+            {/* Display the message if it exists */}
+            <p>{recieveCompanionMsgQueue.status}</p>
+          </div>
+        )}
 
       {!serviceContinue && selectedMode && (
         <div id="selected_mode_title" style={{ marginBottom: '1rem', fontWeight: 'bold' }}>
@@ -277,12 +345,7 @@ const GuardMatchingPage: React.FC = () => {
         <div id="action_buttons"
           style={{ marginTop: '20px', padding: '10px' }}>
           <div id="modes_container" className="rounded-xl shadow-lg">
-            <div className="border rounded-lg flex flex-wrap p-2 mb-2">
-              {/* Button for Queue mode, conditionally apply dark green background if selected */}
-              <button className={selectedMode === ACTIVITY_MODES.QUEUE ? selectedButtonClasses : buttonClasses}
-                onClick={() => handleModeSelection(ACTIVITY_MODES.QUEUE)}>
-                Queue
-              </button>
+            <div className="border rounded-lg flex flex-wrap justify-center items-center p-2 mb-2">
               <button className={selectedMode === ACTIVITY_MODES.CAFE ? selectedButtonClasses : buttonClasses}
                 onClick={() => handleModeSelection(ACTIVITY_MODES.CAFE)}>
                 Cafe
@@ -311,40 +374,16 @@ const GuardMatchingPage: React.FC = () => {
           <div id="status_container" className="rounded-xl shadow-lg" style={{ position: 'relative' }}> {/* Added relative positioning for the overlay */}
 
             <div className="border rounded-lg flex flex-wrap p-2">
-              {/* Status buttons, conditionally apply dark green background if status matches companionCurrentStatus */}
-              <button
-                className={getStatusButtonClass(ACTIVITY_STATUS.QUEUE, companionCurrentStatus, selectedMode)}
-                disabled={!COMPANION_MODE_STATUS_LINKER[selectedMode as keyof typeof COMPANION_MODE_STATUS_LINKER]?.includes(ACTIVITY_STATUS.QUEUE)}
-                onClick={() => handleStatusSelection(ACTIVITY_STATUS.QUEUE)}
-              >
-                Queue
-              </button>
-              <button
-                className={getStatusButtonClass(ACTIVITY_STATUS.PAYMENT_CALL, companionCurrentStatus, selectedMode)}
-                disabled={!COMPANION_MODE_STATUS_LINKER[selectedMode as keyof typeof COMPANION_MODE_STATUS_LINKER]?.includes(ACTIVITY_STATUS.PAYMENT_CALL)} // Disable if not allowed in selected mode
-                onClick={() => handleStatusSelection(ACTIVITY_STATUS.PAYMENT_CALL)}>
-                Payment
-              </button>
-              <button
-                className={getStatusButtonClass(ACTIVITY_STATUS.WAIT_ITEM, companionCurrentStatus, selectedMode)}
-                disabled={!COMPANION_MODE_STATUS_LINKER[selectedMode as keyof typeof COMPANION_MODE_STATUS_LINKER]?.includes(ACTIVITY_STATUS.WAIT_ITEM)} // Disable if not allowed in selected mode
-                onClick={() => handleStatusSelection(ACTIVITY_STATUS.WAIT_ITEM)}>
-                waiting for item
-              </button>
-              <button
-                className={getStatusButtonClass(ACTIVITY_STATUS.WAIT_OP, companionCurrentStatus, selectedMode)}
-                disabled={!COMPANION_MODE_STATUS_LINKER[selectedMode as keyof typeof COMPANION_MODE_STATUS_LINKER]?.includes(ACTIVITY_STATUS.WAIT_OP)} // Disable if not allowed in selected mode
-                onClick={() => handleStatusSelection(ACTIVITY_STATUS.WAIT_OP)}>
-                waiting OP
-              </button>
-              <button
-                className={getStatusButtonClass(ACTIVITY_STATUS.DEFAULT, companionCurrentStatus, selectedMode)}
-                disabled={!COMPANION_MODE_STATUS_LINKER[selectedMode as keyof typeof COMPANION_MODE_STATUS_LINKER]?.includes(ACTIVITY_STATUS.DEFAULT)} // Disable if not allowed in selected mode
-                onClick={() => handleStatusSelection(ACTIVITY_STATUS.DEFAULT)}>
-                Default
-              </button>
-              {/* Add more status buttons here following the same pattern */}
-
+              {/* Only render status buttons allowed for the selected mode */}
+              {COMPANION_MODE_STATUS_LINKER[selectedMode as keyof typeof COMPANION_MODE_STATUS_LINKER]?.map((status: string) => (
+                <button
+                  key={status}
+                  className={getStatusButtonClass(status, companionCurrentStatus, selectedMode)}
+                  onClick={() => handleStatusSelection(status)}
+                >
+                  {STATUS_BUTTON_LABELS[status]}
+                </button>
+              ))}
             </div>
 
           </div>

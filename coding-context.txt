@@ -1,0 +1,45 @@
+# Coding Context Document
+
+## Project Overview
+- Next.js 15.2.3 project with TypeScript
+- Uses Tailwind CSS for styling
+- Firebase integration for database
+- Internationalization (i18n) with next-i18next
+- Zustand for state management
+- Radix UI components for UI elements
+
+## Key Technologies
+- React 18.3.1
+- TypeScript
+- Tailwind CSS
+- Firebase
+- Zustand (state management)
+- Radix UI components
+- React Hook Form
+- Lucide React (icons)
+
+## Project Structure
+- `/src/app/` - Next.js app router pages
+- `/src/components/` - Reusable UI components
+- `/src/store/` - Zustand state management
+- `/src/lib/` - Utilities and configurations
+- `/src/hooks/` - Custom React hooks
+
+## Development Setup
+- Run with: `npm run dev` (uses Turbopack)
+- Hot reload enabled by default
+- Runs on port 8080
+
+## Coding Standards
+- Use TypeScript for all new code
+- Follow existing component patterns
+- Use Tailwind CSS for styling
+- Implement proper error handling
+- Add appropriate TypeScript types
+- Follow React best practices
+- Use simple logic wherever possible
+
+## Notes
+- This document will be updated as needed for context
+- All changes should maintain existing functionality
+- Test changes thoroughly before committing 
