@@ -8,7 +8,7 @@ import { useRouter } from 'next/navigation';
 import { useModal } from '@/components/ui/Modal';
 import CompanionActivityMode from '../CompanionActivityMode/CompanionActivityMode';
 import ActivityStatusQueue from '../../InService/ActivityStatusQueue/ActivityStatusQueue';
-import { ACTIVITY_MODES, ACTIVITY_STATUS, COMPANION_MODE_STATUS_LINKER, MSG_STATUS, MESSAGE_TYPES_TO_COMPANION, STATUS_BUTTON_LABELS } from '@/lib/constants';
+import { ACTIVITY_MODES, ACTIVITY_STATUS, COMPANION_MODE_STATUS_LINKER, MSG_STATUS, MESSAGE_TYPES_TO_COMPANION, STATUS_BUTTON_LABELS, ACTIVITY_SUB_MODE_LINKER, MODE_DEFAULT_STATUS } from '@/lib/constants';
 import StopWatch from '../../InService/StopWatch';
 import ConfirmationModalContent from '@/components/ConfirmationModalContent';
 import { vocab } from '@/lib/vocab_constants';
@@ -37,6 +37,8 @@ const GuardMatchingPage: React.FC = () => {
   // Get the selected mode and current status from the store for conditional styling
   const { selectedMode, companionCurrentStatus, recieveCompanionMsgQueue } = useCompanionStore((state) => state.CompanionAcvitiyMonitor);
   const companionActivityStatus = useCompanionStore.getState().CompanionAcvitiyMonitor.companionCurrentStatus;
+  const setSelectedSubMode = useCompanionStore((state) => state.setSelectedSubMode);
+  const selectedSubMode = useCompanionStore((state) => state.getSelectedSubMode());
 
   useEffect(() => {
     // Create an instance of Html5Qrcode
@@ -139,14 +141,19 @@ const GuardMatchingPage: React.FC = () => {
 
   const modeSelectionConfirmation = (mode: string) => {
     console.log(`Mode selected: ${mode}`);
-    // Update the selectedMode within clientActivityMonitor.companionFlow in the store
+    const defaultStatus = MODE_DEFAULT_STATUS[mode];
     useCompanionStore.getState().setCompanionAcvitiyMonitor({
-      selectedMode: mode, // Assuming selectedMode is a direct property of CompanionAcvitiyMonitor
+      selectedMode: mode,
+      companionCurrentStatus: defaultStatus,
     });
 
     updateValueInClient({
       path: storePaths.ClientActivityMonitor.currentMode,
       val: mode,
+    });
+    updateValueInClient({
+      path: storePaths.ClientActivityMonitor.currentStatus,
+      val: defaultStatus,
     });
 
     closeModal();
@@ -243,6 +250,16 @@ const GuardMatchingPage: React.FC = () => {
   // Handler for cancelling opening the client message
   const handleClientMsgCancel = () => {
     closeModal();
+  };
+
+  // Handler for sub-mode selection
+  const handleSubModeSelection = (subMode: string) => {
+    setSelectedSubMode(subMode);
+    // Add more logic here if needed in the future
+    updateValueInClient({
+      path: storePaths.CompanionAcvitiyMonitor.selectedSubMode,
+      val: subMode,
+    });
   };
 
   return (
@@ -342,7 +359,7 @@ const GuardMatchingPage: React.FC = () => {
           />
 
         </div>
-        <div id="action_buttons"
+        <div id="companion_mode_selection_container"
           style={{ marginTop: '20px', padding: '10px' }}>
           <div id="modes_container" className="rounded-xl shadow-lg">
             <div className="border rounded-lg flex flex-wrap justify-center items-center p-2 mb-2">
@@ -360,15 +377,26 @@ const GuardMatchingPage: React.FC = () => {
                 With client
               </button>
             </div>
-
           </div>
+          {/* Sub Mode Selection Container */}
+          {selectedMode && ACTIVITY_SUB_MODE_LINKER[selectedMode as keyof typeof ACTIVITY_SUB_MODE_LINKER] && ACTIVITY_SUB_MODE_LINKER[selectedMode as keyof typeof ACTIVITY_SUB_MODE_LINKER].length > 0 && (
+            <div id="companion_sub_mode_selection_container" className="rounded-xl shadow-lg mt-4">
+              <div className="border rounded-lg flex flex-wrap justify-center items-center p-2 mb-2">
+                {ACTIVITY_SUB_MODE_LINKER[selectedMode as keyof typeof ACTIVITY_SUB_MODE_LINKER].map((subMode: string) => (
+                  <button
+                    key={subMode}
+                    className={selectedSubMode === subMode ? selectedButtonClasses : buttonClasses}
+                    style={{ minWidth: '120px', padding: '0.5rem 1.5rem', fontSize: '1rem', margin: '0.25rem' }}
+                    onClick={() => handleSubModeSelection(subMode)}
+                  >
+                    {subMode}
+                  </button>
+                ))}
+              </div>
+            </div>
+          )}
           <div id="mode_and_status_info" >
             {companionActivityStatus === ACTIVITY_STATUS.QUEUE && <CompanionActivityMode />}
-            {companionActivityStatus !== ACTIVITY_STATUS.QUEUE &&
-              <div id="status_info_helper">
-
-              </div>
-            }
           </div>
           {/* Status container with relative positioning for the overlay */}
           <div id="status_container" className="rounded-xl shadow-lg" style={{ position: 'relative' }}> {/* Added relative positioning for the overlay */}

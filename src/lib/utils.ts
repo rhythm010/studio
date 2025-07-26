@@ -79,6 +79,7 @@ export const storePaths = {
  recieveCompanionMsgQueue: "CompanionAcvitiyMonitor/recieveCompanionMsgQueue",
     selectedMode: "CompanionAcvitiyMonitor/selectedMode",
     companionCurrentStatus: "CompanionAcvitiyMonitor/companionCurrentStatus",
+    selectedSubMode: "CompanionAcvitiyMonitor/selectedSubMode",
     PAYMENT_CALL: {
       path: "CompanionAcvitiyMonitor/PAYMENT_CALL",
       active: "CompanionAcvitiyMonitor/PAYMENT_CALL/active",

@@ -18,9 +18,9 @@ interface FeedbackDetails {
 
 interface ClientCompanionDetails {
   primaryCompanionSessionId: string | null;
- secondaryCompanionSessionId: string | null;
- getPrimaryCompanionSessionId: () => string | null; // Getter for primaryCompanionSessionId
- getSecondaryCompanionSessionId: () => string | null; // Getter for secondaryCompanionSessionId
+  secondaryCompanionSessionId: string | null;
+  getPrimaryCompanionSessionId: () => string | null; // Getter for primaryCompanionSessionId
+  getSecondaryCompanionSessionId: () => string | null; // Getter for secondaryCompanionSessionId
 }
 
 interface CompanionProfileDetails {
@@ -84,7 +84,7 @@ interface ClientActivityMonitor {
       approxTime: number;
       actionButtons: {
         addItem: boolean;
-        complete?:boolean;
+        complete?: boolean;
         cancel: boolean;
       };
     };
@@ -93,7 +93,7 @@ interface ClientActivityMonitor {
       time: string;
       actionButtons: {
         addItem: boolean;
-        complete?:boolean;
+        complete?: boolean;
         cancel: boolean;
       };
     };
@@ -102,28 +102,28 @@ interface ClientActivityMonitor {
       time: string;
       actionButtons: {
         addItem: boolean;
-        complete?:boolean;
+        complete?: boolean;
       };
     };
     WAIT_OP: {
       active: boolean;
       actionButtons: {
         addItem: boolean;
-        complete?:boolean;
+        complete?: boolean;
       };
     };
     WITH_YOU: {
       active: boolean;
       actionButtons: {
         addItem: boolean;
-        complete?:boolean;
+        complete?: boolean;
       };
     },
     DEFAULT: {
       active: boolean;
       actionButtons: {
         addItem: boolean;
-        complete?:boolean;
+        complete?: boolean;
         cancel: boolean;
       };
     }
@@ -183,6 +183,8 @@ interface CompanionStore {
   setClientActivityMonitor: (details: Partial<ClientActivityMonitor>) => void; // Add setter
   getClientActivityMonitor: () => ClientActivityMonitor; // Add getter
   setRecieveCompanionMsgQueue: (obj: any) => void; // Keep as any for now
+  setSelectedSubMode: (subMode: string) => void;
+  getSelectedSubMode: () => string;
 }
 
 const useCompanionStore = create<CompanionStore>((set) => ({
@@ -214,7 +216,7 @@ const useCompanionStore = create<CompanionStore>((set) => ({
     }],
   },
   CompanionAcvitiyMonitor: { // Initialize the new property
-    sendCompanionMsgQueue: [{data:'initial_data'}],
+    sendCompanionMsgQueue: [{ data: 'initial_data' }],
     // Initialize recieveCompanionMsgQueue as an empty object
     recieveCompanionMsgQueue: {
       type: 'STAND_GUARD',
@@ -225,6 +227,7 @@ const useCompanionStore = create<CompanionStore>((set) => ({
     },
     selectedMode: ACTIVITY_MODES.WITH_YOU,
     companionCurrentStatus: ACTIVITY_STATUS.DEFAULT,
+    selectedSubMode: '',
     QUEUE: {
       active: false,
       currentPosition: 0,
@@ -248,7 +251,7 @@ const useCompanionStore = create<CompanionStore>((set) => ({
   ClientActivityMonitor: { // Initialize the new property
     // Initialize sendClientMsgQueue as an empty object
     sendClientMsgQueue: {},
-    recieveClientMsgQueue: [{data:'initial_data'}],
+    recieveClientMsgQueue: [{ data: 'initial_data' }],
     modeTitle: "",
     currentStatus: ACTIVITY_STATUS.DEFAULT,
     currentMode: ACTIVITY_MODES.WITH_YOU,
@@ -333,10 +336,10 @@ const useCompanionStore = create<CompanionStore>((set) => ({
   setClientCompanionDetails: (details) =>
     set((state) => ({
       clientCompanionDetails: { ...state.clientCompanionDetails, ...details },
- getPrimaryCompanionSessionId: () =>
- useCompanionStore.getState().clientCompanionDetails.primaryCompanionSessionId,
- getSecondaryCompanionSessionId: () =>
- useCompanionStore.getState().clientCompanionDetails.secondaryCompanionSessionId,
+      getPrimaryCompanionSessionId: () =>
+        useCompanionStore.getState().clientCompanionDetails.primaryCompanionSessionId,
+      getSecondaryCompanionSessionId: () =>
+        useCompanionStore.getState().clientCompanionDetails.secondaryCompanionSessionId,
     })),
   getClientCompanionDetails: () => useCompanionStore.getState().clientCompanionDetails,
   setCompanionRole: (role) => set(state => ({ companionProfileDetails: { ...state.companionProfileDetails, companionRole: role } })),
@@ -366,43 +369,43 @@ const useCompanionStore = create<CompanionStore>((set) => ({
       },
     })),
 
- setProfileDetails: (details: Partial<ProfileDetails>) =>
- set((state) => ({
- profileDetails: { ...state.profileDetails, ...details },
+  setProfileDetails: (details: Partial<ProfileDetails>) =>
+    set((state) => ({
+      profileDetails: { ...state.profileDetails, ...details },
     })),
 
   getClientActivityMonitor: () => useCompanionStore.getState().ClientActivityMonitor,
 
-    // Getters for message queues
-    getSendCompanionMsgQueue: () => useCompanionStore.getState().CompanionAcvitiyMonitor.sendCompanionMsgQueue,
-    getRecieveCompanionMsgQueue: () => useCompanionStore.getState().CompanionAcvitiyMonitor.recieveCompanionMsgQueue,
-    // Setters for message queues - adds an object to the respective array
-    setSendCompanionMsgQueue: (message: object) =>
-      set((state) => ({
-        CompanionAcvitiyMonitor: {
-          ...state.CompanionAcvitiyMonitor,
-          sendCompanionMsgQueue: [...state.CompanionAcvitiyMonitor.sendCompanionMsgQueue, message],
-        },
-      })),
-    // Setter for receiveCompanionMsgQueue - sets the object directly
-    setRecieveCompanionMsgQueue: (message: any) =>
-      set((state) => ({
-        CompanionAcvitiyMonitor: { ...state.CompanionAcvitiyMonitor, recieveCompanionMsgQueue: message },
-      })),
+  // Getters for message queues
+  getSendCompanionMsgQueue: () => useCompanionStore.getState().CompanionAcvitiyMonitor.sendCompanionMsgQueue,
+  getRecieveCompanionMsgQueue: () => useCompanionStore.getState().CompanionAcvitiyMonitor.recieveCompanionMsgQueue,
+  // Setters for message queues - adds an object to the respective array
+  setSendCompanionMsgQueue: (message: object) =>
+    set((state) => ({
+      CompanionAcvitiyMonitor: {
+        ...state.CompanionAcvitiyMonitor,
+        sendCompanionMsgQueue: [...state.CompanionAcvitiyMonitor.sendCompanionMsgQueue, message],
+      },
+    })),
+  // Setter for receiveCompanionMsgQueue - sets the object directly
+  setRecieveCompanionMsgQueue: (message: any) =>
+    set((state) => ({
+      CompanionAcvitiyMonitor: { ...state.CompanionAcvitiyMonitor, recieveCompanionMsgQueue: message },
+    })),
 
-      // Getter for sendClientMsgQueue (object)
-      getSendClientMsgQueue: () => useCompanionStore.getState().ClientActivityMonitor.sendClientMsgQueue,
-      getRecieveClientMsgQueue: () => useCompanionStore.getState().ClientActivityMonitor.recieveClientMsgQueue,
-      // Setter for sendClientMsgQueue - sets the object directly
-     setSendClientMsgQueue: (message: object) =>
-     set((state) => ({
-     ClientActivityMonitor: { ...state.ClientActivityMonitor, sendClientMsgQueue: message }, // Set the object directly
-        })),
-     setRecieveClientMsgQueue: (message: object) =>
-     set((state) => ({
-     ClientActivityMonitor: { ...state.ClientActivityMonitor, recieveClientMsgQueue: [...state.ClientActivityMonitor.recieveClientMsgQueue, message] },
-        })),
-     
+  // Getter for sendClientMsgQueue (object)
+  getSendClientMsgQueue: () => useCompanionStore.getState().ClientActivityMonitor.sendClientMsgQueue,
+  getRecieveClientMsgQueue: () => useCompanionStore.getState().ClientActivityMonitor.recieveClientMsgQueue,
+  // Setter for sendClientMsgQueue - sets the object directly
+  setSendClientMsgQueue: (message: object) =>
+    set((state) => ({
+      ClientActivityMonitor: { ...state.ClientActivityMonitor, sendClientMsgQueue: message }, // Set the object directly
+    })),
+  setRecieveClientMsgQueue: (message: object) =>
+    set((state) => ({
+      ClientActivityMonitor: { ...state.ClientActivityMonitor, recieveClientMsgQueue: [...state.ClientActivityMonitor.recieveClientMsgQueue, message] },
+    })),
+
 
   reset: () =>
     set({
@@ -413,6 +416,10 @@ const useCompanionStore = create<CompanionStore>((set) => ({
       serviceSelected: "",
       profileDetails: {}
     }),
+  setSelectedSubMode: (subMode) => set((state) => ({
+    CompanionAcvitiyMonitor: { ...state.CompanionAcvitiyMonitor, selectedSubMode: subMode },
+  })),
+  getSelectedSubMode: () => useCompanionStore.getState().CompanionAcvitiyMonitor.selectedSubMode,
 }));
 
 export { useCompanionStore };

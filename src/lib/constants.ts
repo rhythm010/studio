@@ -6,7 +6,7 @@ export const ACTIVITY_MODES = {
 };
 
 export const ACTIVITY_SUB_MODE_LINKER = {
-   'CAFE': ['SELF', 'WAITER'],
+   'CAFE': ['SELF-SERVICE', 'WAITER-SERVICE'],
    'STORE': ['LARGE', 'MEDIUM', 'SMALL'],
  };
 
@@ -17,19 +17,28 @@ export const ACTIVITY_STATUS = {
     'WAIT_ITEM':'WAIT_ITEM',
     'WAIT_OP':'WAIT_OP',
     'DEFAULT': 'DEFAULT',
+    'CLEAR_TABLE': 'CLEAR_TABLE',
+    'STAND_CLOSE': 'STAND_CLOSE',
 };
 
-export const MODE_ACTIVITY_MAP = {
-    [ACTIVITY_MODES.QUEUE] : [ACTIVITY_STATUS.QUEUE]
-};
 
 export const COMPANION_MODE_STATUS_LINKER = {
    'WITH_YOU': ['DEFAULT', 'QUEUE', 'WAIT_OP' ],
-   'CAFE': ['QUEUE','PAYMENT_CALL','WAIT_ITEM','WAIT_OP'],
+   'CAFE': ['QUEUE','PAYMENT_CALL','WAIT_ITEM','WAIT_OP','CLEAR_TABLE','STAND_CLOSE'],
    'QUEUE': ['QUEUE'],
    'STORE': ['QUEUE','PAYMENT_CALL','WAIT_ITEM','WAIT_OP'],
    'WITH_CLIENT': ['DEFAULT'],
 }
+
+export const STATUS_BUTTON_LABELS = {
+    [ACTIVITY_STATUS.QUEUE]: 'Queue',
+    [ACTIVITY_STATUS.PAYMENT_CALL]: 'Payment',
+    [ACTIVITY_STATUS.WAIT_ITEM]: 'waiting for item',
+    [ACTIVITY_STATUS.WAIT_OP]: 'waiting OP',
+    [ACTIVITY_STATUS.DEFAULT]: 'Default',   
+    [ACTIVITY_STATUS.CLEAR_TABLE]: 'Clear Table',
+    [ACTIVITY_STATUS.STAND_CLOSE]: 'Stand Close',
+};
 
 
 export const CLIENT_SEND_MSG = {
@@ -54,11 +63,9 @@ export const MSG_STATUS = {
     'ACTIONED': 'ACTIONED'
 };
 
- // Status button labels mapping
- export const STATUS_BUTTON_LABELS = {
-    [ACTIVITY_STATUS.QUEUE]: 'Queue',
-    [ACTIVITY_STATUS.PAYMENT_CALL]: 'Payment',
-    [ACTIVITY_STATUS.WAIT_ITEM]: 'waiting for item',
-    [ACTIVITY_STATUS.WAIT_OP]: 'waiting OP',
-    [ACTIVITY_STATUS.DEFAULT]: 'Default',
-  };
+// Default status for each mode
+export const MODE_DEFAULT_STATUS: Record<string, string> = {
+  [ACTIVITY_MODES.CAFE]: ACTIVITY_STATUS.WAIT_OP,
+  [ACTIVITY_MODES.STORE]: ACTIVITY_STATUS.WAIT_OP,
+  [ACTIVITY_MODES.WITH_YOU]: ACTIVITY_STATUS.DEFAULT,
+};
