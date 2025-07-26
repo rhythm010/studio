@@ -89,3 +89,14 @@ export const CLIENT_INSTRUCTION_MANUAL = {
         'WAIT_OP': 'WAIT_OP',
     },
 }
+
+export const CLIENT_INSTRUCTION_OPTIONS = {
+    DEFAULT: [],
+    QUEUE: ['CANCEL'],
+    WAIT_OP: ['CANCEL'],
+    CLEAR_TABLE: ['CANCEL'],
+    STAND_CLOSE: ['CANCEL'],
+    ORDER_CALL: ['CANCEL'],
+    PAYMENT_CALL: [],
+    WAIT_ITEM: [],
+}   

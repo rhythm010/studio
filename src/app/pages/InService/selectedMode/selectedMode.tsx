@@ -4,7 +4,7 @@ import React, { useEffect, useState } from 'react';
 import { useCompanionStore } from '@/store/store';
 import { database } from '@/lib/firebase'; // Assuming you have your firebase instance exported as 'database'
 import { ref, onValue, off } from 'firebase/database';
-import { storePaths, updateValueInCompanion, createClientInstructionProp, createCompanionMessageObject, sendMsgToCompanion } from '@/lib/utils'; // Assuming storePaths and createClientInstructionProp are in utils.ts
+import { storePaths, createClientInstructionProp, createCompanionMessageObject, sendMsgToCompanion } from '@/lib/utils'; // Assuming storePaths and createClientInstructionProp are in utils.ts
 import { cn } from '@/lib/utils'; // Assuming cn is in utils.ts
 import { ACTIVITY_STATUS, ACTIVITY_MODES, CLIENT_INSTRUCTION_MANUAL, COMPANION_ROLES } from '@/lib/constants';
 import ClientFeatureExplainer from '../ClientFeatureExplainer';

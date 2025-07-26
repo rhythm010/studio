@@ -223,30 +223,55 @@ const GuardMatchingPage: React.FC = () => {
 
   // Handler for clicking the client message container
   const handleClientMsgClick = () => {
-    // Immediately set status to OPENED on click
-    useCompanionStore.getState().setCompanionAcvitiyMonitor({
-      recieveCompanionMsgQueue: {
-        ...recieveCompanionMsgQueue,
-        status: MSG_STATUS.OPENED,
-      }
-    });
+    // Determine which button to show based on current status
+    if (recieveCompanionMsgQueue?.status === MSG_STATUS.ACTIONED) {
+      openModal(
+        <ConfirmationModalContent
+          text={"You have completed this instruction"}
+          yesText={undefined}
+          noText={"Close"}
+          onConfirm={closeModal}
+          onCancel={closeModal}
+        />
+      );
+      return;
+    }
+    let yesText = 'START';
+    let nextStatus = MSG_STATUS.OPENED;
+    if (recieveCompanionMsgQueue?.status === MSG_STATUS.OPENED) {
+      yesText = 'COMPLETED';
+      nextStatus = MSG_STATUS.ACTIONED;
+    }
     openModal(
       <ConfirmationModalContent
-        text="Do you want to open this message?"
-        onConfirm={handleClientMsgConfirm}
+        text={
+          yesText === 'START'
+            ? 'Do you want to start this message?'
+            : 'Mark this message as completed?'
+        }
+        yesText={yesText}
+        onConfirm={() => handleClientMsgConfirmAction(nextStatus)}
         onCancel={handleClientMsgCancel}
       />
     );
   };
 
-  // Handler for confirming opening the client message
-  const handleClientMsgConfirm = () => {
-    // Set status to ACTIONED when user clicks Yes
+  // Handler for confirming the client message action (START/COMPLETED)
+  const handleClientMsgConfirmAction = (nextStatus: string) => {
+    // Update local store
     useCompanionStore.getState().setCompanionAcvitiyMonitor({
       recieveCompanionMsgQueue: {
         ...recieveCompanionMsgQueue,
-        status: MSG_STATUS.ACTIONED,
-      }
+        status: nextStatus,
+      },
+    });
+    // Update client's Firebase sendClientMsgQueue with the new status
+    updateValueInClient({
+      path: storePaths.ClientActivityMonitor.sendClientMsgQueue,
+      val: {
+        ...recieveCompanionMsgQueue,
+        status: nextStatus,
+      },
     });
     closeModal();
   };
