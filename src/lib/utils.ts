@@ -268,26 +268,6 @@ export async function updateValueInCompanion(updateObj: { path: string, val: any
 }
 
 
-// export async function updateValueInSecondaryCompanion(updateObj: { path: string, val: any }) {
-//   const secondaryClientSessionId = useCompanionStore.getState().clientCompanionDetails.secondaryCompanionSessionId;
-//   if (!secondaryClientSessionId) {
-//     console.error("Secondary client session ID is not available. Cannot update.");
-//     return;
-//   }
-//   try {
-//     // Construct the reference to the specific path within the secondary client's object
-//     const pathRef = ref(database, `storeObjects/${secondaryClientSessionId}`);
-//     // Update the value at the specified path
-//     console.log('path to be updated in secondary client', updateObj.path)
-//     await update(pathRef, { [updateObj.path]: updateObj.val });
-//     console.log(`Value updated successfully for secondary client ${secondaryClientSessionId} at path ${updateObj.path}`);
-//    } catch (error) {
-//     console.error(`Error updating value for secondary client ${secondaryClientSessionId} at path ${updateObj.path}:`, error);
-//     // Optionally re-throw the error or handle it based on your needs
-//    }
-// }
-
-
 // Async function to send messages to the client
 
 function formMessageObj(messageType: string, messageData: object, messageSender:string) {
@@ -407,3 +387,16 @@ export function changeClientMsgStatus(status: any) {
     console.error('recieveCompanionMsgQueue is not a valid message object. Cannot change status.');
   }
 }
+
+// Utility method to create an empty object for ClientFeatureExplainer props
+export function createClientFeatureProp() {
+  return {};
+}
+
+export function createCompanionMessageObject() {
+  return {};
+}
+
+
+
+

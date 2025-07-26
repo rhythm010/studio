@@ -1,13 +1,14 @@
-
 "use client";
 
 import React, { useEffect, useState } from 'react';
 import { useCompanionStore } from '@/store/store';
 import { database } from '@/lib/firebase'; // Assuming you have your firebase instance exported as 'database'
 import { ref, onValue, off } from 'firebase/database';
-import { storePaths, updateValueInPrimaryCompanion } from '@/lib/utils'; // Assuming storePaths is in utils.ts
+import { storePaths, updateValueInPrimaryCompanion, createClientFeatureProp, createCompanionMessageObject } from '@/lib/utils'; // Assuming storePaths and createClientFeatureProp are in utils.ts
 import { cn } from '@/lib/utils'; // Assuming cn is in utils.ts
 import { ACTIVITY_STATUS, ACTIVITY_MODES } from '@/lib/constants';
+import ClientFeatureExplainer from '../ClientFeatureExplainer';
+import { useModal } from '@/components/ui/Modal';
 
 const selectedMode: React.FC = () => {
   // Define local states
@@ -15,6 +16,8 @@ const selectedMode: React.FC = () => {
   const [currentStatus, setCurrentStatus] = useState<string>('');
   const [currentStatusValues, setCurrentStatusValues] = useState<any | {}>({});
   const clientActivityMonitor = useCompanionStore((state) => state.ClientActivityMonitor);
+  
+  const { openModal, closeModal } = useModal();
 
   useEffect(() => {
     // Add a keyframes rule for the blinking animation
@@ -38,8 +41,8 @@ const selectedMode: React.FC = () => {
 
   const syncLocalModeWithFirebase = () => {
     useCompanionStore.getState().setClientActivityMonitor({
-      currentMode: currentMode,
-      currentStatus: currentStatus,
+      // currentMode: currentMode,
+      // currentStatus: currentStatus,
       // Assuming you want to update statusInfo based on the fetched currentStatusValues
       statusInfo: { ...clientActivityMonitor.statusInfo, [currentStatus]: currentStatusValues },
     });
@@ -122,6 +125,18 @@ const selectedMode: React.FC = () => {
       off(statusInfoRef, 'value', listener as any);
     };
   }, [useCompanionStore.getState().getSessionId(), currentStatus]); // Re-run effect if session ID or currentStatus changes
+
+
+  const activateCompanionInstruction = () => {
+    // TODO: Implement the logic for activating companion instruction
+    console.log('activateCompanionInstruction called');
+    createCompanionMessageObject();
+  };
+
+  const clientFeatureLaunchHandler = () => {
+    const explainerProps = createClientFeatureProp();
+    openModal(<ClientFeatureExplainer {...explainerProps} closeModal={closeModal} handleYes={activateCompanionInstruction} />);
+  };
 
   return (
     <div className="flex flex-col m-4 rounded-lg h-full">
@@ -225,8 +240,10 @@ const selectedMode: React.FC = () => {
           clientActivityMonitor.statusInfo[clientActivityMonitor.currentStatus as keyof typeof clientActivityMonitor.statusInfo]?.actionButtons?.cancel) &&
           <div id="cancel_status_button" className="flex flex-col items-center mx-2">
           <button
-           id="cancel_in_service"
-           className="rounded-full w-12 h-12 mb-1 shadow-md flex items-center justify-center">
+           id="cancel_mode_service"
+           className="rounded-full w-12 h-12 mb-1 shadow-md flex items-center justify-center"
+           onClick={clientFeatureLaunchHandler}
+          >
             <img src="/icons/cancel_mode.png" alt="Add Item Icon" className="w-6 h-6 object-contain" />
           </button>
          
