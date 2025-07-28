@@ -273,6 +273,14 @@ const GuardMatchingPage: React.FC = () => {
         status: nextStatus,
       },
     });
+    // Update companion's own Firebase sendCompanionMsgQueue with the new status
+    updateInSelfFirebase(
+      storePaths.CompanionAcvitiyMonitor.sendCompanionMsgQueue,
+      {
+        ...recieveCompanionMsgQueue,
+        status: nextStatus,
+      }
+    );
     closeModal();
   };
 
@@ -331,7 +339,7 @@ const GuardMatchingPage: React.FC = () => {
             onClick={handleClientMsgClick}
           >
             {/* Display the message if it exists */}
-            <p>{recieveCompanionMsgQueue.status}</p>
+            <p>{recieveCompanionMsgQueue.type}</p>
           </div>
         )}
 

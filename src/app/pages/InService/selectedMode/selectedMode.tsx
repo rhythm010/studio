@@ -4,7 +4,7 @@ import React, { useEffect, useState } from 'react';
 import { useCompanionStore } from '@/store/store';
 import { database } from '@/lib/firebase'; // Assuming you have your firebase instance exported as 'database'
 import { ref, onValue, off } from 'firebase/database';
-import { storePaths, createClientInstructionProp, createCompanionMessageObject, sendMsgToCompanion } from '@/lib/utils'; // Assuming storePaths and createClientInstructionProp are in utils.ts
+import { storePaths, createClientInstructionProp, createCompanionMessageObject, sendMsgToCompanion, listenToFirebaseKey } from '@/lib/utils'; // Assuming storePaths and createClientInstructionProp are in utils.ts
 import { cn } from '@/lib/utils'; // Assuming cn is in utils.ts
 import { ACTIVITY_STATUS, ACTIVITY_MODES, CLIENT_INSTRUCTION_MANUAL, COMPANION_ROLES } from '@/lib/constants';
 import ClientFeatureExplainer from '../ClientFeatureExplainer';
@@ -12,9 +12,10 @@ import { useModal } from '@/components/ui/Modal';
 
 const selectedMode: React.FC = () => {
   // Define local states
-  const [currentMode, setCurrentMode] = useState<string>('');
+  const [currentMode, setCurrentMode] = useState<string>('CAFE');
   const [currentStatus, setCurrentStatus] = useState<string>('');
   const [currentStatusValues, setCurrentStatusValues] = useState<any | {}>({});
+  const [clientQueueStatus, setClientQueueStatus] = useState<string>('');
   const clientActivityMonitor = useCompanionStore((state: any) => state.ClientActivityMonitor);
   
   const { openModal, closeModal } = useModal();
@@ -41,9 +42,6 @@ const selectedMode: React.FC = () => {
 
   const syncLocalModeWithFirebase = () => {
     useCompanionStore.getState().setClientActivityMonitor({
-      // currentMode: currentMode,
-      // currentStatus: currentStatus,
-      // Assuming you want to update statusInfo based on the fetched currentStatusValues
       statusInfo: { ...clientActivityMonitor.statusInfo, [currentStatus]: currentStatusValues },
     });
   }
@@ -68,10 +66,7 @@ const selectedMode: React.FC = () => {
     const listener = onValue(modeRef, (snapshot) => {
       const modeValue = snapshot.val();
       console.log("Firebase currentMode changed:", modeValue);
-      // Update local state if the value is different to avoid unnecessary re-renders
-      // if (modeValue !== currentMode) {
       setCurrentMode(modeValue);
-      // }
     });
 
     return () => off(modeRef, 'value', listener as any); // Explicitly specify 'value' event type
@@ -126,146 +121,81 @@ const selectedMode: React.FC = () => {
     };
   }, [useCompanionStore.getState().getSessionId(), currentStatus]); // Re-run effect if session ID or currentStatus changes
 
+  // Listen for changes to sendClientMsgQueue in Firebase
+  useEffect(() => {
+    const sessionId = useCompanionStore.getState().getSessionId();
+    if (!sessionId) return;
+    const unsubscribe = listenToFirebaseKey(sessionId, storePaths.ClientActivityMonitor.sendClientMsgQueue, (val) => {
+      if (val && typeof val === 'object' && val.status) {
+        setClientQueueStatus(val.status);
+      } else if (typeof val === 'string') {
+        setClientQueueStatus(val);
+      } else {
+        setClientQueueStatus('');
+      }
+    });
+    return unsubscribe;
+  }, [useCompanionStore.getState().getSessionId()]);
+
+  // Handler for instruction button click
+  // Remove handleInstructionButtonClick
 
   const activateCompanionInstruction = (instruction: string) => {
     console.log('activateCompanionInstruction called');
+    // Update companion's local store
+    useCompanionStore.getState().setRecieveCompanionMsgQueue({
+      type: instruction,
+      status: 'SENT', // or any status you want to represent
+      timestamp: Date.now(),
+    });
     // Pass the instruction as the message type to sendMsgToCompanion
     sendMsgToCompanion(instruction, {}, COMPANION_ROLES.PRIMARY);
   };
 
   const clientInstructionLaunchHandler = (instruction: string) => {
     const explainerProps = createClientInstructionProp(instruction);
-    openModal(<ClientFeatureExplainer {...explainerProps} closeModal={closeModal} handleYes={() => activateCompanionInstruction(instruction)} />);
+    openModal(
+      <ClientFeatureExplainer
+        {...explainerProps}
+        closeModal={closeModal}
+        handleYes={() => activateCompanionInstruction(instruction)}
+      />
+    );
+  };
+
+  // Helper to check if currentMode is a valid key for CLIENT_INSTRUCTION_MANUAL
+  const isValidInstructionMode = (mode: any): mode is keyof typeof CLIENT_INSTRUCTION_MANUAL => {
+    return mode && Object.prototype.hasOwnProperty.call(CLIENT_INSTRUCTION_MANUAL, mode);
   };
 
   return (
-    <div id="selected_mode_container" className="flex flex-col m-4 rounded-lg h-full">
-      {/* Top Section: Mode Type (40% height) */}
+    <div id="selected_mode_container" className="flex flex-col h-full w-full rounded-lg">
+      {/* Top Section: Status Text (30% height) */}
       <div
-        className="flex flex-grow-[0.2] flex-shrink-0 items-center justify-center mb-3">
-        <h2 className="text-lg font-bold">{`${clientActivityMonitor.currentMode} MODE`}</h2>
+        id="status_text_container"
+        className="flex items-center justify-center border-2 border-black rounded-lg mb-4 mx-4"
+        style={{ height: '30%' }}
+      >
+        <h2 className="text-2xl font-bold">{clientQueueStatus || 'Dummy Status Text'}</h2>
       </div>
 
-      {/* Middle Section: Status - Conditionally render based on mode (remaining height) */}
-      <div id="section_2"
-        className={cn(
-          "flex flex-grow flex-col items-center mb-3",
-          "h-full overflow-hidden", // Ensure it takes 100% of the available height and prevent overflow
-          "rounded-xl shadow-lg" // Added rounded corners and elevated style
-        )}
+      {/* Bottom Section: Instruction Buttons (70% height) */}
+      <div
+        id="instruction_buttons_container"
+        className="flex flex-row items-center justify-center flex-wrap gap-8 border-2 border-black rounded-lg mx-4 p-4"
+        style={{ minHeight: '70%' }}
       >
-
-        <div>
-          {/* QUEUE MODE AND QUEUE STATUS */}
-         
-          { ((clientActivityMonitor.currentMode === ACTIVITY_MODES.CAFE && clientActivityMonitor.currentStatus === ACTIVITY_STATUS.QUEUE) ||
-          (clientActivityMonitor.currentMode === ACTIVITY_MODES.QUEUE)) && (
-              <div id="queue_container" className="flex flex-col items-center justify-between h-full">
-                <div id="companion_status" className="text-sm font-normal self-start">companion position</div>
-                <div id="companion_pos_val" className="text-[7rem] leading-none">{clientActivityMonitor.statusInfo.QUEUE?.currentPosition}</div>
-                <div id="companion_pos_time" className="self-end">
-                  <span className="text-sm font-thin">Approx. Time: </span>
-                  <span className="text-[2rem]">{clientActivityMonitor.statusInfo.QUEUE?.approxTime}</span>
-                  <span className="text-sm font-thin">min</span>
-                </div>
-              </div>
-            )}
-
-          {/* CAFE MODE AND DEFAULT STATUS */}
-
-          {clientActivityMonitor.currentMode === ACTIVITY_MODES.CAFE && clientActivityMonitor.currentStatus === 'DEFAULT' && (
-            <div className="flex flex-col items-center justify-center">
-              <p>default status for cafe</p>
-            </div>)}
-
-          {clientActivityMonitor.currentMode === ACTIVITY_MODES.CAFE && clientActivityMonitor.currentStatus === 'PAYMENT_CALL' &&
-            (
-              <div id="payment_container" className="flex flex-col items-center justify-center h-full">
-                <img src="/icons/mode_cafe_status_payment.png"
-                  alt="Payment Status Icon" className="w-[12rem] h-[12rem] object-contain"
-                  style={{ animation: 'blink 2s infinite', borderRadius: '10%' }} // Apply the blinking animation and rounded corners
-                />
-              </div>
-            )}
-          {/* CAFE MODE AND WAIT_ITEM STATUS */}
-
-          {clientActivityMonitor.currentMode === ACTIVITY_MODES.CAFE && clientActivityMonitor.currentStatus === 'WAIT_ITEM' && (
-            <div id="payment_container" className="flex flex-col items-center justify-center h-full">
-              <img src="/icons/cafe_wait_item_english.png"
-                alt="Payment Status Icon" className="w-[12rem] h-[12rem] object-contain"
-                style={{ animation: 'blink 2s infinite', borderRadius: '10%' }} // Apply the blinking animation and rounded corners
-              />
-            </div>
-          )}
-          {/* CAFE MODE AND WAIT_OP STATUS */}
-
-          {clientActivityMonitor.currentMode === ACTIVITY_MODES.CAFE && clientActivityMonitor.currentStatus === 'WAIT_OP' && (
-            <div id="queue_container_wait_OP" className="flex flex-col items-center justify-center h-full p-[3rem]">
-              {/* <div id="companion_status" className="text-sm font-normal self-start">companion position</div> */}
-              <div id="companion_at_service_txt" className="text-[3rem] font-bold text-center">Waiting for instructions</div>
-            </div>
-          )}
-
-        </div>
-        {/* clientActivityMonitor.currentMode === ACTIVITY_MODES.WITH_YOU && */}
-        { clientActivityMonitor.currentMode === ACTIVITY_MODES.WITH_YOU &&
-          (
-            <div id="with_you_container" className="flex flex-col items-center justify-between h-full">
-              {/* <div id="companion_status" className="text-sm font-normal self-start">companion position</div> */}
-              <div id="with_you_val" className="text-[3rem] font-bold text-center">With you</div>
-            </div>
-          )
-        }
-      </div>
-
-      {/* Bottom Section: Circular Buttons */}
-      {/* Bottom Section: Action Buttons (40% height) */}
-      <div id="action_section" className={cn(
-        "flex flex-grow-[0.4] flex-shrink-0 items-center justify-evenly p-2",
-        "" // Added rounded corners and elevated style
-      )}
-      >
-        
-        {/* Add Item Button */}
-        {/* <div id="add_item_button" className="flex flex-col items-center mx-2">
-          <button className="rounded-full w-12 h-12 mb-1 shadow-md flex items-center justify-center"
-            onClick={handleRestaurantButtonClick}
-          >
-            <img src="/icons/add_item.png" alt="Add Item Icon" className="w-6 h-6 object-contain" />
-          </button>
-          <span className="text-sm font-bold mt-4">Add Item</span>
-        </div> */}
-        
-        { 
-          <div id="cancel_status_button" className="flex flex-col items-center mx-2">
-          <button
-           id="cancel_mode_service"
-           className="rounded-full w-12 h-12 mb-1 shadow-md flex items-center justify-center"
-           onClick={() => clientInstructionLaunchHandler(CLIENT_INSTRUCTION_MANUAL['WITH_YOU']['DEFAULT'])}
-          >
-            <img src="/icons/cancel_mode.png" alt="Add Item Icon" className="w-6 h-6 object-contain" />
-          </button>
-         
-          <span className="text-sm font-bold mt-4">Cancel</span>
-        </div>
-        }
-
-        
-        
-       { 
-        <div id="end_mode_button" className="flex flex-col items-center mx-2">
-          
-          <button 
-            className="rounded-full w-12 h-12 mb-1 shadow-md flex items-center justify-center"
-            onClick={() => clientInstructionLaunchHandler(CLIENT_INSTRUCTION_MANUAL['WITH_YOU']['QUEUE'])}
-          >
-            
-            <img src="/icons/complete_mode.png" alt="Add Item Icon" className="w-6 h-6 object-contain" />
-          </button>
-          <span className="text-sm font-bold mt-4">Done</span>
-        </div>
-        }
-
+        {isValidInstructionMode(currentMode) &&
+          (Object.keys(CLIENT_INSTRUCTION_MANUAL[currentMode]) as Array<keyof typeof CLIENT_INSTRUCTION_MANUAL[typeof currentMode]>).map((key) => (
+            <button
+              id={`instruction_button_${key}`}
+              key={key as string}
+              className="rounded-full w-16 h-16 shadow-md flex items-center justify-center bg-gray-200 hover:bg-gray-300 border-2 border-gray-400"
+              onClick={() => clientInstructionLaunchHandler((CLIENT_INSTRUCTION_MANUAL[currentMode] as Record<string, string>)[key as string])}
+            >
+              <span className="text-xs font-bold text-center leading-tight">{(CLIENT_INSTRUCTION_MANUAL[currentMode] as Record<string, string>)[key as string]}</span>
+            </button>
+          ))}
       </div>
     </div>
   );

@@ -10,7 +10,6 @@ export const ACTIVITY_SUB_MODE_LINKER = {
    'STORE': ['LARGE', 'MEDIUM', 'SMALL'],
  };
 
-
 export const ACTIVITY_STATUS = {
     'QUEUE':'QUEUE',
     'PAYMENT_CALL':'PAYMENT_CALL',
@@ -20,7 +19,6 @@ export const ACTIVITY_STATUS = {
     'CLEAR_TABLE': 'CLEAR_TABLE',
     'STAND_CLOSE': 'STAND_CLOSE',
 };
-
 
 export const COMPANION_MODE_STATUS_LINKER = {
    'WITH_YOU': ['DEFAULT', 'QUEUE', 'WAIT_OP' ],
@@ -39,7 +37,6 @@ export const STATUS_BUTTON_LABELS = {
     [ACTIVITY_STATUS.CLEAR_TABLE]: 'Clear Table',
     [ACTIVITY_STATUS.STAND_CLOSE]: 'Stand Close',
 };
-
 
 export const CLIENT_SEND_MSG = {
     'STOP_ACTIVITY':'STOP_ACTIVITY',
@@ -63,7 +60,6 @@ export const MSG_STATUS = {
     'ACTIONED': 'ACTIONED'
 };
 
-// Default status for each mode
 export const MODE_DEFAULT_STATUS: Record<string, string> = {
   [ACTIVITY_MODES.CAFE]: ACTIVITY_STATUS.WAIT_OP,
   [ACTIVITY_MODES.STORE]: ACTIVITY_STATUS.WAIT_OP,
@@ -78,14 +74,15 @@ export const CLIENT_INSTRUCTION_MANUAL = {
     },
     'CAFE': {
         'WAIT_OP': 'WAIT_OP',
-        'CLEAR_TABLE': 'CLEAR_TABLE',
+        'BRING_STAFF': 'BRING_STAFF',
         'STAND_CLOSE': 'STAND_CLOSE',
         'ORDER_CALL': 'ORDER_CALL',
+        'I_AM_DONE': 'I_AM_DONE',
     },
     'STORE': {
-        'QUEUE': 'QUEUE',
-        'PAYMENT_CALL': 'PAYMENT_CALL',
-        'WAIT_ITEM': 'WAIT_ITEM',
+        'I_AM_DONE': 'I_AM_DONE',
+        'CLOSE_ASSIST': 'CLOSE_ASSIST',
+        'BRING_STAFF': 'BRING_STAFF',
         'WAIT_OP': 'WAIT_OP',
     },
 }

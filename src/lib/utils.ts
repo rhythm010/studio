@@ -238,8 +238,9 @@ export async function updateValueInClient(updateObj: { path: string, val: any })
 }
 
 export async function updateValueInCompanion(updateObj: { path: string, val: any }, role: string) {
-  const companionSessionId = role === COMPANION_ROLES.PRIMARY ? useCompanionStore.getState().clientCompanionDetails.primaryCompanionSessionId:
-                                  useCompanionStore.getState().clientCompanionDetails.secondaryCompanionSessionId;
+  const companionSessionId = role === COMPANION_ROLES.PRIMARY
+    ? useCompanionStore.getState().getPrimaryCompanionSessionId()
+    : useCompanionStore.getState().getSecondaryCompanionSessionId();
   if (!companionSessionId) {
     console.error("Primary companion session ID is not available. Cannot update.");
     return;
@@ -420,8 +421,21 @@ export function changeClientMsgStatus(status: any) {
   }
 }
 
-
-
+/**
+ * Listen to a specific key in a user's Firebase store and call the callback on value change.
+ * @param sessionId - The session ID (user or companion)
+ * @param keyPath - The path to the key inside storeObjects/{sessionId}/
+ * @param callback - Function to call with the new value
+ * @returns Unsubscribe function
+ */
+export function listenToFirebaseKey(sessionId: string, keyPath: string, callback: (val: any) => void) {
+  if (!sessionId) return () => {};
+  const keyRef = ref(database, `storeObjects/${sessionId}/${keyPath}`);
+  const listener = onValue(keyRef, (snapshot) => {
+    callback(snapshot.val());
+  });
+  return () => off(keyRef, 'value', listener as any);
+}
 
 
 export function createClientInstructionProp(instruction: string) {

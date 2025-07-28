@@ -420,6 +420,8 @@ const useCompanionStore = create<CompanionStore>((set) => ({
     CompanionAcvitiyMonitor: { ...state.CompanionAcvitiyMonitor, selectedSubMode: subMode },
   })),
   getSelectedSubMode: () => useCompanionStore.getState().CompanionAcvitiyMonitor.selectedSubMode,
+  getPrimaryCompanionSessionId: () => useCompanionStore.getState().clientCompanionDetails.primaryCompanionSessionId,
+  getSecondaryCompanionSessionId: () => useCompanionStore.getState().clientCompanionDetails.secondaryCompanionSessionId,
 }));
 
 export { useCompanionStore };

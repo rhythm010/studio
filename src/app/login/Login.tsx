@@ -84,6 +84,15 @@ const Login: React.FC = () => {
     // Extract only data properties, excluding methods
     const dataOnlyObject = extractDataFromStore(storeData);
 
+    // Sanitize statusInfo keys before writing to Firebase
+    if (dataOnlyObject.ClientActivityMonitor && dataOnlyObject.ClientActivityMonitor.statusInfo) {
+      dataOnlyObject.ClientActivityMonitor.statusInfo = Object.fromEntries(
+        Object.entries(dataOnlyObject.ClientActivityMonitor.statusInfo).filter(
+          ([key]) => key && !/[.#$/[\]]/.test(key)
+        )
+      );
+    }
+
     // Write the entire store object to Firebase
     try {
       const storeRef = ref(database, `storeObjects/${sessionId}`); // Reference using session ID

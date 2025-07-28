@@ -17,12 +17,12 @@ const ConfirmationModalContent: React.FC<ConfirmationModalContentProps> = ({ tex
       {title && <h2 className="text-xl font-bold mb-4">{title}</h2>}
       <p className="mb-6 text-center text-lg">{text}</p>
       <div className="flex space-x-4">
-        {yesText && (
+        {(yesText !== '') && (
           <button
             className="px-6 py-3 bg-gray-800 text-white rounded-lg border border-green-500 hover:bg-gray-700"
             onClick={onConfirm}
           >
-            {yesText}
+            {yesText || t('yes')}
           </button>
         )}
         <button
