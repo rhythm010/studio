@@ -1,6 +1,5 @@
 "use client"
 import React, { useState, useEffect } from "react";
-import { ACTIVITY_STATUS, ACTIVITY_MODES } from '@/lib/constants';
 import StopWatch from "./StopWatch";
 import { ref, onValue, off } from "firebase/database";
 import SelectedMode from "./selectedMode/selectedMode";
@@ -17,7 +16,6 @@ const InService: React.FC = () => {
   const router = useRouter()
   const { t } = useTranslation('common');
   const [isRunning, setIsRunning] = useState<boolean>(false);
-  const [elapsedTime, setElapsedTime] = useState<number>(0);
   const [firebaseCurrentMode, setFirebaseCurrentMode] = useState<string>("WITH_YOU");
   const { openModal, closeModal } = useModal();
   const startTimer = () => {
@@ -66,23 +64,6 @@ const InService: React.FC = () => {
     sendMsgToCompanion(randomMessage.type, {content: 'a value'}, 'PRIMARY' );
     console.log("Sent a test message to the client.");
   };
-
-  useEffect(() => {
-    // commenting it: this is causing multiple re-renders for the in service component
-    // let intervalId: NodeJS.Timeout | null = null;
-    // if (isRunning) {
-    //   intervalId = setInterval(() => {
-    //     setElapsedTime((prevTime) => prevTime + 10);
-    //   }, 10);
-    // } else if (!isRunning && intervalId) {
-    //   clearInterval(intervalId);
-    // }
-    // return () => {
-    //   if (intervalId) {
-    //     clearInterval(intervalId);
-    //   }
-    // };
-  }, [isRunning]);
 
   useEffect(() => {
     if (useCompanionStore.getState().getSessionId()) {
@@ -151,9 +132,6 @@ const InService: React.FC = () => {
       <div id="stopwatch_section" className="h-[40%] flex flex-col items-center justify-center border-gray-700 mt-4">
         <StopWatch
           isRunning={isRunning}
-          startStop={handleStartStop}
-          elapsedTime={elapsedTime}
-          setElapsedTime={setElapsedTime}
         />
       </div>
 

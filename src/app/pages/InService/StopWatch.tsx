@@ -1,32 +1,44 @@
 "use client";
 
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 
-
 interface StopWatchProps {
-  elapsedTime: number;
-    isRunning: boolean;
-    startStop: () => void;
-    setElapsedTime:(time:number) => void
+  isRunning: boolean;
 }
 
-const StopWatch: React.FC<StopWatchProps> = ({ isRunning, startStop , elapsedTime = 1 ,setElapsedTime }) => {
+const StopWatch: React.FC<StopWatchProps> = ({ isRunning }) => {
+  const [elapsedTime, setElapsedTime] = useState(0); // milliseconds
+  const startTimeRef = useRef<number | null>(null); // timestamp when started
+  const timerRef = useRef<NodeJS.Timeout | null>(null);
 
+  // On start/stop, sync with system clock for accuracy
   useEffect(() => {
-    let intervalId: NodeJS.Timeout | null = null;
     if (isRunning) {
-      intervalId = setInterval(() => {
-        setElapsedTime((prevTime) => prevTime + 1000);
-      }, 1000);
-      clearInterval(intervalId);
+      // When starting, set the start time to now minus already elapsed
+      startTimeRef.current = Date.now() - elapsedTime;
+      timerRef.current = setInterval(() => {
+        if (startTimeRef.current !== null) {
+          setElapsedTime(Date.now() - startTimeRef.current);
+        }
+      }, 100); // update every 100ms for smoothness
+    } else {
+      // When stopped, clear the interval
+      if (timerRef.current) {
+        clearInterval(timerRef.current);
+        timerRef.current = null;
+      }
     }
+    // Cleanup on unmount or when isRunning changes
     return () => {
-      if (intervalId) {
-        clearInterval(intervalId);
+      if (timerRef.current) {
+        clearInterval(timerRef.current);
+        timerRef.current = null;
       }
     };
-  },[isRunning]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [isRunning]);
+
   const { t } = useTranslation('common');
 
   const formatTime = (timeInMilliseconds: number) => {
@@ -34,7 +46,6 @@ const StopWatch: React.FC<StopWatchProps> = ({ isRunning, startStop , elapsedTim
     const hours = Math.floor(totalSeconds / 3600);
     const minutes = Math.floor((totalSeconds % 3600) / 60);
     const seconds = totalSeconds % 60;
-
     return {
       hours: hours.toString().padStart(2, "0"),
       minutes: minutes.toString().padStart(2, "0"),
@@ -44,7 +55,7 @@ const StopWatch: React.FC<StopWatchProps> = ({ isRunning, startStop , elapsedTim
 
   const { hours, minutes, seconds } = formatTime(elapsedTime);
 
-   return (
+  return (
     <div className="flex flex-col items-center justify-center">
       <div
         className="rounded-full border-2 border-black flex items-center justify-center text-6xl font-bold p-4"

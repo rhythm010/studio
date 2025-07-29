@@ -275,11 +275,7 @@ const GuardMatchingPage: React.FC = () => {
       ...(recieveCompanionMsgQueue || {}),
       status: nextStatus,
     };
-    console.log('Instruction object to be sent to Firebase:', instructionObj);
-    
-    // Get client session ID for debugging
-    const clientSessionId = useCompanionStore.getState().getClientSessionId();
-    console.log('Client session ID:', clientSessionId);
+        
     
     // Update client's Firebase sendClientMsgQueue with the new status and type
     updateValueInClient({
@@ -403,9 +399,6 @@ const GuardMatchingPage: React.FC = () => {
         <div id="stopwatch_section" className="h-[40%] flex flex-col items-center justify-center border-gray-700 mt-4">
           <StopWatch
             isRunning={true}
-            startStop={() => { }}
-            elapsedTime={2}
-            setElapsedTime={() => { }}
           />
 
         </div>
