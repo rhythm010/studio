@@ -38,11 +38,6 @@ export const STATUS_BUTTON_LABELS = {
     [ACTIVITY_STATUS.STAND_CLOSE]: 'Stand Close',
 };
 
-export const CLIENT_SEND_MSG = {
-    'STOP_ACTIVITY':'STOP_ACTIVITY',
-    'COMPLETE_MODE_CAFE':'COMPLETE_MODE_CAFE',
-};
-
 export const COMPANION_ROLES = {
     'PRIMARY': 'PRIMARY',
     'SECONDARY': 'SECONDARY',
@@ -167,4 +162,16 @@ export const CLIENT_MODE_STATUS_UI_MAP: Record<string, Record<string, { text: st
   WITH_CLIENT: {
     DEFAULT: { text: 'You are with your client.' },
   },
+};   
+
+export const RECIEVE_COMPANION_MSG_TYPE_MAP: Record<string, string> = {
+  WAIT_OP: 'Waiting for operation...',
+  BRING_STAFF: 'A staff member is on the way.',
+  STAND_CLOSE: 'Your companion will stand close.',
+  ORDER_CALL: 'Order is being called.',
+  I_AM_DONE: 'You have indicated you are done.',
+  QUEUE: 'You are in the queue.',
+  DEFAULT: 'Default instruction sent.',
+  CLOSE_ASSIST: 'Assistance will be closed soon.',
+  // Add more mappings as needed
 };   

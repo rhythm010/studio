@@ -55,6 +55,40 @@ const GuardMatchingPage: React.FC = () => {
     };
   }, []);
 
+  // Add blinking animation style for urgent messages and urgent icon style
+  useEffect(() => {
+    const style = document.createElement('style');
+    style.innerHTML = `
+      @keyframes blink-urgent {
+        0%, 100% { opacity: 1; }
+        50% { opacity: 0.5; }
+      }
+      .blink-urgent {
+        animation: blink-urgent 1s linear infinite;
+      }
+      .urgent-icon {
+        position: absolute;
+        top: -10px;
+        right: -10px;
+        background: #fff;
+        border-radius: 50%;
+        border: 2px solid red;
+        width: 22px;
+        height: 22px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 14px;
+        font-weight: bold;
+        color: red;
+        z-index: 2;
+        box-shadow: 0 1px 4px rgba(0,0,0,0.08);
+      }
+    `;
+    document.head.appendChild(style);
+    return () => { document.head.removeChild(style); };
+  }, []);
+
   const scanSuccess = () => {
     console.log("QR code matched. Updating matching status in store and Firebase.");
     stopScanning();
@@ -260,7 +294,7 @@ const GuardMatchingPage: React.FC = () => {
   const handleClientMsgConfirmAction = (nextStatus: string) => {
     console.log('handleClientMsgConfirmAction called with nextStatus:', nextStatus);
     console.log('Current recieveCompanionMsgQueue:', recieveCompanionMsgQueue);
-    
+
     // Update local store
     useCompanionStore.getState().setCompanionAcvitiyMonitor({
       recieveCompanionMsgQueue: {
@@ -268,21 +302,21 @@ const GuardMatchingPage: React.FC = () => {
         status: nextStatus,
       },
     });
-    
+
     // Ensure type is present in the object sent to Firebase
     const instructionObj = {
       type: recieveCompanionMsgQueue?.type || '',
       ...(recieveCompanionMsgQueue || {}),
       status: nextStatus,
     };
-        
-    
+
+
     // Update client's Firebase sendClientMsgQueue with the new status and type
     updateValueInClient({
       path: storePaths.ClientActivityMonitor.sendClientMsgQueue,
       val: instructionObj,
     });
-    
+
     // Update companion's own Firebase sendCompanionMsgQueue with the new status
     updateInSelfFirebase(
       storePaths.CompanionAcvitiyMonitor.recieveCompanionMsgQueue,
@@ -317,64 +351,167 @@ const GuardMatchingPage: React.FC = () => {
         alignItems: 'center',
         width: '100%'
       }}>
+      <style>{`
+      .mode-large-btn {
+        min-width: 90px !important;
+        min-height: 40px !important;
+        font-size: 1.5rem !important;
+        padding: 1rem 2rem !important;
+        margin: 0.5rem !important;
+      }
+    `}</style>
 
-        {recieveCompanionMsgQueue?.status && (
-          <div 
-            id="client_msg_container"
-            style={{ 
-              cursor: 'pointer',
-              padding: '0.5rem',
-              borderRadius: '0.25rem',
-              transition: 'background-color 0.2s, border-color 0.2s',
-              marginBottom: '1rem',
-              width: '90%',
-              maxWidth: '500px',
-              backgroundColor: '#f9fafb', // subtle background
-              border: '2px solid',
-              borderColor:
-                recieveCompanionMsgQueue.status === MSG_STATUS.UNREAD ? 'red' :
-                recieveCompanionMsgQueue.status === MSG_STATUS.OPENED ? 'yellow' :
-                recieveCompanionMsgQueue.status === MSG_STATUS.ACTIONED ? 'green' :
-                '#d1d5db', // default gray
-            }}
-            onMouseEnter={(e) => {
-              e.currentTarget.style.backgroundColor = '#f3f4f6';
-            }}
-            onMouseLeave={(e) => {
-              e.currentTarget.style.backgroundColor = '#f9fafb';
-            }}
-            onClick={handleClientMsgClick}
-          >
-            {/* Display the message if it exists */}
-            <p>{recieveCompanionMsgQueue.type}</p>
-          </div>
-        )}
-
-      {!serviceContinue && selectedMode && (
-        <div id="selected_mode_title" style={{ marginBottom: '1rem', fontWeight: 'bold' }}>
-          Selected Mode: {selectedMode}
-        </div>
-      )}
-
-      {!serviceContinue && companionCurrentStatus && (
-        <div style={{ marginBottom: '1rem', fontWeight: 'bold' }}>
-          Selected Status: {companionCurrentStatus}
-        </div>
-      )}
-
-      {!serviceContinue && companionRole &&
-        <p id="companion_role_title" style={
-          {
-            width: '10rem',
-            textAlign: 'center',
-            backgroundColor: 'rgb(31 41 55 / var(--tw-bg-opacity, 1))',
-            color: 'white',
+      {recieveCompanionMsgQueue?.status && !serviceContinue && (
+        <div
+          id="client_msg_container"
+          className={
+            recieveCompanionMsgQueue.status === MSG_STATUS.UNREAD
+              ? 'blink-urgent'
+              : ''
+          }
+          style={{
+            position: 'absolute',
+            top: 80,
+            left: '50%',
+            transform: 'translateX(-50%)',
+            zIndex: 1000,
+            cursor: 'pointer',
             padding: '0.5rem',
-            fontSize: '1rem',
-            borderRadius: '2rem',
+            borderRadius: '0.25rem',
+            transition: 'background-color 0.2s, border-color 0.2s',
+            marginBottom: '1rem',
+            width: '90%',
+            maxWidth: '500px',
+            backgroundColor:
+              recieveCompanionMsgQueue.status === MSG_STATUS.UNREAD
+                ? '#ffe5e5' // light red
+                : recieveCompanionMsgQueue.status === MSG_STATUS.OPENED
+                  ? '#fff9e5' // less dark yellow
+                  : recieveCompanionMsgQueue.status === MSG_STATUS.ACTIONED
+                    ? '#e5ffe5' // light green
+                    : '#f9fafb', // subtle background
+            border: '2px solid',
+            borderColor:
+              recieveCompanionMsgQueue.status === MSG_STATUS.UNREAD
+                ? 'red'
+                : recieveCompanionMsgQueue.status === MSG_STATUS.OPENED
+                  ? '#bfa100' // dark yellow
+                  : recieveCompanionMsgQueue.status === MSG_STATUS.ACTIONED
+                    ? '#228B22' // dark green
+                    : '#d1d5db', // default gray
           }}
-        >Your Role: {companionRole}
-        </p>}
+          onMouseEnter={(e) => {
+            e.currentTarget.style.backgroundColor =
+              recieveCompanionMsgQueue.status === MSG_STATUS.UNREAD
+                ? '#ffe5e5'
+                : recieveCompanionMsgQueue.status === MSG_STATUS.OPENED
+                  ? '#fff9e5'
+                : recieveCompanionMsgQueue.status === MSG_STATUS.ACTIONED
+                  ? '#e5ffe5'
+                : '#f3f4f6';
+          }}
+          onMouseLeave={(e) => {
+            e.currentTarget.style.backgroundColor =
+              recieveCompanionMsgQueue.status === MSG_STATUS.UNREAD
+                ? '#ffe5e5'
+                : recieveCompanionMsgQueue.status === MSG_STATUS.OPENED
+                  ? '#fff9e5'
+                : recieveCompanionMsgQueue.status === MSG_STATUS.ACTIONED
+                  ? '#e5ffe5'
+                : '#f9fafb';
+          }}
+          onClick={handleClientMsgClick}
+        >
+          {/* Urgent icon for UNREAD */}
+          {recieveCompanionMsgQueue.status === MSG_STATUS.UNREAD && (
+            <span className="urgent-icon" title="Urgent">&#9888;</span>
+          )}
+          {/* Display the message if it exists */}
+          <p>{recieveCompanionMsgQueue.type}</p>
+        </div>
+      )}
+
+      {/* Mode/Status display above companion_mode_selection_container */}
+      {!serviceContinue && <div id="mode_and_status_info_display" style={{ width: '90%', maxWidth: 500, margin: '0 auto 1.5rem auto', border: '2px solid #222', borderRadius: 10, overflow: 'hidden' }}>
+        <div style={{ background: '#111', color: '#fff', fontSize: '2rem', fontWeight: 700, padding: '1rem', textAlign: 'center' }}>
+          Mode: {selectedMode || '-'}
+        </div>
+        <div style={{ borderTop: '2px solid #222', background: '#fff', color: '#111', fontSize: '1.2rem', fontWeight: 500, padding: '0.75rem 1rem', textAlign: 'center' }}>
+          Status: {companionCurrentStatus || '-'}
+        </div>
+      </div>}
+
+      {/* The rest of the main content, including serviceContinue check, goes here */}
+      {!serviceContinue && <div>
+        <div id="companion_mode_selection_container"
+          style={{ marginTop: '20px', padding: '10px' }}>
+                      <div id="modes_container" className="rounded-xl shadow-lg">
+            <div className="border rounded-lg flex flex-wrap justify-center items-center p-2 mb-2">
+              <button className={selectedMode === ACTIVITY_MODES.CAFE ? selectedButtonClasses : buttonClasses + ' mode-large-btn'}
+                onClick={() => handleModeSelection(ACTIVITY_MODES.CAFE)}>
+                Cafe
+              </button>
+              <button className={selectedMode === ACTIVITY_MODES.STORE ? selectedButtonClasses : buttonClasses + ' mode-large-btn'}
+                onClick={() => handleModeSelection(ACTIVITY_MODES.STORE)}>
+                Store
+              </button>
+              <button className={selectedMode === ACTIVITY_MODES.WITH_YOU ? selectedButtonClasses : buttonClasses + ' mode-large-btn'}
+                onClick={() => handleModeSelection(ACTIVITY_MODES.WITH_YOU)}
+              >
+                With client
+              </button>
+            </div>
+          </div>
+          <div id="status_container" className="rounded-xl shadow-lg" style={{ position: 'relative' }}>
+
+            <div className="border rounded-lg flex flex-wrap p-2">
+              {/* Only render status buttons allowed for the selected mode */}
+              {COMPANION_MODE_STATUS_LINKER[selectedMode as keyof typeof COMPANION_MODE_STATUS_LINKER]?.map((status: string) => (
+                <button
+                  key={status}
+                  className={getStatusButtonClass(status, companionCurrentStatus, selectedMode)}
+                  onClick={() => handleStatusSelection(status)}
+                >
+                  {STATUS_BUTTON_LABELS[status]}
+                </button>
+              ))}
+            </div>
+
+          </div>
+          
+          <div id="mode_and_status_info" >
+            {companionActivityStatus === ACTIVITY_STATUS.QUEUE && <CompanionActivityMode />}
+          </div>
+
+          {/* Sub Mode Selection Container */}
+          {selectedMode && ACTIVITY_SUB_MODE_LINKER[selectedMode as keyof typeof ACTIVITY_SUB_MODE_LINKER] && ACTIVITY_SUB_MODE_LINKER[selectedMode as keyof typeof ACTIVITY_SUB_MODE_LINKER].length > 0 && (
+            <div id="companion_sub_mode_selection_container" className="rounded-xl shadow-lg mt-4">
+              <div className="border rounded-lg flex flex-wrap justify-center items-center p-2 mb-2">
+                {ACTIVITY_SUB_MODE_LINKER[selectedMode as keyof typeof ACTIVITY_SUB_MODE_LINKER].map((subMode: string) => (
+                  <button
+                    key={subMode}
+                    className={selectedSubMode === subMode ? selectedButtonClasses : buttonClasses}
+                    style={{ minWidth: '120px', padding: '0.5rem 1.5rem', fontSize: '1rem', margin: '0.25rem' }}
+                    onClick={() => handleSubModeSelection(subMode)}
+                  >
+                    {subMode}
+                  </button>
+                ))}
+              </div>
+            </div>
+          )}
+          
+
+
+        </div>
+
+        <div id="stopwatch_section" className="h-[40%] flex flex-col items-center justify-center border-gray-700 mt-4">
+          <StopWatch
+            isRunning={true}
+          />
+        </div>
+      </div>}
+
 
       {isDevMode && <div style={{ display: 'flex', alignItems: 'center', marginTop: '20px' }}>
         <input
@@ -394,74 +531,6 @@ const GuardMatchingPage: React.FC = () => {
         >Submit Session ID</button>
       </div>}
 
-      {!serviceContinue && <div>
-
-        <div id="stopwatch_section" className="h-[40%] flex flex-col items-center justify-center border-gray-700 mt-4">
-          <StopWatch
-            isRunning={true}
-          />
-
-        </div>
-        <div id="companion_mode_selection_container"
-          style={{ marginTop: '20px', padding: '10px' }}>
-          <div id="modes_container" className="rounded-xl shadow-lg">
-            <div className="border rounded-lg flex flex-wrap justify-center items-center p-2 mb-2">
-              <button className={selectedMode === ACTIVITY_MODES.CAFE ? selectedButtonClasses : buttonClasses}
-                onClick={() => handleModeSelection(ACTIVITY_MODES.CAFE)}>
-                Cafe
-              </button>
-              <button className={selectedMode === ACTIVITY_MODES.STORE ? selectedButtonClasses : buttonClasses}
-                onClick={() => handleModeSelection(ACTIVITY_MODES.STORE)}>
-                Store
-              </button>
-              <button className={selectedMode === ACTIVITY_MODES.WITH_YOU ? selectedButtonClasses : buttonClasses}
-                onClick={() => handleModeSelection(ACTIVITY_MODES.WITH_YOU)}
-              >
-                With client
-              </button>
-            </div>
-          </div>
-          {/* Sub Mode Selection Container */}
-          {selectedMode && ACTIVITY_SUB_MODE_LINKER[selectedMode as keyof typeof ACTIVITY_SUB_MODE_LINKER] && ACTIVITY_SUB_MODE_LINKER[selectedMode as keyof typeof ACTIVITY_SUB_MODE_LINKER].length > 0 && (
-            <div id="companion_sub_mode_selection_container" className="rounded-xl shadow-lg mt-4">
-              <div className="border rounded-lg flex flex-wrap justify-center items-center p-2 mb-2">
-                {ACTIVITY_SUB_MODE_LINKER[selectedMode as keyof typeof ACTIVITY_SUB_MODE_LINKER].map((subMode: string) => (
-                  <button
-                    key={subMode}
-                    className={selectedSubMode === subMode ? selectedButtonClasses : buttonClasses}
-                    style={{ minWidth: '120px', padding: '0.5rem 1.5rem', fontSize: '1rem', margin: '0.25rem' }}
-                    onClick={() => handleSubModeSelection(subMode)}
-                  >
-                    {subMode}
-                  </button>
-                ))}
-              </div>
-            </div>
-          )}
-          <div id="mode_and_status_info" >
-            {companionActivityStatus === ACTIVITY_STATUS.QUEUE && <CompanionActivityMode />}
-          </div>
-          {/* Status container with relative positioning for the overlay */}
-          <div id="status_container" className="rounded-xl shadow-lg" style={{ position: 'relative' }}> {/* Added relative positioning for the overlay */}
-
-            <div className="border rounded-lg flex flex-wrap p-2">
-              {/* Only render status buttons allowed for the selected mode */}
-              {COMPANION_MODE_STATUS_LINKER[selectedMode as keyof typeof COMPANION_MODE_STATUS_LINKER]?.map((status: string) => (
-                <button
-                  key={status}
-                  className={getStatusButtonClass(status, companionCurrentStatus, selectedMode)}
-                  onClick={() => handleStatusSelection(status)}
-                >
-                  {STATUS_BUTTON_LABELS[status]}
-                </button>
-              ))}
-            </div>
-
-          </div>
-        </div>
-      </div>
-
-      }
 
       {/* <CompanionActivityMode /> */}
       <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', width: '100%', maxWidth: '500px' }}>

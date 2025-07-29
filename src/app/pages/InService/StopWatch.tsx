@@ -12,31 +12,26 @@ const StopWatch: React.FC<StopWatchProps> = ({ isRunning }) => {
   const startTimeRef = useRef<number | null>(null); // timestamp when started
   const timerRef = useRef<NodeJS.Timeout | null>(null);
 
-  // On start/stop, sync with system clock for accuracy
   useEffect(() => {
     if (isRunning) {
-      // When starting, set the start time to now minus already elapsed
       startTimeRef.current = Date.now() - elapsedTime;
       timerRef.current = setInterval(() => {
         if (startTimeRef.current !== null) {
           setElapsedTime(Date.now() - startTimeRef.current);
         }
-      }, 100); // update every 100ms for smoothness
+      }, 1000); // update every 1s for HH:MM:SS
     } else {
-      // When stopped, clear the interval
       if (timerRef.current) {
         clearInterval(timerRef.current);
         timerRef.current = null;
       }
     }
-    // Cleanup on unmount or when isRunning changes
     return () => {
       if (timerRef.current) {
         clearInterval(timerRef.current);
         timerRef.current = null;
       }
     };
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [isRunning]);
 
   const { t } = useTranslation('common');
@@ -58,9 +53,14 @@ const StopWatch: React.FC<StopWatchProps> = ({ isRunning }) => {
   return (
     <div className="flex flex-col items-center justify-center">
       <div
-        className="rounded-full border-2 border-black flex items-center justify-center text-6xl font-bold p-4"
+        className="rounded-md border border-black flex items-center justify-center bg-white px-2 py-1"
+        style={{ minWidth: '120px', minHeight: '36px', fontFamily: 'monospace', fontWeight: 700 }}
       >
-        {hours}:{minutes}<span className="text-2xl ml-1">{seconds}</span>
+        <span className="text-xl" style={{ letterSpacing: '1px' }}>{hours}</span>
+        <span className="text-xl mx-0.5">:</span>
+        <span className="text-xl" style={{ letterSpacing: '1px' }}>{minutes}</span>
+        <span className="text-xl mx-0.5">:</span>
+        <span className="text-xl" style={{ letterSpacing: '1px' }}>{seconds}</span>
       </div>
     </div>
   );
