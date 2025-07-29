@@ -97,3 +97,74 @@ export const CLIENT_INSTRUCTION_OPTIONS = {
     PAYMENT_CALL: [],
     WAIT_ITEM: [],
 }   
+
+export const INSTRUCTION_STATUS_UI_MAP: Record<string, Record<string, { text: string; image?: string }>> = {
+  WAIT_OP: {
+    UNREAD: { text: 'Waiting for operation to start...' }, // SENT
+    OPENED: { text: 'Operation started!' }, // ACTIONED
+    ACTIONED: { text: 'Operation completed!' }, // COMPLETED
+  },
+  BRING_STAFF: {
+    UNREAD: { text: 'A staff member is on the way.' },
+    OPENED: { text: 'Staff has arrived.' },
+    ACTIONED: { text: 'Staff assistance completed.' },
+  },
+  STAND_CLOSE: {
+    UNREAD: { text: 'Your companion will stand close.' },
+    OPENED: { text: 'Companion is now standing close.' },
+    ACTIONED: { text: 'Stand close instruction completed.' },
+  },
+  ORDER_CALL: {
+    UNREAD: { text: 'Order is being called.' },
+    OPENED: { text: 'Order has been placed.' },
+    ACTIONED: { text: 'Order completed.' },
+  },
+  I_AM_DONE: {
+    UNREAD: { text: 'You have indicated you are done.' },
+    OPENED: { text: 'Companion acknowledged you are done.' },
+    ACTIONED: { text: 'Session completed.' },
+  },
+  QUEUE: {
+    UNREAD: { text: 'You are in the queue.' },
+    OPENED: { text: 'Queue is moving.' },
+    ACTIONED: { text: 'Queue completed.' },
+  },
+  DEFAULT: {
+    UNREAD: { text: 'Default instruction sent.' },
+    OPENED: { text: 'Default instruction actioned.' },
+    ACTIONED: { text: 'Default instruction completed.' },
+  },
+  CLOSE_ASSIST: {
+    UNREAD: { text: 'Assistance will be closed soon.' },
+    OPENED: { text: 'Assistance is being closed.' },
+    ACTIONED: { text: 'Assistance closed.' },
+  },
+};   
+
+export const CLIENT_MODE_STATUS_UI_MAP: Record<string, Record<string, { text: string; image?: string }>> = {
+  WITH_YOU: {
+    DEFAULT: { text: 'You are with your companion.' },
+    QUEUE: { text: 'You are in the queue with your companion.' },
+    WAIT_OP: { text: 'Waiting for the next operation with your companion.' },
+  },
+  CAFE: {
+    QUEUE: { text: 'You are in the cafe queue.' },
+    PAYMENT_CALL: { text: 'Payment is being processed.' },
+    WAIT_ITEM: { text: 'Waiting for your item in the cafe.' },
+    WAIT_OP: { text: 'Waiting for the next operation in the cafe.' },
+    CLEAR_TABLE: { text: 'Table is being cleared.' },
+    STAND_CLOSE: { text: 'Your companion is standing close in the cafe.' },
+  },
+  QUEUE: {
+    QUEUE: { text: 'You are in the main queue.' },
+  },
+  STORE: {
+    QUEUE: { text: 'You are in the store queue.' },
+    PAYMENT_CALL: { text: 'Processing payment in the store.' },
+    WAIT_ITEM: { text: 'Waiting for your item in the store.' },
+    WAIT_OP: { text: 'Waiting for the next operation in the store.' },
+  },
+  WITH_CLIENT: {
+    DEFAULT: { text: 'You are with your client.' },
+  },
+};   

@@ -4,9 +4,9 @@ import React, { useEffect, useState } from 'react';
 import { useCompanionStore } from '@/store/store';
 import { database } from '@/lib/firebase'; // Assuming you have your firebase instance exported as 'database'
 import { ref, onValue, off } from 'firebase/database';
-import { storePaths, createClientInstructionProp, createCompanionMessageObject, sendMsgToCompanion, listenToFirebaseKey } from '@/lib/utils'; // Assuming storePaths and createClientInstructionProp are in utils.ts
+import { storePaths, createClientInstructionProp, createCompanionMessageObject, sendMsgToCompanion, listenToFirebaseKey, getInstructionStatusText, updateInSelfFirebase } from '@/lib/utils'; // Assuming storePaths and createClientInstructionProp are in utils.ts
 import { cn } from '@/lib/utils'; // Assuming cn is in utils.ts
-import { ACTIVITY_STATUS, ACTIVITY_MODES, CLIENT_INSTRUCTION_MANUAL, COMPANION_ROLES } from '@/lib/constants';
+import { ACTIVITY_STATUS, ACTIVITY_MODES, CLIENT_INSTRUCTION_MANUAL, COMPANION_ROLES, INSTRUCTION_STATUS_UI_MAP, CLIENT_MODE_STATUS_UI_MAP, MSG_STATUS } from '@/lib/constants';
 import ClientFeatureExplainer from '../ClientFeatureExplainer';
 import { useModal } from '@/components/ui/Modal';
 
@@ -16,9 +16,11 @@ const selectedMode: React.FC = () => {
   const [currentStatus, setCurrentStatus] = useState<string>('');
   const [currentStatusValues, setCurrentStatusValues] = useState<any | {}>({});
   const [clientQueueStatus, setClientQueueStatus] = useState<string>('');
+  const [clientQueueObj, setClientQueueObj] = useState<any>({});
   const clientActivityMonitor = useCompanionStore((state: any) => state.ClientActivityMonitor);
   
   const { openModal, closeModal } = useModal();
+  const setSendClientMsgQueue = useCompanionStore((state: any) => state.setSendClientMsgQueue);
 
   useEffect(() => {
     // Add a keyframes rule for the blinking animation
@@ -126,12 +128,10 @@ const selectedMode: React.FC = () => {
     const sessionId = useCompanionStore.getState().getSessionId();
     if (!sessionId) return;
     const unsubscribe = listenToFirebaseKey(sessionId, storePaths.ClientActivityMonitor.sendClientMsgQueue, (val) => {
-      if (val && typeof val === 'object' && val.status) {
-        setClientQueueStatus(val.status);
-      } else if (typeof val === 'string') {
-        setClientQueueStatus(val);
+      if (val && typeof val === 'object') {
+        setClientQueueObj(val);
       } else {
-        setClientQueueStatus('');
+        setClientQueueObj({});
       }
     });
     return unsubscribe;
@@ -145,9 +145,17 @@ const selectedMode: React.FC = () => {
     // Update companion's local store
     useCompanionStore.getState().setRecieveCompanionMsgQueue({
       type: instruction,
-      status: 'SENT', // or any status you want to represent
+      status: MSG_STATUS.UNREAD, // or any status you want to represent
       timestamp: Date.now(),
     });
+    // Update client's sendClientMsgQueue in local store and Firebase
+    const msgObj = {
+      type: instruction,
+      status: MSG_STATUS.UNREAD,
+      timestamp: Date.now(),
+    };
+    setSendClientMsgQueue(msgObj);
+    updateInSelfFirebase(storePaths.ClientActivityMonitor.sendClientMsgQueue, msgObj);
     // Pass the instruction as the message type to sendMsgToCompanion
     sendMsgToCompanion(instruction, {}, COMPANION_ROLES.PRIMARY);
   };
@@ -176,7 +184,11 @@ const selectedMode: React.FC = () => {
         className="flex items-center justify-center border-2 border-black rounded-lg mb-4 mx-4"
         style={{ height: '30%' }}
       >
-        <h2 className="text-2xl font-bold">{clientQueueStatus || 'Dummy Status Text'}</h2>
+        <h2 className="text-2xl font-bold">
+          {clientQueueObj.status && INSTRUCTION_STATUS_UI_MAP[clientQueueObj.type]?.[clientQueueObj.status]
+            ? INSTRUCTION_STATUS_UI_MAP[clientQueueObj.type][clientQueueObj.status].text
+            : CLIENT_MODE_STATUS_UI_MAP[currentMode]?.[currentStatus]?.text || currentStatus || 'Status'}
+        </h2>
       </div>
 
       {/* Bottom Section: Instruction Buttons (70% height) */}

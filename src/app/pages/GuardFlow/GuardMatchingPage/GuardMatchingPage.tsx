@@ -258,6 +258,9 @@ const GuardMatchingPage: React.FC = () => {
 
   // Handler for confirming the client message action (START/COMPLETED)
   const handleClientMsgConfirmAction = (nextStatus: string) => {
+    console.log('handleClientMsgConfirmAction called with nextStatus:', nextStatus);
+    console.log('Current recieveCompanionMsgQueue:', recieveCompanionMsgQueue);
+    
     // Update local store
     useCompanionStore.getState().setCompanionAcvitiyMonitor({
       recieveCompanionMsgQueue: {
@@ -265,21 +268,29 @@ const GuardMatchingPage: React.FC = () => {
         status: nextStatus,
       },
     });
-    // Update client's Firebase sendClientMsgQueue with the new status
+    
+    // Ensure type is present in the object sent to Firebase
+    const instructionObj = {
+      type: recieveCompanionMsgQueue?.type || '',
+      ...(recieveCompanionMsgQueue || {}),
+      status: nextStatus,
+    };
+    console.log('Instruction object to be sent to Firebase:', instructionObj);
+    
+    // Get client session ID for debugging
+    const clientSessionId = useCompanionStore.getState().getClientSessionId();
+    console.log('Client session ID:', clientSessionId);
+    
+    // Update client's Firebase sendClientMsgQueue with the new status and type
     updateValueInClient({
       path: storePaths.ClientActivityMonitor.sendClientMsgQueue,
-      val: {
-        ...recieveCompanionMsgQueue,
-        status: nextStatus,
-      },
+      val: instructionObj,
     });
+    
     // Update companion's own Firebase sendCompanionMsgQueue with the new status
     updateInSelfFirebase(
-      storePaths.CompanionAcvitiyMonitor.sendCompanionMsgQueue,
-      {
-        ...recieveCompanionMsgQueue,
-        status: nextStatus,
-      }
+      storePaths.CompanionAcvitiyMonitor.recieveCompanionMsgQueue,
+      instructionObj
     );
     closeModal();
   };

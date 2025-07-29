@@ -1,10 +1,10 @@
-import { type ClassValue } from "tailwind-merge"
+import { type ClassValue } from "clsx"
 import { clsx } from "clsx";
 import { database } from "@/lib/firebase";
 import { useCompanionStore } from '@/store/store';
 import { ref, update, remove, get, child, DatabaseReference, onValue, off } from "firebase/database";
 import { twMerge } from "tailwind-merge"
-import { COMPANION_ROLES, MSG_STATUS, CLIENT_INSTRUCTION_MANUAL } from "./constants";
+import { COMPANION_ROLES, MSG_STATUS, CLIENT_INSTRUCTION_MANUAL, INSTRUCTION_STATUS_UI_MAP } from "./constants";
 
 export function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs))
@@ -212,23 +212,34 @@ export async function updateCompanionSessionIdInClient(clientSessionId: string, 
 
 export async function updateValueInClient(updateObj: { path: string, val: any }) {
   const clientSessionId = useCompanionStore.getState().getClientSessionId();
+  console.log('updateValueInClient called with:', updateObj);
+  console.log('Client session ID from store:', clientSessionId);
+  
+  if (!clientSessionId) {
+    console.error('Client session ID is null or undefined. Cannot update client Firebase.');
+    return;
+  }
+  
   try {
     // Construct the reference to the specific path within the client's object
     const targetRef = ref(database, `storeObjects/${clientSessionId}/${updateObj.path}`);
-    console.log('path to be updated', updateObj.path);
+    console.log('Firebase path to be updated:', `storeObjects/${clientSessionId}/${updateObj.path}`);
 
     // Read the existing data at the target path
     const snapshot = await get(targetRef);
     const existingData = snapshot.val();
+    console.log('Existing data at path:', existingData);
 
     // Check if the existing data is an array
     if (Array.isArray(existingData)) {
       // If it's an array, append the new value
       const updatedArray = [...existingData, updateObj.val];
       await update(ref(database, `storeObjects/${clientSessionId}`), { [updateObj.path]: updatedArray });
+      console.log('Updated array in Firebase');
     } else {
       // If it's not an array, perform a regular update
       await update(ref(database, `storeObjects/${clientSessionId}`), { [updateObj.path]: updateObj.val });
+      console.log('Updated object in Firebase');
     }
     console.log(`Value updated successfully for client ${clientSessionId} at path ${updateObj.path}`);
    } catch (error) {
@@ -276,23 +287,31 @@ export async function updateValueInCompanion(updateObj: { path: string, val: any
  */
 export async function updateInSelfFirebase(path: string, val: any) {
   const sessionId = useCompanionStore.getState().getSessionId();
+  console.log('updateInSelfFirebase called with path:', path, 'val:', val);
+  console.log('Session ID from store:', sessionId);
+  
   if (!sessionId) {
     console.error("Session ID is not available. Cannot update.");
     return;
   }
   try {
     const targetRef = ref(database, `storeObjects/${sessionId}/${path}`);
+    console.log('Firebase path to be updated:', `storeObjects/${sessionId}/${path}`);
+    
     // Read the existing data at the target path
     const snapshot = await get(targetRef);
     const existingData = snapshot.val();
+    console.log('Existing data at path:', existingData);
 
     // If the existing data is an array, append the new value
     if (Array.isArray(existingData)) {
       const updatedArray = [...existingData, val];
       await update(ref(database, `storeObjects/${sessionId}`), { [path]: updatedArray });
+      console.log('Updated array in Firebase');
     } else {
       // Otherwise, just update the value
       await update(ref(database, `storeObjects/${sessionId}`), { [path]: val });
+      console.log('Updated object in Firebase');
     }
     console.log(`Value updated successfully for session ${sessionId} at path ${path}`);
   } catch (error) {
@@ -462,4 +481,16 @@ export function createCompanionMessageObject(instruction: string) {
     status: currentStatus,
     clientSessionId: currentStore.getSessionId()
   };
+}
+
+/**
+ * Get mapped UI text for current instruction and status
+ */
+export function getInstructionStatusText(instructionObj: any): string {
+  if (!instructionObj || !instructionObj.type || !instructionObj.status) return '';
+  const type = instructionObj.type;
+  const status = instructionObj.status;
+  return (
+    INSTRUCTION_STATUS_UI_MAP[type]?.[status]?.text || status || ''
+  );
 }
