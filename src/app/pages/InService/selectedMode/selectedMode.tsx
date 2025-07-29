@@ -142,6 +142,7 @@ const selectedMode: React.FC = () => {
 
   const activateCompanionInstruction = (instruction: string) => {
     console.log('activateCompanionInstruction called');
+    closeModal()
     // Update companion's local store
     useCompanionStore.getState().setRecieveCompanionMsgQueue({
       type: instruction,
@@ -185,11 +186,23 @@ const selectedMode: React.FC = () => {
         style={{ height: '30%' }}
       >
         <h2 className="text-2xl font-bold">
-          {clientQueueObj.status && INSTRUCTION_STATUS_UI_MAP[clientQueueObj.type]?.[clientQueueObj.status]
+          {clientQueueObj.status && clientQueueObj.status !== MSG_STATUS.ACTIONED && INSTRUCTION_STATUS_UI_MAP[clientQueueObj.type]?.[clientQueueObj.status]
             ? INSTRUCTION_STATUS_UI_MAP[clientQueueObj.type][clientQueueObj.status].text
             : CLIENT_MODE_STATUS_UI_MAP[currentMode]?.[currentStatus]?.text || currentStatus || 'Status'}
         </h2>
       </div>
+
+      {/* Queue Position Display */}
+      {currentStatus === ACTIVITY_STATUS.QUEUE && (
+        <div
+          id="queue_position_container"
+          className="flex items-center justify-center border-2 border-black rounded-lg mb-4 mx-4 p-4"
+        >
+          <h3 className="text-lg font-semibold">
+            Current Position: {clientActivityMonitor.statusInfo?.QUEUE?.currentPosition || 0}
+          </h3>
+        </div>
+      )}
 
       {/* Bottom Section: Instruction Buttons (70% height) */}
       <div
@@ -198,16 +211,24 @@ const selectedMode: React.FC = () => {
         style={{ minHeight: '70%' }}
       >
         {isValidInstructionMode(currentMode) &&
-          (Object.keys(CLIENT_INSTRUCTION_MANUAL[currentMode]) as Array<keyof typeof CLIENT_INSTRUCTION_MANUAL[typeof currentMode]>).map((key) => (
-            <button
-              id={`instruction_button_${key}`}
-              key={key as string}
-              className="rounded-full w-16 h-16 shadow-md flex items-center justify-center bg-gray-200 hover:bg-gray-300 border-2 border-gray-400"
-              onClick={() => clientInstructionLaunchHandler((CLIENT_INSTRUCTION_MANUAL[currentMode] as Record<string, string>)[key as string])}
-            >
-              <span className="text-xs font-bold text-center leading-tight">{(CLIENT_INSTRUCTION_MANUAL[currentMode] as Record<string, string>)[key as string]}</span>
-            </button>
-          ))}
+          (Object.keys(CLIENT_INSTRUCTION_MANUAL[currentMode]) as Array<keyof typeof CLIENT_INSTRUCTION_MANUAL[typeof currentMode]>).map((key) => {
+            const instructionType = (CLIENT_INSTRUCTION_MANUAL[currentMode] as Record<string, string>)[key as string];
+            const isActive = clientQueueObj.type === instructionType && 
+                           (clientQueueObj.status === MSG_STATUS.UNREAD || clientQueueObj.status === MSG_STATUS.OPENED);
+            
+            return (
+              <button
+                id={`instruction_button_${key}`}
+                key={key as string}
+                className={`rounded-full w-16 h-16 shadow-md flex items-center justify-center border-2 border-gray-400 ${
+                  isActive ? 'bg-green-500 hover:bg-green-600' : 'bg-gray-200 hover:bg-gray-300'
+                }`}
+                onClick={() => clientInstructionLaunchHandler(instructionType)}
+              >
+                <span className="text-xs font-bold text-center leading-tight">{(CLIENT_INSTRUCTION_MANUAL[currentMode] as Record<string, string>)[key as string]}</span>
+              </button>
+            );
+          })}
       </div>
     </div>
   );

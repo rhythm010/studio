@@ -68,12 +68,12 @@ export const MODE_DEFAULT_STATUS: Record<string, string> = {
 
 export const CLIENT_INSTRUCTION_MANUAL = {
     'WITH_YOU': {
-        'DEFAULT': 'DEFAULT',
+        // 'DEFAULT': 'DEFAULT',
         'QUEUE': 'QUEUE',
         'WAIT_OP': 'WAIT_OP',
     },
     'CAFE': {
-        'WAIT_OP': 'WAIT_OP',
+        // 'WAIT_OP': 'WAIT_OP',
         'BRING_STAFF': 'BRING_STAFF',
         'STAND_CLOSE': 'STAND_CLOSE',
         'ORDER_CALL': 'ORDER_CALL',
