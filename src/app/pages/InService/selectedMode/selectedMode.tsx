@@ -10,6 +10,33 @@ import { ACTIVITY_STATUS, ACTIVITY_MODES, CLIENT_INSTRUCTION_MANUAL, COMPANION_R
 import ClientFeatureExplainer from '../ClientFeatureExplainer';
 import { useModal } from '@/components/ui/Modal';
 
+const INSTRUCTION_ICONS: Record<string, JSX.Element> = {
+  WAIT_OP: (
+    <svg width="20" height="20" fill="none" viewBox="0 0 24 24" stroke="black"><circle cx="12" cy="12" r="9" strokeWidth="2"/><path d="M12 7v5l3 3" strokeWidth="2" strokeLinecap="round"/></svg>
+  ),
+  QUEUE: (
+    <svg width="20" height="20" fill="none" viewBox="0 0 24 24" stroke="black"><circle cx="8" cy="8" r="3" strokeWidth="2"/><circle cx="16" cy="8" r="3" strokeWidth="2"/><circle cx="12" cy="16" r="3" strokeWidth="2"/></svg>
+  ),
+  BRING_STAFF: (
+    <svg width="20" height="20" fill="none" viewBox="0 0 24 24" stroke="black"><circle cx="12" cy="7" r="4" strokeWidth="2"/><path d="M5 21v-2a7 7 0 0 1 14 0v2" strokeWidth="2"/></svg>
+  ),
+  STAND_CLOSE: (
+    <svg width="20" height="20" fill="none" viewBox="0 0 24 24" stroke="black"><circle cx="12" cy="8" r="4" strokeWidth="2"/><rect x="6" y="16" width="12" height="4" rx="2" strokeWidth="2"/></svg>
+  ),
+  ORDER_CALL: (
+    <svg width="20" height="20" fill="none" viewBox="0 0 24 24" stroke="black"><path d="M12 19v-6" strokeWidth="2"/><path d="M8 13h8" strokeWidth="2"/><circle cx="12" cy="7" r="4" strokeWidth="2"/></svg>
+  ),
+  I_AM_DONE: (
+    <svg width="20" height="20" fill="none" viewBox="0 0 24 24" stroke="black"><path d="M5 13l4 4L19 7" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/></svg>
+  ),
+  CLOSE_ASSIST: (
+    <svg width="20" height="20" fill="none" viewBox="0 0 24 24" stroke="black"><path d="M6 18L18 6M6 6l12 12" strokeWidth="2" strokeLinecap="round"/></svg>
+  ),
+  DEFAULT: (
+    <svg width="20" height="20" fill="none" viewBox="0 0 24 24" stroke="black"><circle cx="12" cy="12" r="10" strokeWidth="2"/></svg>
+  ),
+};
+
 const selectedMode: React.FC = () => {
   // Define local states
   const [currentMode, setCurrentMode] = useState<string>('CAFE');
@@ -106,8 +133,7 @@ const selectedMode: React.FC = () => {
 
     // Get the Firebase path for statusInfo based on currentStatus
     const statusInfoRef = ref(database, `storeObjects/${sessionId}/${storePaths.ClientActivityMonitor.statusInfo.path}/${currentStatus}`);
-    console.log('key which is having issue');
-    console.log(`storeObjects/${sessionId}/${storePaths.ClientActivityMonitor.statusInfo.path}/${currentStatus}`);
+   
 
     const listener = onValue(statusInfoRef, (snapshot) => {
       const statusInfoValue = snapshot.val();
@@ -182,7 +208,7 @@ const selectedMode: React.FC = () => {
       {/* Top Section: Status Text (30% height) */}
       <div
         id="status_text_container"
-        className="flex items-center justify-center border-2 border-black rounded-lg mb-4 mx-4"
+        className="flex items-center justify-center shadow-lg rounded-lg mb-4 mx-4 bg-white"
         style={{ height: '30%' }}
       >
         <h2 className="text-2xl font-bold">
@@ -207,7 +233,7 @@ const selectedMode: React.FC = () => {
       {/* Bottom Section: Instruction Buttons (70% height) */}
       <div
         id="instruction_buttons_container"
-        className="flex flex-row items-center justify-center flex-wrap gap-8 border-2 border-black rounded-lg mx-4 p-4"
+        className="flex flex-row items-center justify-center flex-wrap gap-8 shadow-lg rounded-lg mx-4 p-4 bg-white"
         style={{ minHeight: '70%' }}
       >
         {isValidInstructionMode(currentMode) &&
@@ -215,18 +241,19 @@ const selectedMode: React.FC = () => {
             const instructionType = (CLIENT_INSTRUCTION_MANUAL[currentMode] as Record<string, string>)[key as string];
             const isActive = clientQueueObj.type === instructionType && 
                            (clientQueueObj.status === MSG_STATUS.UNREAD || clientQueueObj.status === MSG_STATUS.OPENED);
-            
             return (
-              <button
-                id={`instruction_button_${key}`}
-                key={key as string}
-                className={`rounded-full w-16 h-16 shadow-md flex items-center justify-center border-2 border-gray-400 ${
-                  isActive ? 'bg-green-500 hover:bg-green-600' : 'bg-gray-200 hover:bg-gray-300'
-                }`}
-                onClick={() => clientInstructionLaunchHandler(instructionType)}
-              >
-                <span className="text-xs font-bold text-center leading-tight">{(CLIENT_INSTRUCTION_MANUAL[currentMode] as Record<string, string>)[key as string]}</span>
-              </button>
+              <div key={key as string} className="flex flex-col items-center justify-center">
+                <button
+                  id={`instruction_button_${key}`}
+                  className={`rounded-full w-10 h-10 shadow-lg flex items-center justify-center ${
+                    isActive ? 'bg-green-500 hover:bg-green-600' : 'bg-white hover:bg-gray-200'
+                  }`}
+                  onClick={() => clientInstructionLaunchHandler(instructionType)}
+                >
+                  {INSTRUCTION_ICONS[instructionType] || INSTRUCTION_ICONS.DEFAULT}
+                </button>
+                <span className="text-[0.7rem] font-bold text-center mt-3">{instructionType}</span>
+              </div>
             );
           })}
       </div>
