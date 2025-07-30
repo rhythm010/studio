@@ -219,11 +219,11 @@ const useCompanionStore = create<CompanionStore>((set) => ({
     sendCompanionMsgQueue: [{ data: 'initial_data' }],
     // Initialize recieveCompanionMsgQueue as an empty object
     recieveCompanionMsgQueue: {
-      type: 'STAND_GUARD',
-      data: 'initial_data',
-      timestamp: Date.now(),
-      active: true,
-      status: MSG_STATUS.UNREAD,
+      // type: 'STAND_GUARD',
+      // data: 'initial_data',
+      // timestamp: Date.now(),
+      // active: true,
+      // status: MSG_STATUS.UNREAD,
     },
     selectedMode: ACTIVITY_MODES.WITH_YOU,
     companionCurrentStatus: ACTIVITY_STATUS.DEFAULT,
