@@ -19,13 +19,14 @@ export const ACTIVITY_STATUS = {
     'CLEAR_TABLE': 'CLEAR_TABLE',
     'STAND_CLOSE': 'STAND_CLOSE',
     'QUEUE_CALL': 'QUEUE_CALL',
+    'CLOSE_ASSIST': 'CLOSE_ASSIST',
 };
 
 export const COMPANION_MODE_STATUS_LINKER = {
    'WITH_YOU': ['DEFAULT', 'QUEUE', 'WAIT_OP', 'QUEUE_CALL' ],
    'CAFE': ['QUEUE','PAYMENT_CALL','WAIT_ITEM','WAIT_OP','STAND_CLOSE'],
    'QUEUE': ['QUEUE'],
-   'STORE': ['QUEUE','PAYMENT_CALL','WAIT_ITEM','WAIT_OP'],
+   'STORE': ['QUEUE','PAYMENT_CALL','WAIT_ITEM','WAIT_OP', 'CLOSE_ASSIST'],
    'WITH_CLIENT': ['DEFAULT'],
 }
 
@@ -38,6 +39,7 @@ export const STATUS_BUTTON_LABELS = {
     [ACTIVITY_STATUS.CLEAR_TABLE]: 'Clear Table',
     [ACTIVITY_STATUS.STAND_CLOSE]: 'Stand Close',
     [ACTIVITY_STATUS.QUEUE_CALL]: 'Queue Ends',
+    [ACTIVITY_STATUS.CLOSE_ASSIST]: 'Close Assist',
 };
 
 export const COMPANION_ROLES = {
@@ -118,6 +120,7 @@ export const CLIENT_MODE_STATUS_UI_MAP: Record<string, Record<string, { text: st
     PAYMENT_CALL: { text: 'Processing payment in the store.' },
     WAIT_ITEM: { text: 'Waiting for your item in the store.' },
     WAIT_OP: { text: 'Waiting for the next operation in the store.' },
+    CLOSE_ASSIST: { text: 'Companion will be helping you' },
   },
   WITH_CLIENT: {
     DEFAULT: { text: 'You are with your client.' },
@@ -161,8 +164,8 @@ export const INSTRUCTION_STATUS_UI_MAP: Record<string, Record<string, { text: st
     ACTIONED: { text: 'Instructions completed' },
   },
   CLOSE_ASSIST: {
-    UNREAD: { text: 'Assistance will be closed soon' },
-    OPENED: { text: 'Assistance is being closed' },
+    UNREAD: { text: 'Instructions Sent' },
+    OPENED: { text: 'Help is being provided' },
     ACTIONED: { text: 'Instructions completed' },
   },
 };     

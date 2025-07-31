@@ -29,7 +29,8 @@ const GuardMatchingPage: React.FC = () => {
   const {
     isDevMode,
   } = useCompanionStore();
-  const [manualSessionId, setManualSessionId] = useState(''); // State for manual session ID input
+  const [manualSessionId, setManualSessionId] = useState(''); // State for manual client session ID input
+  const [manualCompanionSessionId, setManualCompanionSessionId] = useState(''); // State for manual companion session ID input
   const router = useRouter();
   const companionRole = getCompanionProfileDetails().companionRole || 'Primary'; // Get the companion role
   // Get the selected mode from the store for conditional styling
@@ -108,6 +109,29 @@ const GuardMatchingPage: React.FC = () => {
     updateStoreInFirebase();
     scanSuccess();
   }
+
+  // Handler for manual companion session ID input
+  const handleManualCompanionSessionIdSubmit = async () => {
+    if (!manualCompanionSessionId.trim()) {
+      console.warn('Please enter a companion session ID');
+      return;
+    }
+
+    try {
+      const sessionExists = await checkIfSessionExistsAndMatch(manualCompanionSessionId);
+      if (sessionExists) {
+        // Set the companion session ID in the store
+        useCompanionStore.getState().setSessionId(manualCompanionSessionId);
+        console.log('Successfully connected companion to session:', manualCompanionSessionId);
+        setManualCompanionSessionId(''); // Clear input after successful connection
+        updateStoreInFirebase(); // Update Firebase with the new session ID
+      } else {
+        console.warn('Companion session not found or invalid');
+      }
+    } catch (error) {
+      console.error('Error connecting companion to session:', error);
+    }
+  };
 
   const QRCodeAnalyze = async (decodedData: string) => {
     if (decodedData) {
@@ -531,6 +555,25 @@ const GuardMatchingPage: React.FC = () => {
             padding: '0.5rem 1rem',
           }}
         >Submit Session ID</button>
+      </div>}
+
+      {/* Manual Companion Session ID Input Container (Dev Mode Only) */}
+      {isDevMode && <div id="manual_companion_session_id_input_container" style={{ display: 'flex', alignItems: 'center', marginTop: '10px' }}>
+        <input
+          type="text"
+          placeholder="Enter Companion Session ID"
+          value={manualCompanionSessionId}
+          onChange={(e) => setManualCompanionSessionId(e.target.value)}
+          style={{ marginRight: '10px', padding: '0.5rem' }}
+        />
+        <button
+          onClick={handleManualCompanionSessionIdSubmit}
+          style={{
+            backgroundColor: 'rgb(31 41 55 / var(--tw-bg-opacity, 1))',
+            color: 'white',
+            padding: '0.5rem 1rem',
+          }}
+        >Connect Companion to Session</button>
       </div>}
 
 

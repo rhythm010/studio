@@ -4,7 +4,7 @@ import React, { useEffect, useState } from 'react';
 import { useCompanionStore } from '@/store/store';
 import { database } from '@/lib/firebase'; // Assuming you have your firebase instance exported as 'database'
 import { ref, onValue, off } from 'firebase/database';
-import { storePaths, createClientInstructionProp, createCompanionMessageObject, sendMsgToCompanion, listenToFirebaseKey, getInstructionStatusText, updateInSelfFirebase } from '@/lib/utils'; // Assuming storePaths and createClientInstructionProp are in utils.ts
+import { storePaths, createClientInstructionProp, createCompanionMessageObject, sendMsgToCompanion, listenToFirebaseKey, getInstructionStatusText, updateInSelfFirebase, updateValueInCompanion } from '@/lib/utils'; // Assuming storePaths and createClientInstructionProp are in utils.ts
 import { cn } from '@/lib/utils'; // Assuming cn is in utils.ts
 import { ACTIVITY_STATUS, ACTIVITY_MODES, CLIENT_INSTRUCTION_MANUAL, COMPANION_ROLES, INSTRUCTION_STATUS_UI_MAP, CLIENT_MODE_STATUS_UI_MAP, MSG_STATUS } from '@/lib/constants';
 import ClientFeatureExplainer from '../ClientFeatureExplainer';
@@ -44,6 +44,8 @@ const selectedMode: React.FC = () => {
   const [currentStatusValues, setCurrentStatusValues] = useState<any | {}>({});
   const [clientQueueStatus, setClientQueueStatus] = useState<string>('');
   const [clientQueueObj, setClientQueueObj] = useState<any>({});
+  const [isModeChanging, setIsModeChanging] = useState<boolean>(false);
+  const [previousMode, setPreviousMode] = useState<string>('CAFE');
   const clientActivityMonitor = useCompanionStore((state: any) => state.ClientActivityMonitor);
   
   const { openModal, closeModal } = useModal();
@@ -95,11 +97,36 @@ const selectedMode: React.FC = () => {
     const listener = onValue(modeRef, (snapshot) => {
       const modeValue = snapshot.val();
       console.log("Firebase currentMode changed:", modeValue);
+      
+      // Check if mode is actually changing
+      if (modeValue && modeValue !== currentMode) {
+        setPreviousMode(currentMode);
+        setIsModeChanging(true);
+        
+        // Clear sendClientMsgQueue when mode changes
+        const emptyMsgQueue = {};
+        setSendClientMsgQueue(emptyMsgQueue);
+        updateInSelfFirebase(storePaths.ClientActivityMonitor.sendClientMsgQueue, emptyMsgQueue);
+        
+        // Clear recieveCompanionMsgQueue in primary companion Firebase store
+        const primaryCompanionSessionId = useCompanionStore.getState().getPrimaryCompanionSessionId();
+        if (primaryCompanionSessionId) {
+          const emptyCompanionMsgQueue = {};
+          updateValueInCompanion({ 
+            path: storePaths.CompanionAcvitiyMonitor.recieveCompanionMsgQueue, 
+            val: emptyCompanionMsgQueue 
+          }, 'PRIMARY');
+        }
+        
+        // Reset mode changing flag after a short delay
+        setTimeout(() => setIsModeChanging(false), 3000);
+      }
+      
       setCurrentMode(modeValue);
     });
 
     return () => off(modeRef, 'value', listener as any); // Explicitly specify 'value' event type
-  }, [useCompanionStore.getState().getSessionId()]); // Re-run effect if session ID changes
+  }, [useCompanionStore.getState().getSessionId(), currentMode]); // Re-run effect if session ID or currentMode changes
 
   useEffect(() => {
     const sessionId = useCompanionStore.getState().getSessionId();
@@ -213,6 +240,76 @@ const selectedMode: React.FC = () => {
     return mode && Object.prototype.hasOwnProperty.call(CLIENT_INSTRUCTION_MANUAL, mode);
   };
 
+  // Helper function to get status text
+  const getStatusText = () => {
+    if (isModeChanging) {
+      return CLIENT_MODE_STATUS_UI_MAP[currentMode]?.[currentStatus]?.text || currentStatus || 'Connecting with companions...';
+    }
+    
+    if (clientQueueObj.status && clientQueueObj.status !== MSG_STATUS.ACTIONED && INSTRUCTION_STATUS_UI_MAP[clientQueueObj.type]?.[clientQueueObj.status]) {
+      return INSTRUCTION_STATUS_UI_MAP[clientQueueObj.type][clientQueueObj.status].text;
+    }
+    
+    return CLIENT_MODE_STATUS_UI_MAP[currentMode]?.[currentStatus]?.text || currentStatus || 'Connecting with companions...';
+  };
+
+  // Helper function to render queue position display
+  const renderQueuePositionDisplay = () => {
+    if (currentStatus !== ACTIVITY_STATUS.QUEUE && currentStatus !== ACTIVITY_STATUS.QUEUE_CALL) {
+      return null;
+    }
+
+    return (
+      <div
+        id="queue_position_container"
+        className="flex items-center justify-center border-2 border-black rounded-lg mb-4 mx-4 p-4"
+      >
+        {currentStatus === ACTIVITY_STATUS.QUEUE && (
+          <h3 className="text-lg font-semibold">
+            Current Position: {clientActivityMonitor.statusInfo?.QUEUE?.currentPosition || 0}
+          </h3>
+        )}
+
+        {currentStatus === ACTIVITY_STATUS.QUEUE_CALL && (
+          <h3 className="text-lg font-semibold">
+            Your turn is next
+          </h3>
+        )}
+      </div>
+    );
+  };
+
+  // Helper function to render instruction buttons
+  const renderInstructionButtons = () => {
+    if (!isValidInstructionMode(currentMode)) {
+      return null;
+    }
+
+    const instructionKeys = Object.keys(CLIENT_INSTRUCTION_MANUAL[currentMode]) as Array<keyof typeof CLIENT_INSTRUCTION_MANUAL[typeof currentMode]>;
+    
+    return instructionKeys.map((key) => {
+      const instructionType = (CLIENT_INSTRUCTION_MANUAL[currentMode] as Record<string, string>)[key as string];
+      
+      // Only the current status should be active, not multiple buttons
+      const isActive = currentStatus === instructionType;
+      
+      return (
+        <div key={key as string} className="flex flex-col items-center justify-center">
+          <button
+            id={`instruction_button_${key}`}
+            className={`rounded-full w-10 h-10 shadow-lg flex items-center justify-center ${
+              isActive ? 'bg-green-500 hover:bg-green-600' : 'bg-white hover:bg-gray-200'
+            }`}
+            onClick={() => clientInstructionLaunchHandler(instructionType)}
+          >
+            {INSTRUCTION_ICONS[instructionType] || INSTRUCTION_ICONS.DEFAULT}
+          </button>
+          <span className="text-[0.7rem] font-bold text-center mt-3">{instructionType}</span>
+        </div>
+      );
+    });
+  };
+
   return (
     <div id="selected_mode_container" className="flex flex-col h-full w-full rounded-lg">
       {/* Top Section: Status Text (30% height) */}
@@ -222,27 +319,12 @@ const selectedMode: React.FC = () => {
         style={{ height: '30%' }}
       >
         <h2 className="text-2xl font-bold">
-          {clientQueueObj.status && clientQueueObj.status !== MSG_STATUS.ACTIONED && INSTRUCTION_STATUS_UI_MAP[clientQueueObj.type]?.[clientQueueObj.status]
-            ? INSTRUCTION_STATUS_UI_MAP[clientQueueObj.type][clientQueueObj.status].text
-            : CLIENT_MODE_STATUS_UI_MAP[currentMode]?.[currentStatus]?.text || currentStatus || 'Connecting with companions...'}
+          {getStatusText()}
         </h2>
       </div>
 
       {/* Queue Position Display */}
-      {(currentStatus === ACTIVITY_STATUS.QUEUE || currentStatus === ACTIVITY_STATUS.QUEUE_CALL) && (
-        <div
-          id="queue_position_container"
-          className="flex items-center justify-center border-2 border-black rounded-lg mb-4 mx-4 p-4"
-        >
-          {currentStatus === ACTIVITY_STATUS.QUEUE  && <h3 className="text-lg font-semibold">
-            Current Position: {clientActivityMonitor.statusInfo?.QUEUE?.currentPosition || 0}
-          </h3>}
-
-          {currentStatus === ACTIVITY_STATUS.QUEUE_CALL  && <h3 className="text-lg font-semibold">
-            Your turn is next
-          </h3>}
-        </div>
-      )}
+      {renderQueuePositionDisplay()}
 
       {/* Bottom Section: Instruction Buttons (70% height) */}
       <div
@@ -250,30 +332,8 @@ const selectedMode: React.FC = () => {
         className="flex flex-row items-center justify-center flex-wrap gap-8 shadow-lg rounded-lg mx-4 p-4 bg-white"
         style={{ minHeight: '70%' }}
       >
-        {isValidInstructionMode(currentMode) &&
-          (Object.keys(CLIENT_INSTRUCTION_MANUAL[currentMode]) as Array<keyof typeof CLIENT_INSTRUCTION_MANUAL[typeof currentMode]>).map((key) => {
-            const instructionType = (CLIENT_INSTRUCTION_MANUAL[currentMode] as Record<string, string>)[key as string];
-            const isActive = (clientQueueObj.type === instructionType && 
-                           (clientQueueObj.status === MSG_STATUS.UNREAD || clientQueueObj.status === MSG_STATUS.OPENED)) ||
-                           currentStatus === instructionType;
-            return (
-              <div key={key as string} className="flex flex-col items-center justify-center">
-                <button
-                  id={`instruction_button_${key}`}
-                  className={`rounded-full w-10 h-10 shadow-lg flex items-center justify-center ${
-                    isActive ? 'bg-green-500 hover:bg-green-600' : 'bg-white hover:bg-gray-200'
-                  }`}
-                  onClick={() => clientInstructionLaunchHandler(instructionType)}
-                >
-                  {INSTRUCTION_ICONS[instructionType] || INSTRUCTION_ICONS.DEFAULT}
-                </button>
-                <span className="text-[0.7rem] font-bold text-center mt-3">{instructionType}</span>
-              </div>
-            );
-          })}
+        {renderInstructionButtons()}
       </div>
-
-
     </div>
   );
 };
