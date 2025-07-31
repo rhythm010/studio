@@ -188,15 +188,25 @@ const selectedMode: React.FC = () => {
   };
 
   const clientInstructionLaunchHandler = (instruction: string) => {
-    const explainerProps = createClientInstructionProp(instruction);
+    // Check if the instruction is already active
+    const isInstructionActive = (clientQueueObj.type === instruction && 
+                               (clientQueueObj.status === MSG_STATUS.UNREAD || clientQueueObj.status === MSG_STATUS.OPENED)) ||
+                               currentStatus === instruction;
+    
+    // If instruction is already active, send DEFAULT instead
+    const instructionToSend = isInstructionActive ? 'DEFAULT' : instruction;
+    
+    const explainerProps = createClientInstructionProp(instructionToSend);
     openModal(
       <ClientFeatureExplainer
         {...explainerProps}
         closeModal={closeModal}
-        handleYes={() => activateCompanionInstruction(instruction)}
+        handleYes={() => activateCompanionInstruction(instructionToSend)}
       />
     );
   };
+
+
 
   // Helper to check if currentMode is a valid key for CLIENT_INSTRUCTION_MANUAL
   const isValidInstructionMode = (mode: any): mode is keyof typeof CLIENT_INSTRUCTION_MANUAL => {
@@ -214,19 +224,23 @@ const selectedMode: React.FC = () => {
         <h2 className="text-2xl font-bold">
           {clientQueueObj.status && clientQueueObj.status !== MSG_STATUS.ACTIONED && INSTRUCTION_STATUS_UI_MAP[clientQueueObj.type]?.[clientQueueObj.status]
             ? INSTRUCTION_STATUS_UI_MAP[clientQueueObj.type][clientQueueObj.status].text
-            : CLIENT_MODE_STATUS_UI_MAP[currentMode]?.[currentStatus]?.text || currentStatus || 'Status'}
+            : CLIENT_MODE_STATUS_UI_MAP[currentMode]?.[currentStatus]?.text || currentStatus || 'Connecting with companions...'}
         </h2>
       </div>
 
       {/* Queue Position Display */}
-      {currentStatus === ACTIVITY_STATUS.QUEUE && (
+      {(currentStatus === ACTIVITY_STATUS.QUEUE || currentStatus === ACTIVITY_STATUS.QUEUE_CALL) && (
         <div
           id="queue_position_container"
           className="flex items-center justify-center border-2 border-black rounded-lg mb-4 mx-4 p-4"
         >
-          <h3 className="text-lg font-semibold">
+          {currentStatus === ACTIVITY_STATUS.QUEUE  && <h3 className="text-lg font-semibold">
             Current Position: {clientActivityMonitor.statusInfo?.QUEUE?.currentPosition || 0}
-          </h3>
+          </h3>}
+
+          {currentStatus === ACTIVITY_STATUS.QUEUE_CALL  && <h3 className="text-lg font-semibold">
+            Your turn is next
+          </h3>}
         </div>
       )}
 
@@ -239,8 +253,9 @@ const selectedMode: React.FC = () => {
         {isValidInstructionMode(currentMode) &&
           (Object.keys(CLIENT_INSTRUCTION_MANUAL[currentMode]) as Array<keyof typeof CLIENT_INSTRUCTION_MANUAL[typeof currentMode]>).map((key) => {
             const instructionType = (CLIENT_INSTRUCTION_MANUAL[currentMode] as Record<string, string>)[key as string];
-            const isActive = clientQueueObj.type === instructionType && 
-                           (clientQueueObj.status === MSG_STATUS.UNREAD || clientQueueObj.status === MSG_STATUS.OPENED);
+            const isActive = (clientQueueObj.type === instructionType && 
+                           (clientQueueObj.status === MSG_STATUS.UNREAD || clientQueueObj.status === MSG_STATUS.OPENED)) ||
+                           currentStatus === instructionType;
             return (
               <div key={key as string} className="flex flex-col items-center justify-center">
                 <button
@@ -257,6 +272,8 @@ const selectedMode: React.FC = () => {
             );
           })}
       </div>
+
+
     </div>
   );
 };

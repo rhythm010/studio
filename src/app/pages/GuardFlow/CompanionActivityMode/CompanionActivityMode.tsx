@@ -104,7 +104,7 @@ const CompanionActivityMode: React.FC = () => {
           >
             -
           </button>
-          <button 
+          {/* <button 
             id="queue_position_status_btn"
             style={{
               backgroundColor: 'rgb(31 41 55 / var(--tw-bg-opacity, 1))',
@@ -118,7 +118,7 @@ const CompanionActivityMode: React.FC = () => {
             onClick={endQueue}
           >
             End
-          </button>
+          </button> */}
         </div>)}
       </div>
 

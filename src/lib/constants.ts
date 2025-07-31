@@ -18,11 +18,12 @@ export const ACTIVITY_STATUS = {
     'DEFAULT': 'DEFAULT',
     'CLEAR_TABLE': 'CLEAR_TABLE',
     'STAND_CLOSE': 'STAND_CLOSE',
+    'QUEUE_CALL': 'QUEUE_CALL',
 };
 
 export const COMPANION_MODE_STATUS_LINKER = {
-   'WITH_YOU': ['DEFAULT', 'QUEUE', 'WAIT_OP' ],
-   'CAFE': ['QUEUE','PAYMENT_CALL','WAIT_ITEM','WAIT_OP','CLEAR_TABLE','STAND_CLOSE'],
+   'WITH_YOU': ['DEFAULT', 'QUEUE', 'WAIT_OP', 'QUEUE_CALL' ],
+   'CAFE': ['QUEUE','PAYMENT_CALL','WAIT_ITEM','WAIT_OP','STAND_CLOSE'],
    'QUEUE': ['QUEUE'],
    'STORE': ['QUEUE','PAYMENT_CALL','WAIT_ITEM','WAIT_OP'],
    'WITH_CLIENT': ['DEFAULT'],
@@ -36,6 +37,7 @@ export const STATUS_BUTTON_LABELS = {
     [ACTIVITY_STATUS.DEFAULT]: 'Default',   
     [ACTIVITY_STATUS.CLEAR_TABLE]: 'Clear Table',
     [ACTIVITY_STATUS.STAND_CLOSE]: 'Stand Close',
+    [ACTIVITY_STATUS.QUEUE_CALL]: 'Queue Ends',
 };
 
 export const COMPANION_ROLES = {
@@ -80,7 +82,7 @@ export const CLIENT_INSTRUCTION_MANUAL = {
         'BRING_STAFF': 'BRING_STAFF',
         'WAIT_OP': 'WAIT_OP',
     },
-}
+};
 
 export const CLIENT_INSTRUCTION_OPTIONS = {
     DEFAULT: [],
@@ -93,54 +95,12 @@ export const CLIENT_INSTRUCTION_OPTIONS = {
     WAIT_ITEM: [],
 }   
 
-export const INSTRUCTION_STATUS_UI_MAP: Record<string, Record<string, { text: string; image?: string }>> = {
-  WAIT_OP: {
-    UNREAD: { text: 'Waiting for operation to start...' }, // SENT
-    OPENED: { text: 'Operation started!' }, // ACTIONED
-    ACTIONED: { text: 'Operation completed!' }, // COMPLETED
-  },
-  BRING_STAFF: {
-    UNREAD: { text: 'A staff member is on the way.' },
-    OPENED: { text: 'Staff has arrived.' },
-    ACTIONED: { text: 'Staff assistance completed.' },
-  },
-  STAND_CLOSE: {
-    UNREAD: { text: 'Your companion will stand close.' },
-    OPENED: { text: 'Companion is now standing close.' },
-    ACTIONED: { text: 'Stand close instruction completed.' },
-  },
-  ORDER_CALL: {
-    UNREAD: { text: 'Order is being called.' },
-    OPENED: { text: 'Order has been placed.' },
-    ACTIONED: { text: 'Order completed.' },
-  },
-  I_AM_DONE: {
-    UNREAD: { text: 'You have indicated you are done.' },
-    OPENED: { text: 'Companion acknowledged you are done.' },
-    ACTIONED: { text: 'Session completed.' },
-  },
-  QUEUE: {
-    UNREAD: { text: 'You are in the queue.' },
-    OPENED: { text: 'Queue is moving.' },
-    ACTIONED: { text: 'Queue completed.' },
-  },
-  DEFAULT: {
-    UNREAD: { text: 'Default instruction sent.' },
-    OPENED: { text: 'Default instruction actioned.' },
-    ACTIONED: { text: 'Default instruction completed.' },
-  },
-  CLOSE_ASSIST: {
-    UNREAD: { text: 'Assistance will be closed soon.' },
-    OPENED: { text: 'Assistance is being closed.' },
-    ACTIONED: { text: 'Assistance closed.' },
-  },
-};   
-
 export const CLIENT_MODE_STATUS_UI_MAP: Record<string, Record<string, { text: string; image?: string }>> = {
   WITH_YOU: {
     DEFAULT: { text: 'You are with your companion.' },
-    QUEUE: { text: 'You are in the queue with your companion.' },
-    WAIT_OP: { text: 'Waiting for the next operation with your companion.' },
+    QUEUE: { text: 'Compnaions standing in Queue for you' },
+    WAIT_OP: { text: 'Companions waiting for your instructions' },
+    QUEUE_CALL: { text: 'Your turn is next' },
   },
   CAFE: {
     QUEUE: { text: 'You are in the cafe queue.' },
@@ -162,7 +122,50 @@ export const CLIENT_MODE_STATUS_UI_MAP: Record<string, Record<string, { text: st
   WITH_CLIENT: {
     DEFAULT: { text: 'You are with your client.' },
   },
-};   
+}; 
+
+export const INSTRUCTION_STATUS_UI_MAP: Record<string, Record<string, { text: string; image?: string }>> = {
+  WAIT_OP: {
+    UNREAD: { text: 'Standing instructions send' }, // SENT
+    OPENED: { text: 'Companions have accepted instructions' }, // ACTIONED
+    ACTIONED: { text: 'Instructions completed' }, // COMPLETED
+  },
+  BRING_STAFF: {
+    UNREAD: { text: 'Instructions sent to bring staff' },
+    OPENED: { text: 'Companions will now bring staff' },
+    ACTIONED: { text: 'Instructions completed' },
+  },
+  STAND_CLOSE: {
+    UNREAD: { text: 'Instructions sent to stand close' },
+    OPENED: { text: 'Companion will now complete task' },
+    ACTIONED: { text: 'Instructions completed' },
+  },
+  ORDER_CALL: {
+    UNREAD: { text: 'Instructions sent to give orders for food' },
+    OPENED: { text: 'Order has been placed' },
+    ACTIONED: { text: 'Instructions completed' },
+  },
+  I_AM_DONE: {
+    UNREAD: { text: 'Companions will arrive shortly' },
+    OPENED: { text: 'Companion acknowledged you are done' },
+    ACTIONED: { text: 'Instructions completed' },
+  },
+  QUEUE: {
+    UNREAD: { text: 'Instructions sent to join queue' },
+    OPENED: { text: 'Companions will now join queue' },
+    ACTIONED: { text: 'Instructions completed' },
+  },
+  DEFAULT: {
+    UNREAD: { text: 'Default instruction sent' },
+    OPENED: { text: 'Default instruction actioned' },
+    ACTIONED: { text: 'Instructions completed' },
+  },
+  CLOSE_ASSIST: {
+    UNREAD: { text: 'Assistance will be closed soon' },
+    OPENED: { text: 'Assistance is being closed' },
+    ACTIONED: { text: 'Instructions completed' },
+  },
+};     
 
 export const RECIEVE_COMPANION_MSG_TYPE_MAP: Record<string, string> = {
   WAIT_OP: 'Waiting for operation...',

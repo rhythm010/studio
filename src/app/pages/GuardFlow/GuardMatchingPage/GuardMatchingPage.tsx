@@ -351,6 +351,8 @@ const GuardMatchingPage: React.FC = () => {
         alignItems: 'center',
         width: '100%'
       }}>
+      
+
       <style>{`
       .mode-large-btn {
         min-width: 90px !important;
@@ -513,7 +515,7 @@ const GuardMatchingPage: React.FC = () => {
       </div>}
 
 
-      {isDevMode && <div style={{ display: 'flex', alignItems: 'center', marginTop: '20px' }}>
+      {isDevMode && <div id="manual_clientsession_id_input_container" style={{ display: 'flex', alignItems: 'center', marginTop: '20px' }}>
         <input
           type="text"
           placeholder="Enter Client Session ID"

@@ -7,7 +7,7 @@ import { useTranslation } from 'react-i18next';
 import { useModal } from '../../../components/ui/Modal'; // Assuming useModal is exported from Modal.tsx
 import ConfirmationModalContent from '../../../components/ConfirmationModalContent'; // Import the new component
 import { useCompanionStore } from '../../../store/store';
-import { getStoreRef, updateStoreInFirebase, sendMsgToClient, sendMsgToCompanion } from '../../../lib/utils';
+import { getStoreRef, updateStoreInFirebase, sendMsgToClient, sendMsgToCompanion, checkIfSessionExistsAndMatch } from '../../../lib/utils';
 import { useRouter } from 'next/navigation'
 import { database } from '@/lib/firebase';
 
@@ -17,7 +17,10 @@ const InService: React.FC = () => {
   const { t } = useTranslation('common');
   const [isRunning, setIsRunning] = useState<boolean>(false);
   const [firebaseCurrentMode, setFirebaseCurrentMode] = useState<string>("WITH_YOU");
+  const [manualSessionId, setManualSessionId] = useState(''); // State for manual session ID input
   const { openModal, closeModal } = useModal();
+  const { isDevMode } = useCompanionStore();
+  const setSessionId = useCompanionStore((state: any) => state.setSessionId);
   const startTimer = () => {
     setIsRunning(true);
   };
@@ -63,6 +66,27 @@ const InService: React.FC = () => {
     // sendMsgToClient("test", randomMessage);
     sendMsgToCompanion(randomMessage.type, {content: 'a value'}, 'PRIMARY' );
     console.log("Sent a test message to the client.");
+  };
+
+  // Handler for manual session ID input
+  const handleManualSessionIdSubmit = async () => {
+    if (!manualSessionId.trim()) {
+      console.warn('Please enter a session ID');
+      return;
+    }
+
+    try {
+      const sessionExists = await checkIfSessionExistsAndMatch(manualSessionId);
+      if (sessionExists) {
+        setSessionId(manualSessionId);
+        console.log('Successfully connected to session:', manualSessionId);
+        setManualSessionId(''); // Clear input after successful connection
+      } else {
+        console.warn('Session not found or invalid');
+      }
+    } catch (error) {
+      console.error('Error connecting to session:', error);
+    }
   };
 
   useEffect(() => {
@@ -173,6 +197,39 @@ const InService: React.FC = () => {
             {/* Cancel icon */}
             Cancel 
           </button>
+
+      {/* Manual Session ID Input Container (Dev Mode Only) */}
+      {isDevMode && (
+        <div id="manual_session_id_input_container" style={{ display: 'flex', alignItems: 'center', marginTop: '20px', padding: '0 1rem' }}>
+          <input
+            type="text"
+            placeholder="Enter Session ID"
+            value={manualSessionId}
+            onChange={(e) => setManualSessionId(e.target.value)}
+            style={{ 
+              marginRight: '10px', 
+              padding: '0.5rem',
+              flex: 1,
+              border: '1px solid #ccc',
+              borderRadius: '4px'
+            }}
+          />
+          <button
+            onClick={handleManualSessionIdSubmit}
+            style={{
+              backgroundColor: 'rgb(31 41 55 / var(--tw-bg-opacity, 1))',
+              color: 'white',
+              padding: '0.5rem 1rem',
+              borderRadius: '4px',
+              border: 'none',
+              cursor: 'pointer'
+            }}
+          >
+            Connect to Session
+          </button>
+        </div>
+      )}
+
       {/* Modal is now handled by the hook */}
 
     </div>

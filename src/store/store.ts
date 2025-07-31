@@ -46,6 +46,7 @@ interface CompanionAcvitiyMonitor {
   selectedMode: string;
   companionCurrentStatus: string;
   selectedSubMode: string;
+
   QUEUE: {
     currentPosition: number;
   };
@@ -77,6 +78,7 @@ interface ClientActivityMonitor {
   modeTitle: string;
   currentMode: string;
   currentStatus: string;
+
   statusInfo: {
     QUEUE: {
       active: boolean;
@@ -150,6 +152,7 @@ interface CompanionStore {
   setCompanionAcvitiyMonitor: (details: Partial<CompanionAcvitiyMonitor>) => void; // Add setter for CompanionAcvitiyMonitor
   getCompanionAcvitiyMonitor: () => CompanionAcvitiyMonitor; // Add getter for CompanionAcvitiyMonitor
   ClientActivityMonitor: ClientActivityMonitor; // Add the new property
+
   setProfileDetails: (details: Partial<ProfileDetails>) => void;
   setMatchingDone: (done: boolean) => void;
   setSessionId: (id: string) => void;
@@ -228,6 +231,7 @@ const useCompanionStore = create<CompanionStore>((set) => ({
     selectedMode: ACTIVITY_MODES.WITH_YOU,
     companionCurrentStatus: ACTIVITY_STATUS.DEFAULT,
     selectedSubMode: '',
+
     QUEUE: {
       active: false,
       currentPosition: 0,
@@ -255,6 +259,7 @@ const useCompanionStore = create<CompanionStore>((set) => ({
     modeTitle: "",
     currentStatus: ACTIVITY_STATUS.DEFAULT,
     currentMode: ACTIVITY_MODES.WITH_YOU,
+
     statusInfo: {
       QUEUE: {
         currentPosition: 2,

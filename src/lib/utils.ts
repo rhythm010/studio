@@ -52,6 +52,7 @@ export const storePaths = {
     modeTitle: "ClientActivityMonitor/modeTitle",
     currentMode: "ClientActivityMonitor/currentMode",
     currentStatus: "ClientActivityMonitor/currentStatus",
+
     statusInfo: {
       path: "ClientActivityMonitor/statusInfo",
       QUEUE: {
@@ -80,6 +81,7 @@ export const storePaths = {
     selectedMode: "CompanionAcvitiyMonitor/selectedMode",
     companionCurrentStatus: "CompanionAcvitiyMonitor/companionCurrentStatus",
     selectedSubMode: "CompanionAcvitiyMonitor/selectedSubMode",
+
     PAYMENT_CALL: {
       path: "CompanionAcvitiyMonitor/PAYMENT_CALL",
       active: "CompanionAcvitiyMonitor/PAYMENT_CALL/active",
@@ -487,10 +489,12 @@ export function createCompanionMessageObject(instruction: string) {
  * Get mapped UI text for current instruction and status
  */
 export function getInstructionStatusText(instructionObj: any): string {
-  if (!instructionObj || !instructionObj.type || !instructionObj.status) return '';
-  const type = instructionObj.type;
-  const status = instructionObj.status;
-  return (
-    INSTRUCTION_STATUS_UI_MAP[type]?.[status]?.text || status || ''
-  );
+  if (!instructionObj || !instructionObj.type || !instructionObj.status) {
+    return 'No instruction';
+  }
+
+  const statusText = INSTRUCTION_STATUS_UI_MAP[instructionObj.type]?.[instructionObj.status]?.text;
+  return statusText || 'Unknown instruction status';
 }
+
+
