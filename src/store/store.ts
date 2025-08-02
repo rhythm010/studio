@@ -222,7 +222,7 @@ const useCompanionStore = create<CompanionStore>((set) => ({
     sendCompanionMsgQueue: [{ data: 'initial_data' }],
     // Initialize recieveCompanionMsgQueue as an empty object
     recieveCompanionMsgQueue: {
-      a:1
+      test:1
     },
     selectedMode: ACTIVITY_MODES.WITH_YOU,
     companionCurrentStatus: ACTIVITY_STATUS.DEFAULT,
@@ -248,9 +248,15 @@ const useCompanionStore = create<CompanionStore>((set) => ({
       active: false,
     },
   },
+  companionProfileDetails: {
+    clientSessionId: '',
+    companionRole: '',
+    primaryCompanionName: '',
+    secondaryCompanionName: '',
+  },
   ClientActivityMonitor: { // Initialize the new property
     // Initialize sendClientMsgQueue as an empty object
-    sendClientMsgQueue: {a:1},
+    sendClientMsgQueue: {test:1},
     recieveClientMsgQueue: [{ data: 'initial_data' }],
     modeTitle: "",
     currentStatus: ACTIVITY_STATUS.DEFAULT,

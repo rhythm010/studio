@@ -30,6 +30,13 @@ export const storePaths = {
   feedbackDetails: "feedbackDetails",
   companionFeedbackDetails: "companionFeedbackDetails",
   isComplete: "isComplete",
+  companionProfileDetails: {
+    path: "companionProfileDetails",
+    primaryCompanionName: "companionProfileDetails/primaryCompanionName",
+    secondaryCompanionName: "companionProfileDetails/secondaryCompanionName",
+    clientSessionId: "companionProfileDetails/clientSessionId",
+    companionRole: "companionProfileDetails/companionRole",
+  },
  ClientCompanionDetails: {
  path: "clientCompanionDetails",
   },

@@ -4,6 +4,8 @@ import { useEffect, useState, useRef } from 'react';
 import { Html5Qrcode } from 'html5-qrcode';
 import { useCompanionStore } from '@/store/store'; // Import the store
 import { checkIfSessionExistsAndMatch, updateStoreInFirebase, updateCompanionSessionIdInClient, updateValueInClient, storePaths, updateInSelfFirebase } from '@/lib/utils'; // Import the utility method
+import { ref, get } from 'firebase/database';
+import { database } from '@/lib/firebase';
 import { useRouter } from 'next/navigation';
 import { useModal } from '@/components/ui/Modal';
 import CompanionActivityMode from '../CompanionActivityMode/CompanionActivityMode';
@@ -30,7 +32,7 @@ const GuardMatchingPage: React.FC = () => {
     isDevMode,
   } = useCompanionStore();
   const [manualSessionId, setManualSessionId] = useState(''); // State for manual client session ID input
-  const [manualCompanionSessionId, setManualCompanionSessionId] = useState(''); // State for manual companion session ID input
+  const manualCompanionSessionIdRef = useRef<HTMLInputElement>(null); // Ref for manual companion session ID input
   const router = useRouter();
   const companionRole = getCompanionProfileDetails().companionRole || 'Primary'; // Get the companion role
   // Get the selected mode from the store for conditional styling
@@ -106,32 +108,81 @@ const GuardMatchingPage: React.FC = () => {
     // console.log("Manual session ID found:", ClientSessionId); // Add logging for manual session ID
     setClientSessionId(ClientSessionId);
     updateCompanionSessionIdInClient(ClientSessionId, companionSessionId, companionRole);
-    // Use targeted updates instead of full-store sync to avoid overwriting message queues
-    updateInSelfFirebase('clientSessionId', ClientSessionId);
+    updateInSelfFirebase(storePaths.companionProfileDetails.clientSessionId, ClientSessionId);
     scanSuccess();
   }
 
   // Handler for manual companion session ID input
-  const handleManualCompanionSessionIdSubmit = async () => {
-    if (!manualCompanionSessionId.trim()) {
+  const handleManualCompanionSessionIdSubmit = async (inputValue: string) => {
+    if (!inputValue.trim()) {
       console.warn('Please enter a companion session ID');
       return;
     }
 
     try {
-      const sessionExists = await checkIfSessionExistsAndMatch(manualCompanionSessionId);
-      if (sessionExists) {
-        // Set the companion session ID in the store
-        useCompanionStore.getState().setSessionId(manualCompanionSessionId);
-        console.log('Successfully connected companion to session:', manualCompanionSessionId);
-        setManualCompanionSessionId(''); // Clear input after successful connection
-        // Use targeted updates instead of full-store sync to avoid overwriting message queues
-        updateInSelfFirebase('sessionId', manualCompanionSessionId);
+      // Fetch the store data from Firebase using the provided session ID
+      const storeRef = ref(database, `storeObjects/${inputValue}`);
+      const snapshot = await get(storeRef);
+      
+      if (snapshot.exists()) {
+        const firebaseStoreData = snapshot.val();
+        console.log('Fetched store data from Firebase:', firebaseStoreData);
+        
+        // Update the local store with specific Firebase data
+        const currentStore = useCompanionStore.getState();
+        
+        // Update basic session properties
+        if (firebaseStoreData.sessionId) {
+          currentStore.setSessionId(firebaseStoreData.sessionId);
+        } else {
+          currentStore.setSessionId(inputValue);
+        }
+        
+        if (firebaseStoreData.matchingId) {
+          currentStore.setMatchingId(firebaseStoreData.matchingId);
+        }
+        
+        if (firebaseStoreData.matchingDone !== undefined) {
+          currentStore.setMatchingDone(firebaseStoreData.matchingDone);
+        }
+        
+        if (firebaseStoreData.serviceSelected) {
+          currentStore.setServiceSelected(firebaseStoreData.serviceSelected);
+        }
+        
+        if (firebaseStoreData.profileDetails) {
+          currentStore.setProfileDetails(firebaseStoreData.profileDetails);
+        }
+        
+        if (firebaseStoreData.serviceRunning !== undefined) {
+          currentStore.setServiceRunning(firebaseStoreData.serviceRunning);
+        }
+        
+        if (firebaseStoreData.isComplete !== undefined) {
+          currentStore.setIsComplete(firebaseStoreData.isComplete);
+        }
+        
+        // Update companion-specific properties
+        if (firebaseStoreData.companionProfileDetails) {
+          currentStore.setCompanionProfileDetails(firebaseStoreData.companionProfileDetails);
+        }
+        
+        if (firebaseStoreData.CompanionAcvitiyMonitor) {
+          currentStore.setCompanionAcvitiyMonitor(firebaseStoreData.CompanionAcvitiyMonitor);
+        }
+        
+        console.log('Successfully updated local store with Firebase data for session:', inputValue);
+        
+        // Clear input after successful connection
+        if (manualCompanionSessionIdRef.current) {
+          manualCompanionSessionIdRef.current.value = '';
+        }
+        scanSuccess();
       } else {
-        console.warn('Companion session not found or invalid');
+        console.warn('Companion session not found in Firebase');
       }
     } catch (error) {
-      console.error('Error connecting companion to session:', error);
+      console.error('Error fetching and updating store data:', error);
     }
   };
 
@@ -141,8 +192,6 @@ const GuardMatchingPage: React.FC = () => {
       if (ClientSessionId) {
         setClientSessionId(ClientSessionId); // Set the clientSessionId in the store
         onceClientSessionIdFound(ClientSessionId);
-        // Use targeted updates instead of full-store sync to avoid overwriting message queues
-        updateInSelfFirebase('clientSessionId', ClientSessionId);
         scanSuccess();
       } else {
         // error handling
@@ -563,14 +612,13 @@ const GuardMatchingPage: React.FC = () => {
       {/* Manual Companion Session ID Input Container (Dev Mode Only) */}
       {isDevMode && <div id="manual_companion_session_id_input_container" style={{ display: 'flex', alignItems: 'center', marginTop: '10px' }}>
         <input
+          ref={manualCompanionSessionIdRef}
           type="text"
           placeholder="Enter Companion Session ID"
-          value={manualCompanionSessionId}
-          onChange={(e) => setManualCompanionSessionId(e.target.value)}
           style={{ marginRight: '10px', padding: '0.5rem' }}
         />
         <button
-          onClick={handleManualCompanionSessionIdSubmit}
+          onClick={() => handleManualCompanionSessionIdSubmit(manualCompanionSessionIdRef.current?.value || '')}
           style={{
             backgroundColor: 'rgb(31 41 55 / var(--tw-bg-opacity, 1))',
             color: 'white',

@@ -106,7 +106,7 @@ const selectedMode: React.FC = () => {
         setIsModeChanging(true);
         
         // Clear sendClientMsgQueue when mode changes
-        const emptyMsgQueue = {};
+        const emptyMsgQueue = {test:1};
         setSendClientMsgQueue(emptyMsgQueue);
         updateInSelfFirebase(storePaths.ClientActivityMonitor.sendClientMsgQueue, emptyMsgQueue);
         
