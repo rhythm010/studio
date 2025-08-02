@@ -27,7 +27,6 @@ export const COMPANION_MODE_STATUS_LINKER = {
    'CAFE': ['QUEUE','PAYMENT_CALL','WAIT_ITEM','WAIT_OP','STAND_CLOSE'],
    'QUEUE': ['QUEUE'],
    'STORE': ['QUEUE','PAYMENT_CALL','WAIT_ITEM','WAIT_OP', 'CLOSE_ASSIST'],
-   'WITH_CLIENT': ['DEFAULT'],
 }
 
 export const STATUS_BUTTON_LABELS = {
@@ -99,37 +98,34 @@ export const CLIENT_INSTRUCTION_OPTIONS = {
 
 export const CLIENT_MODE_STATUS_UI_MAP: Record<string, Record<string, { text: string; image?: string }>> = {
   WITH_YOU: {
-    DEFAULT: { text: 'You are with your companion.' },
-    QUEUE: { text: 'Compnaions standing in Queue for you' },
-    WAIT_OP: { text: 'Companions waiting for your instructions' },
+    DEFAULT: { text: 'We are moving with you' },
+    QUEUE: { text: 'Standing in Queue' },
+    WAIT_OP: { text: 'We are standing at a distance' },
     QUEUE_CALL: { text: 'Your turn is next' },
   },
   CAFE: {
-    QUEUE: { text: 'You are in the cafe queue.' },
-    PAYMENT_CALL: { text: 'Payment is being processed.' },
-    WAIT_ITEM: { text: 'Waiting for your item in the cafe.' },
-    WAIT_OP: { text: 'Waiting for the next operation in the cafe.' },
-    CLEAR_TABLE: { text: 'Table is being cleared.' },
-    STAND_CLOSE: { text: 'Your companion is standing close in the cafe.' },
+    QUEUE: { text: 'We are in the queue' },
+    PAYMENT_CALL: { text: 'Please come and make payment' },
+    WAIT_ITEM: { text: 'Your order is being prepared' },
+    WAIT_OP: { text: 'Let us know when you want something' },
+    CLEAR_TABLE: { text: 'Table is being cleared' },
+    STAND_CLOSE: { text: 'We are standing close' },
   },
   QUEUE: {
-    QUEUE: { text: 'You are in the main queue.' },
+    QUEUE: { text: 'You are in the main queue' },
   },
   STORE: {
-    QUEUE: { text: 'You are in the store queue.' },
-    PAYMENT_CALL: { text: 'Processing payment in the store.' },
-    WAIT_ITEM: { text: 'Waiting for your item in the store.' },
-    WAIT_OP: { text: 'Waiting for the next operation in the store.' },
-    CLOSE_ASSIST: { text: 'Companion will be helping you' },
-  },
-  WITH_CLIENT: {
-    DEFAULT: { text: 'You are with your client.' },
+    QUEUE: { text: 'You are in the store queue' },
+    PAYMENT_CALL: { text: 'Please come for payment' },
+    WAIT_ITEM: { text: 'We are getting items ready for you' },
+    WAIT_OP: { text: 'Let us know if you need help in shopping' },
+    CLOSE_ASSIST: { text: 'Assisting you in shopping' },
   },
 }; 
 
 export const INSTRUCTION_STATUS_UI_MAP: Record<string, Record<string, { text: string; image?: string }>> = {
   WAIT_OP: {
-    UNREAD: { text: 'Standing instructions send' }, // SENT
+    UNREAD: { text: 'Standing instructions sent' }, // SENT
     OPENED: { text: 'Companions have accepted instructions' }, // ACTIONED
     ACTIONED: { text: 'Instructions completed' }, // COMPLETED
   },
@@ -140,12 +136,12 @@ export const INSTRUCTION_STATUS_UI_MAP: Record<string, Record<string, { text: st
   },
   STAND_CLOSE: {
     UNREAD: { text: 'Instructions sent to stand close' },
-    OPENED: { text: 'Companion will now complete task' },
+    OPENED: { text: 'Companion will now stand close to you' },
     ACTIONED: { text: 'Instructions completed' },
   },
   ORDER_CALL: {
-    UNREAD: { text: 'Instructions sent to give orders for food' },
-    OPENED: { text: 'Order has been placed' },
+    UNREAD: { text: 'Instructions sent to order' },
+    OPENED: { text: 'Companions will now move' },
     ACTIONED: { text: 'Instructions completed' },
   },
   I_AM_DONE: {
@@ -164,8 +160,8 @@ export const INSTRUCTION_STATUS_UI_MAP: Record<string, Record<string, { text: st
     ACTIONED: { text: 'Instructions completed' },
   },
   CLOSE_ASSIST: {
-    UNREAD: { text: 'Instructions Sent' },
-    OPENED: { text: 'Help is being provided' },
+    UNREAD: { text: 'Calling Companion to you' },
+    OPENED: { text: 'Companions will come now' },
     ACTIONED: { text: 'Instructions completed' },
   },
 };     
@@ -180,4 +176,53 @@ export const RECIEVE_COMPANION_MSG_TYPE_MAP: Record<string, string> = {
   DEFAULT: 'Default instruction sent.',
   CLOSE_ASSIST: 'Assistance will be closed soon.',
   // Add more mappings as needed
+};
+
+export const CLIENT_INSTRUCTION_CONTENT: Record<string, Record<string, { title: string; description: { text: string; image?: string } }>> = {
+  WITH_YOU: {
+    QUEUE: { 
+      title: 'Standing in Queue', 
+      description: { text: 'We are waiting in the queue with you' }
+    },
+    WAIT_OP: { 
+      title: 'Standing at distance', 
+      description: { text: 'We are standing nearby while you handle your business' }
+    },
+  },
+  CAFE: {
+    BRING_STAFF: { 
+      title: 'Calling staff', 
+      description: { text: 'We will call a staff member to assist you' }
+    },
+    STAND_CLOSE: { 
+      title: 'Standing close', 
+      description: { text: 'We are standing nearby to assist you' }
+    },
+    ORDER_CALL: { 
+      title: 'Placing order', 
+      description: { text: 'We will place your order with the staff' }
+    },
+    I_AM_DONE: { 
+      title: 'Service complete', 
+      description: { text: 'You have indicated you are finished with your meal' }
+    },
+  },
+  STORE: {
+    I_AM_DONE: { 
+      title: 'Shopping complete', 
+      description: { text: 'You have indicated you are finished shopping' }
+    },
+    CLOSE_ASSIST: { 
+      title: 'Shopping assistance', 
+      description: { text: 'We are here to assist you with your shopping' }
+    },
+    BRING_STAFF: { 
+      title: 'Calling staff', 
+      description: { text: 'We will call a staff member to assist you' }
+    },
+    WAIT_OP: { 
+      title: 'Shopping assistance', 
+      description: { text: 'Let us know if you need help while shopping' }
+    },
+  },
 };   

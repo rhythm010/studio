@@ -4,9 +4,8 @@ import React, { useEffect, useState } from 'react';
 import { useCompanionStore } from '@/store/store';
 import { database } from '@/lib/firebase'; // Assuming you have your firebase instance exported as 'database'
 import { ref, onValue, off } from 'firebase/database';
-import { storePaths, createClientInstructionProp, createCompanionMessageObject, sendMsgToCompanion, listenToFirebaseKey, getInstructionStatusText, updateInSelfFirebase, updateValueInCompanion } from '@/lib/utils'; // Assuming storePaths and createClientInstructionProp are in utils.ts
-import { cn } from '@/lib/utils'; // Assuming cn is in utils.ts
-import { ACTIVITY_STATUS, ACTIVITY_MODES, CLIENT_INSTRUCTION_MANUAL, COMPANION_ROLES, INSTRUCTION_STATUS_UI_MAP, CLIENT_MODE_STATUS_UI_MAP, MSG_STATUS } from '@/lib/constants';
+import { storePaths, createClientInstructionProp, sendMsgToCompanion, listenToFirebaseKey, updateInSelfFirebase, updateValueInCompanion } from '@/lib/utils'; // Assuming storePaths and createClientInstructionProp are in utils.ts
+import { ACTIVITY_STATUS, CLIENT_INSTRUCTION_MANUAL, COMPANION_ROLES, INSTRUCTION_STATUS_UI_MAP, CLIENT_MODE_STATUS_UI_MAP, MSG_STATUS } from '@/lib/constants';
 import ClientFeatureExplainer from '../ClientFeatureExplainer';
 import { useModal } from '@/components/ui/Modal';
 
@@ -42,7 +41,6 @@ const selectedMode: React.FC = () => {
   const [currentMode, setCurrentMode] = useState<string>('CAFE');
   const [currentStatus, setCurrentStatus] = useState<string>('');
   const [currentStatusValues, setCurrentStatusValues] = useState<any | {}>({});
-  const [clientQueueStatus, setClientQueueStatus] = useState<string>('');
   const [clientQueueObj, setClientQueueObj] = useState<any>({});
   const [isModeChanging, setIsModeChanging] = useState<boolean>(false);
   const [previousMode, setPreviousMode] = useState<string>('CAFE');
@@ -124,6 +122,12 @@ const selectedMode: React.FC = () => {
       }
       
       setCurrentMode(modeValue);
+      
+      // Update currentMode in local store's ClientActivityMonitor
+      const currentStore = useCompanionStore.getState();
+      currentStore.setClientActivityMonitor({
+        currentMode: modeValue
+      });
     });
 
     return () => off(modeRef, 'value', listener as any); // Explicitly specify 'value' event type

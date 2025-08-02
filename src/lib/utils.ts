@@ -4,7 +4,7 @@ import { database } from "@/lib/firebase";
 import { useCompanionStore } from '@/store/store';
 import { ref, update, remove, get, child, DatabaseReference, onValue, off } from "firebase/database";
 import { twMerge } from "tailwind-merge"
-import { COMPANION_ROLES, MSG_STATUS, CLIENT_INSTRUCTION_MANUAL, INSTRUCTION_STATUS_UI_MAP } from "./constants";
+import { COMPANION_ROLES, MSG_STATUS, CLIENT_INSTRUCTION_MANUAL, INSTRUCTION_STATUS_UI_MAP, CLIENT_INSTRUCTION_CONTENT } from "./constants";
 
 export function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs))
@@ -600,14 +600,24 @@ export function listenToFirebaseKey(sessionId: string, keyPath: string, callback
 
 
 export function createClientInstructionProp(instruction: string) {
-  // Get the current mode and status from the store
+  // Get the current mode from the store
   const currentStore = useCompanionStore.getState();
   const currentMode = currentStore.ClientActivityMonitor.currentMode;
-  const currentStatus = currentStore.ClientActivityMonitor.currentStatus;
   
-  // Get the instruction title from CLIENT_INSTRUCTION_MANUAL based on mode and status
+  // Get the instruction content from CLIENT_INSTRUCTION_CONTENT based on mode and instruction
+  const modeContent = CLIENT_INSTRUCTION_CONTENT[currentMode as keyof typeof CLIENT_INSTRUCTION_CONTENT];
+  const instructionContent = modeContent?.[instruction as keyof typeof modeContent];
+  
+  if (instructionContent) {
+    return { 
+      title: instructionContent.title, 
+      description: instructionContent.description 
+    };
+  }
+  
+  // Fallback to the old method if content is not found
   const modeInstructions = CLIENT_INSTRUCTION_MANUAL[currentMode as keyof typeof CLIENT_INSTRUCTION_MANUAL];
-  const instructionTitle = modeInstructions?.[currentStatus as keyof typeof modeInstructions] || instruction;
+  const instructionTitle = modeInstructions?.[instruction as keyof typeof modeInstructions] || instruction;
   
   return { title: instructionTitle };
 }
