@@ -72,7 +72,9 @@ const selectedMode: React.FC = () => {
   }, []); // Empty dependency array ensures this effect runs only once on the client-side
 
   const syncLocalModeWithFirebase = () => {
+    const currentState = useCompanionStore.getState().ClientActivityMonitor;
     useCompanionStore.getState().setClientActivityMonitor({
+      ...currentState,
       statusInfo: { ...clientActivityMonitor.statusInfo, [currentStatus]: currentStatusValues },
     });
   }
@@ -195,23 +197,16 @@ const selectedMode: React.FC = () => {
 
   const activateCompanionInstruction = (instruction: string) => {
     console.log('activateCompanionInstruction called');
-    closeModal()
-    // Update companion's local store
-    useCompanionStore.getState().setRecieveCompanionMsgQueue({
-      type: instruction,
-      status: MSG_STATUS.UNREAD, // or any status you want to represent
-      timestamp: Date.now(),
-    });
-    // Update client's sendClientMsgQueue in local store and Firebase
+    closeModal();
     const msgObj = {
       type: instruction,
       status: MSG_STATUS.UNREAD,
       timestamp: Date.now(),
     };
-    setSendClientMsgQueue(msgObj);
-    updateInSelfFirebase(storePaths.ClientActivityMonitor.sendClientMsgQueue, msgObj);
+    setSendClientMsgQueue(msgObj); // local store first step - CLIENT - 1
+    updateInSelfFirebase(storePaths.ClientActivityMonitor.sendClientMsgQueue, msgObj); // firebase update step - CLIENT - 2
     // Pass the instruction as the message type to sendMsgToCompanion
-    sendMsgToCompanion(instruction, {}, COMPANION_ROLES.PRIMARY);
+    sendMsgToCompanion(instruction, {}, COMPANION_ROLES.PRIMARY); // UPDATE IN COMPANION - 3
   };
 
   const clientInstructionLaunchHandler = (instruction: string) => {

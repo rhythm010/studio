@@ -128,6 +128,17 @@ export async function updateStoreInFirebase() {
   const sessionId = useCompanionStore.getState().getSessionId(); // Get session ID from the store
   const storeData = useCompanionStore.getState();
   const dataToUpdate = extractDataFromStore(storeData);
+  
+  if (!sessionId) {
+    console.error("Session ID is not available. Cannot update store in Firebase.");
+    return;
+  }
+  
+  if (!dataToUpdate || Object.keys(dataToUpdate).length === 0) {
+    console.error("No data to update. Cannot update store in Firebase.");
+    return;
+  }
+  
   try {
     const storeRef = getStoreRef(sessionId);
     await update(storeRef, dataToUpdate);
@@ -160,6 +171,11 @@ export async function removeDevSessions() {
 }
 
 export async function checkIfSessionExistsAndMatch(sessionId: string): Promise<any> {
+  if (!sessionId) {
+    console.error("Session ID is null or undefined. Cannot check session existence.");
+    return false;
+  }
+  
   const dbRef = ref(database);
   try {
     const sessionRef: DatabaseReference = child(dbRef, `storeObjects/${sessionId}`);
@@ -181,6 +197,21 @@ export async function checkIfSessionExistsAndMatch(sessionId: string): Promise<a
 }
 
 export async function updateCompanionSessionIdInClient(clientSessionId: string, companionSessionId: string, companionRole:string): Promise<void> {
+  if (!clientSessionId) {
+    console.error("Client session ID is null or undefined. Cannot update companion session ID.");
+    return;
+  }
+  
+  if (!companionSessionId) {
+    console.error("Companion session ID is null or undefined. Cannot update companion session ID.");
+    return;
+  }
+  
+  if (!companionRole) {
+    console.error("Companion role is null or undefined. Cannot update companion session ID.");
+    return;
+  }
+  
   const clientRef = ref(database, 'storeObjects/' + clientSessionId);
   try {
     const snapshot = await get(child(clientRef, 'clientCompanionDetails'));
@@ -222,15 +253,40 @@ export async function updateValueInClient(updateObj: { path: string, val: any })
     return;
   }
   
+  if (!updateObj) {
+    console.error('Update object is null or undefined. Cannot update client Firebase.');
+    return;
+  }
+  
+  if (!updateObj.path) {
+    console.error('Update path is null or undefined. Cannot update client Firebase.');
+    return;
+  }
+  
+  if (updateObj.val === null || updateObj.val === undefined || (typeof updateObj.val === 'object' && updateObj.val !== null && Object.keys(updateObj.val).length === 0)) {
+    console.error('Update value is null or undefined. Cannot update client Firebase.');
+    return;
+  }
+  
+  // Log specific message queue updates
+  if (updateObj.path === 'sendClientMsgQueue') {
+    console.log(`🔍 CLIENT MESSAGE QUEUE UPDATE - Path: ${updateObj.path}, Value:`, updateObj.val);
+  }
+  
   try {
     // Construct the reference to the specific path within the client's object
     const targetRef = ref(database, `storeObjects/${clientSessionId}/${updateObj.path}`);
     console.log('Firebase path to be updated:', `storeObjects/${clientSessionId}/${updateObj.path}`);
+    console.log('value to be updated', updateObj.val);
 
     // Read the existing data at the target path
     const snapshot = await get(targetRef);
     const existingData = snapshot.val();
     console.log('Existing data at path:', existingData);
+
+    if(!existingData){
+      return;
+    }
 
     // Check if the existing data is an array
     if (Array.isArray(existingData)) {
@@ -258,9 +314,31 @@ export async function updateValueInCompanion(updateObj: { path: string, val: any
     console.error("Primary companion session ID is not available. Cannot update.");
     return;
   }
+  
+  if (!updateObj) {
+    console.error('Update object is null or undefined. Cannot update companion Firebase.');
+    return;
+  }
+  
+  if (!updateObj.path) {
+    console.error('Update path is null or undefined. Cannot update companion Firebase.');
+    return;
+  }
+  
+  if (updateObj.val === null || updateObj.val === undefined || (typeof updateObj.val === 'object' && updateObj.val !== null && Object.keys(updateObj.val).length === 0)) {
+    console.error('Update value is null or undefined. Cannot update companion Firebase.');
+    return;
+  }
+  
+  if (!role) {
+    console.error('Role is null or undefined. Cannot update companion Firebase.');
+    return;
+  }
+  
   try {
     const targetRef = ref(database, `storeObjects/${companionSessionId}/${updateObj.path}`);
     console.log('path to be updated', updateObj.path);
+    console.log('value to be updated', updateObj.val);
 
     // Read the existing data at the target path
     const snapshot = await get(targetRef);
@@ -275,9 +353,9 @@ export async function updateValueInCompanion(updateObj: { path: string, val: any
       // If it's not an array, perform a regular update
       await update(ref(database, `storeObjects/${companionSessionId}`), { [updateObj.path]: updateObj.val });
     }
-    console.log(`Value updated successfully for client ${companionSessionId} at path ${updateObj.path}`);
+    console.log(`Value updated successfully for ${role} companion ${companionSessionId} at path ${updateObj.path}`);
   } catch (error) {
-    console.error(`Error updating value for primary companion ${companionSessionId} at path ${updateObj.path}:`, error);
+    console.error(`Error updating value for ${role} companion ${companionSessionId} at path ${updateObj.path}:`, error);
     // Optionally re-throw the error or handle it based on your needs
   }
 }
@@ -296,6 +374,22 @@ export async function updateInSelfFirebase(path: string, val: any) {
     console.error("Session ID is not available. Cannot update.");
     return;
   }
+  
+  if (!path) {
+    console.error("Path is null or undefined. Cannot update Firebase.");
+    return;
+  }
+  
+  if (val === null || val === undefined || (typeof val === 'object' && Object.keys(val).length === 0)) {
+    console.error("Value is null or undefined. Cannot update Firebase.");
+    return;
+  }
+  
+  // Log specific message queue updates
+  if (path === 'CompanionAcvitiyMonitor/recieveCompanionMsgQueue' || path === 'ClientActivityMonitor/sendClientMsgQueue') {
+    console.log(`🔍 MESSAGE QUEUE UPDATE - Path: ${path}, Value:`, val);
+  }
+  
   try {
     const targetRef = ref(database, `storeObjects/${sessionId}/${path}`);
     console.log('Firebase path to be updated:', `storeObjects/${sessionId}/${path}`);
@@ -316,6 +410,7 @@ export async function updateInSelfFirebase(path: string, val: any) {
       console.log('Updated object in Firebase');
     }
     console.log(`Value updated successfully for session ${sessionId} at path ${path}`);
+    console.log(val);
   } catch (error) {
     console.error(`Error updating value for session ${sessionId} at path ${path}:`, error);
   }
@@ -338,6 +433,16 @@ function formMessageObj(messageType: string, messageData: object, messageSender:
 }
 
 export async function sendMsgToClient(messageType: string, messageData: object) {
+  if (!messageType) {
+    console.error("Message type is null or undefined. Cannot send message to client.");
+    return;
+  }
+  
+  if (!messageData) {
+    console.error("Message data is null or undefined. Cannot send message to client.");
+    return;
+  }
+  
   const messageObj = formMessageObj(messageType, messageData, 'CLIENT');
   const clientSessionId = useCompanionStore.getState().getClientSessionId();
   if (!clientSessionId) {
@@ -354,6 +459,21 @@ export async function sendMsgToClient(messageType: string, messageData: object) 
 
 
 export async function sendMsgToCompanion(messageType: string, messageData: object, companionRole:string) {
+  if (!messageType) {
+    console.error("Message type is null or undefined. Cannot send message to companion.");
+    return;
+  }
+  
+  if (!messageData) {
+    console.error("Message data is null or undefined. Cannot send message to companion.");
+    return;
+  }
+  
+  if (!companionRole) {
+    console.error("Companion role is null or undefined. Cannot send message to companion.");
+    return;
+  }
+  
   const messageObj = formMessageObj(messageType, messageData, 'COMPANION');
   const companionSessionId = companionRole === COMPANION_ROLES.PRIMARY ? useCompanionStore.getState().getPrimaryCompanionSessionId():
                           useCompanionStore.getState().getSecondaryCompanionSessionId() ;
@@ -370,7 +490,13 @@ export async function sendMsgToCompanion(messageType: string, messageData: objec
 }
 
 function actionOnClientMessage(clientActionMessage: any) {
-  console.log('mesasge from client');
+  // Only process valid messages, ignore null/empty values
+  if (!clientActionMessage || (typeof clientActionMessage === 'object' && Object.keys(clientActionMessage).length === 0)) {
+    console.log('Received empty/null message from client, ignoring');
+    return;
+  }
+
+  console.log('message from client');
   console.log(clientActionMessage);
 
   const currentStore = useCompanionStore.getState();
@@ -378,7 +504,7 @@ function actionOnClientMessage(clientActionMessage: any) {
   currentStore.setRecieveCompanionMsgQueue(clientActionMessage);
 }
 
-export async function listenToClientMessages() {
+export async function listenToCompaionRecieveQueue() {
   // Get the client session ID from the store
   const companionSessionId = useCompanionStore.getState().getSessionId();
 
@@ -397,6 +523,12 @@ export async function listenToClientMessages() {
 }
 
 function actionOnCompanionMessage(companionActionMsg: any) {
+  // Only process valid messages, ignore null/empty values
+  if (!companionActionMsg || (typeof companionActionMsg === 'object' && Object.keys(companionActionMsg).length === 0)) {
+    console.log('Received empty/null message from companion, ignoring');
+    return;
+  }
+
   console.log('mesasge from companion');
   console.log(companionActionMsg);
 }

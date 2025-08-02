@@ -106,7 +106,8 @@ const GuardMatchingPage: React.FC = () => {
     // console.log("Manual session ID found:", ClientSessionId); // Add logging for manual session ID
     setClientSessionId(ClientSessionId);
     updateCompanionSessionIdInClient(ClientSessionId, companionSessionId, companionRole);
-    updateStoreInFirebase();
+    // Use targeted updates instead of full-store sync to avoid overwriting message queues
+    updateInSelfFirebase('clientSessionId', ClientSessionId);
     scanSuccess();
   }
 
@@ -124,7 +125,8 @@ const GuardMatchingPage: React.FC = () => {
         useCompanionStore.getState().setSessionId(manualCompanionSessionId);
         console.log('Successfully connected companion to session:', manualCompanionSessionId);
         setManualCompanionSessionId(''); // Clear input after successful connection
-        updateStoreInFirebase(); // Update Firebase with the new session ID
+        // Use targeted updates instead of full-store sync to avoid overwriting message queues
+        updateInSelfFirebase('sessionId', manualCompanionSessionId);
       } else {
         console.warn('Companion session not found or invalid');
       }
@@ -139,7 +141,8 @@ const GuardMatchingPage: React.FC = () => {
       if (ClientSessionId) {
         setClientSessionId(ClientSessionId); // Set the clientSessionId in the store
         onceClientSessionIdFound(ClientSessionId);
-        updateStoreInFirebase();
+        // Use targeted updates instead of full-store sync to avoid overwriting message queues
+        updateInSelfFirebase('clientSessionId', ClientSessionId);
         scanSuccess();
       } else {
         // error handling

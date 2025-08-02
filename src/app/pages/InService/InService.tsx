@@ -7,7 +7,7 @@ import { useTranslation } from 'react-i18next';
 import { useModal } from '../../../components/ui/Modal'; // Assuming useModal is exported from Modal.tsx
 import ConfirmationModalContent from '../../../components/ConfirmationModalContent'; // Import the new component
 import { useCompanionStore } from '../../../store/store';
-import { getStoreRef, updateStoreInFirebase, sendMsgToClient, sendMsgToCompanion, checkIfSessionExistsAndMatch } from '../../../lib/utils';
+import { getStoreRef, updateStoreInFirebase, sendMsgToClient, sendMsgToCompanion, checkIfSessionExistsAndMatch, updateInSelfFirebase } from '../../../lib/utils';
 import { useRouter } from 'next/navigation'
 import { database } from '@/lib/firebase';
 
@@ -28,7 +28,8 @@ const InService: React.FC = () => {
   const onEndService = () => {
     setIsRunning(false); // Stop the timer
     useCompanionStore.getState().setServiceRunning(false)
-    updateStoreInFirebase();
+    // Use targeted update instead of full-store sync to avoid overwriting message queues
+    updateInSelfFirebase('serviceRunning', false);
     closeModal();
     router.push('/end-service')
   }
@@ -46,12 +47,13 @@ const InService: React.FC = () => {
   };
 
   const updateAcvityDataInStoreFromFirebase = (activityMode: string, activityObjectFull: any) => {
+    const currentState = useCompanionStore.getState().ClientActivityMonitor;
     useCompanionStore.getState().setClientActivityMonitor({
-       currentMode: activityMode, 
-       modeTitle:`${activityMode} MODE ACTIVE`, 
-       currentStatus:'DEFAULT'
-      
-    }); // Update the local store
+      ...currentState,
+      currentMode: activityMode, 
+      modeTitle: `${activityMode} MODE ACTIVE`, 
+      currentStatus: 'DEFAULT',
+    });
   }
   const handleCancelInService = async () => {
     // Create a random message
@@ -134,7 +136,7 @@ const InService: React.FC = () => {
         const activityObjectFull = snapshot.val();
         if (activityMode !== firebaseCurrentMode) {
           setFirebaseCurrentMode(activityMode);
-          updateAcvityDataInStoreFromFirebase(activityMode, activityObjectFull);
+          // updateAcvityDataInStoreFromFirebase(activityMode, activityObjectFull);
         }
       } else {
         setFirebaseCurrentMode(""); // Or a default value if appropriate

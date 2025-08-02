@@ -46,6 +46,12 @@ const GuardInfoForm: React.FC = () => {
   const createFirebaseSession = () => {
     const now = new Date();
     const sessionId = `${now.getDate()}-${now.getMonth() + 1}-${now.getFullYear()}-${now.getHours()}-${now.getMinutes()}-Companion-${yourRole}`;
+    
+    if (!sessionId) {
+      console.error("Session ID is null or undefined. Cannot create Firebase session.");
+      return;
+    }
+    
     setSessionId(sessionId);
 
     // Get the entire store object
@@ -53,6 +59,11 @@ const GuardInfoForm: React.FC = () => {
 
     // Extract only data properties, excluding methods
     const dataOnlyObject = extractDataFromStore(storeState);
+    
+    if (!dataOnlyObject || Object.keys(dataOnlyObject).length === 0) {
+      console.error("No data to write to Firebase. Cannot create session.");
+      return;
+    }
 
     // Write the entire store object to Firebase
     try {

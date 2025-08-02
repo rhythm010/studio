@@ -68,6 +68,12 @@ const Login: React.FC = () => {
     setDevSession(IS_DEV_SESSION); // Set the dev_session value from the constant
     const now = new Date();
     const sessionId = `${now.getDate()}-${now.getMonth() + 1}-${now.getFullYear()}-${now.getHours()}-${now.getMinutes()}-Client`;
+    
+    if (!sessionId) {
+      console.error("Session ID is null or undefined. Cannot create Firebase session.");
+      return;
+    }
+    
     setSessionId(sessionId);
 
     try {
@@ -83,6 +89,11 @@ const Login: React.FC = () => {
 
     // Extract only data properties, excluding methods
     const dataOnlyObject = extractDataFromStore(storeData);
+    
+    if (!dataOnlyObject || Object.keys(dataOnlyObject).length === 0) {
+      console.error("No data to write to Firebase. Cannot create session.");
+      return;
+    }
 
     // Sanitize statusInfo keys before writing to Firebase
     if (dataOnlyObject.ClientActivityMonitor && dataOnlyObject.ClientActivityMonitor.statusInfo) {

@@ -1,11 +1,12 @@
 # Contributing to Companion Studio
 
 > **Coding Standards (Must Read!)**
->
+> - **Only change code which is part of the prompt.** Do not make changes at places which are out of scope of prompt
 > - **Keep logic simple and easy to read.** Prioritize human readability over cleverness.
 > - **Break down complex logic.** If a line or block is hard to follow, split it into smaller, named parts or helper functions.
 > - **Double-check your logic.** Review your implementation at least twice to ensure correctness and clarity.
-> - **Ask for clarification.** If you are ever unsure about a requirement or prompt, ask before proceeding.
+> - **Ask for clarification where needed.** If you are ever unsure about a requirement or prompt, ask before proceeding.
+
 
 Thank you for considering contributing to this project! To maintain code quality and consistency, please follow these guidelines:
 
@@ -58,6 +59,7 @@ Thank you for considering contributing to this project! To maintain code quality
 ## 6. Additional Guidelines
 - Keep functions/components small and focused.
 - Prefer utility functions for repeated logic.
+- Alwayd prefer readability over concise logic
 - Update documentation as needed (`README.md`, `docs/`).
 - If something can be reused or is used at miltiple places, create a util or use an existing util method
 
