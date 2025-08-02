@@ -38,12 +38,12 @@ const INSTRUCTION_ICONS: Record<string, JSX.Element> = {
 
 const selectedMode: React.FC = () => {
   // Define local states
-  const [currentMode, setCurrentMode] = useState<string>('CAFE');
+  const [currentMode, setCurrentMode] = useState<string>('WITH_YOU');
   const [currentStatus, setCurrentStatus] = useState<string>('');
   const [currentStatusValues, setCurrentStatusValues] = useState<any | {}>({});
   const [clientQueueObj, setClientQueueObj] = useState<any>({});
   const [isModeChanging, setIsModeChanging] = useState<boolean>(false);
-  const [previousMode, setPreviousMode] = useState<string>('CAFE');
+  const [previousMode, setPreviousMode] = useState<string>('WITH_YOU');
   const clientActivityMonitor = useCompanionStore((state: any) => state.ClientActivityMonitor);
   
   const { openModal, closeModal } = useModal();

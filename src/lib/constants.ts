@@ -181,48 +181,48 @@ export const RECIEVE_COMPANION_MSG_TYPE_MAP: Record<string, string> = {
 export const CLIENT_INSTRUCTION_CONTENT: Record<string, Record<string, { title: string; description: { text: string; image?: string } }>> = {
   WITH_YOU: {
     QUEUE: { 
-      title: 'Standing in Queue', 
-      description: { text: 'We are waiting in the queue with you' }
+      title: 'Stand In Queue', 
+      description: { text: 'When we are here, you never have to stand in any queue' }
     },
     WAIT_OP: { 
-      title: 'Standing at distance', 
-      description: { text: 'We are standing nearby while you handle your business' }
+      title: 'Stand at a Distance', 
+      description: { text: 'Need Privacy or going for prayer ? We will stand and wait for you' }
     },
   },
   CAFE: {
     BRING_STAFF: { 
-      title: 'Calling staff', 
-      description: { text: 'We will call a staff member to assist you' }
+      title: 'Bring Staff', 
+      description: { text: 'We will present the staff to your table' }
     },
     STAND_CLOSE: { 
-      title: 'Standing close', 
-      description: { text: 'We are standing nearby to assist you' }
+      title: 'Stand Close By', 
+      description: { text: 'Let us give you that extra presence' }
     },
     ORDER_CALL: { 
-      title: 'Placing order', 
-      description: { text: 'We will place your order with the staff' }
+      title: 'Place order for me', 
+      description: { text: 'Just tell what you want, pay and relax. We will take care of the rest' }
     },
     I_AM_DONE: { 
-      title: 'Service complete', 
-      description: { text: 'You have indicated you are finished with your meal' }
+      title: 'I am done', 
+      description: { text: 'Let us come and pick up your stuff' }
     },
   },
   STORE: {
     I_AM_DONE: { 
-      title: 'Shopping complete', 
-      description: { text: 'You have indicated you are finished shopping' }
+      title: 'I am done', 
+      description: { text: 'Let us come and get your items billed and packed' }
     },
     CLOSE_ASSIST: { 
-      title: 'Shopping assistance', 
-      description: { text: 'We are here to assist you with your shopping' }
+      title: 'Come help me', 
+      description: { text: 'One of us will come with you to hold any items that you want' }
     },
     BRING_STAFF: { 
-      title: 'Calling staff', 
-      description: { text: 'We will call a staff member to assist you' }
+      title: 'Call staff', 
+      description: { text: 'We will be calling staff for you' }
     },
     WAIT_OP: { 
-      title: 'Shopping assistance', 
-      description: { text: 'Let us know if you need help while shopping' }
+      title: 'Wait outside', 
+      description: { text: 'We will stand guard outside, waiting for your instructions' }
     },
   },
 };   
