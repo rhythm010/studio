@@ -105,20 +105,19 @@ const selectedMode: React.FC = () => {
         setPreviousMode(currentMode);
         setIsModeChanging(true);
         
-        // Clear sendClientMsgQueue when mode changes
-        const emptyMsgQueue = {test:1};
-        setSendClientMsgQueue(emptyMsgQueue);
+        // Clear sendClientMsgQueue in Firebase for client
+        const emptyMsgQueue = {};
         updateInSelfFirebase(storePaths.ClientActivityMonitor.sendClientMsgQueue, emptyMsgQueue);
         
-        // Clear recieveCompanionMsgQueue in primary companion Firebase store
-        const primaryCompanionSessionId = useCompanionStore.getState().getPrimaryCompanionSessionId();
-        if (primaryCompanionSessionId) {
-          const emptyCompanionMsgQueue = {};
-          updateValueInCompanion({ 
+        // Clear sendClientMsgQueue in local store of client
+        setSendClientMsgQueue(emptyMsgQueue);
+        
+        // Clear recieveCompanionMsgQueue in Firebase for companion
+        updateValueInCompanion({ 
             path: storePaths.CompanionAcvitiyMonitor.recieveCompanionMsgQueue, 
-            val: emptyCompanionMsgQueue 
+            val: {test:1}, 
           }, 'PRIMARY');
-        }
+        
         
         // Reset mode changing flag after a short delay
         setTimeout(() => setIsModeChanging(false), 3000);

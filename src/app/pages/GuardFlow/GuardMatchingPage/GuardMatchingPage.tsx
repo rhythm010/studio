@@ -3,7 +3,7 @@
 import { useEffect, useState, useRef } from 'react';
 import { Html5Qrcode } from 'html5-qrcode';
 import { useCompanionStore } from '@/store/store'; // Import the store
-import { checkIfSessionExistsAndMatch, updateStoreInFirebase, updateCompanionSessionIdInClient, updateValueInClient, storePaths, updateInSelfFirebase } from '@/lib/utils'; // Import the utility method
+import { checkIfSessionExistsAndMatch, updateStoreInFirebase, updateCompanionSessionIdInClient, updateValueInClient, storePaths, updateInSelfFirebase, handleManualCompanionSessionIdSubmit } from '@/lib/utils'; // Import the utility method
 import { ref, get } from 'firebase/database';
 import { database } from '@/lib/firebase';
 import { useRouter } from 'next/navigation';
@@ -113,76 +113,14 @@ const GuardMatchingPage: React.FC = () => {
   }
 
   // Handler for manual companion session ID input
-  const handleManualCompanionSessionIdSubmit = async (inputValue: string) => {
-    if (!inputValue.trim()) {
-      console.warn('Please enter a companion session ID');
-      return;
-    }
-
-    try {
-      // Fetch the store data from Firebase using the provided session ID
-      const storeRef = ref(database, `storeObjects/${inputValue}`);
-      const snapshot = await get(storeRef);
-      
-      if (snapshot.exists()) {
-        const firebaseStoreData = snapshot.val();
-        console.log('Fetched store data from Firebase:', firebaseStoreData);
-        
-        // Update the local store with specific Firebase data
-        const currentStore = useCompanionStore.getState();
-        
-        // Update basic session properties
-        if (firebaseStoreData.sessionId) {
-          currentStore.setSessionId(firebaseStoreData.sessionId);
-        } else {
-          currentStore.setSessionId(inputValue);
-        }
-        
-        if (firebaseStoreData.matchingId) {
-          currentStore.setMatchingId(firebaseStoreData.matchingId);
-        }
-        
-        if (firebaseStoreData.matchingDone !== undefined) {
-          currentStore.setMatchingDone(firebaseStoreData.matchingDone);
-        }
-        
-        if (firebaseStoreData.serviceSelected) {
-          currentStore.setServiceSelected(firebaseStoreData.serviceSelected);
-        }
-        
-        if (firebaseStoreData.profileDetails) {
-          currentStore.setProfileDetails(firebaseStoreData.profileDetails);
-        }
-        
-        if (firebaseStoreData.serviceRunning !== undefined) {
-          currentStore.setServiceRunning(firebaseStoreData.serviceRunning);
-        }
-        
-        if (firebaseStoreData.isComplete !== undefined) {
-          currentStore.setIsComplete(firebaseStoreData.isComplete);
-        }
-        
-        // Update companion-specific properties
-        if (firebaseStoreData.companionProfileDetails) {
-          currentStore.setCompanionProfileDetails(firebaseStoreData.companionProfileDetails);
-        }
-        
-        if (firebaseStoreData.CompanionAcvitiyMonitor) {
-          currentStore.setCompanionAcvitiyMonitor(firebaseStoreData.CompanionAcvitiyMonitor);
-        }
-        
-        console.log('Successfully updated local store with Firebase data for session:', inputValue);
-        
-        // Clear input after successful connection
-        if (manualCompanionSessionIdRef.current) {
-          manualCompanionSessionIdRef.current.value = '';
-        }
-        scanSuccess();
-      } else {
-        console.warn('Companion session not found in Firebase');
+  const handleManualCompanionSessionIdSubmitLocal = async (inputValue: string) => {
+    const success = await handleManualCompanionSessionIdSubmit(inputValue);
+    if (success) {
+      // Clear input after successful connection
+      if (manualCompanionSessionIdRef.current) {
+        manualCompanionSessionIdRef.current.value = '';
       }
-    } catch (error) {
-      console.error('Error fetching and updating store data:', error);
+      scanSuccess();
     }
   };
 
@@ -618,7 +556,7 @@ const GuardMatchingPage: React.FC = () => {
           style={{ marginRight: '10px', padding: '0.5rem' }}
         />
         <button
-          onClick={() => handleManualCompanionSessionIdSubmit(manualCompanionSessionIdRef.current?.value || '')}
+          onClick={() => handleManualCompanionSessionIdSubmitLocal(manualCompanionSessionIdRef.current?.value || '')}
           style={{
             backgroundColor: 'rgb(31 41 55 / var(--tw-bg-opacity, 1))',
             color: 'white',

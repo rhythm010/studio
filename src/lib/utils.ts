@@ -400,6 +400,7 @@ export async function updateInSelfFirebase(path: string, val: any) {
   try {
     const targetRef = ref(database, `storeObjects/${sessionId}/${path}`);
     console.log('Firebase path to be updated:', `storeObjects/${sessionId}/${path}`);
+    console.log('value to be updated', val);
     
     // Read the existing data at the target path
     const snapshot = await get(targetRef);
@@ -634,6 +635,76 @@ export function getInstructionStatusText(instructionObj: any): string {
 
   const statusText = INSTRUCTION_STATUS_UI_MAP[instructionObj.type]?.[instructionObj.status]?.text;
   return statusText || 'Unknown instruction status';
+}
+
+export async function handleManualCompanionSessionIdSubmit(inputValue: string) {
+  if (!inputValue.trim()) {
+    console.warn('Please enter a companion session ID');
+    return;
+  }
+
+  try {
+    // Fetch the store data from Firebase using the provided session ID
+    const storeRef = ref(database, `storeObjects/${inputValue}`);
+    const snapshot = await get(storeRef);
+    
+    if (snapshot.exists()) {
+      const firebaseStoreData = snapshot.val();
+      console.log('Fetched store data from Firebase:', firebaseStoreData);
+      
+      // Update the local store with specific Firebase data
+      const currentStore = useCompanionStore.getState();
+      
+      // Update basic session properties
+      if (firebaseStoreData.sessionId) {
+        currentStore.setSessionId(firebaseStoreData.sessionId);
+      } else {
+        currentStore.setSessionId(inputValue);
+      }
+      
+      if (firebaseStoreData.matchingId) {
+        currentStore.setMatchingId(firebaseStoreData.matchingId);
+      }
+      
+      if (firebaseStoreData.matchingDone !== undefined) {
+        currentStore.setMatchingDone(firebaseStoreData.matchingDone);
+      }
+      
+      if (firebaseStoreData.serviceSelected) {
+        currentStore.setServiceSelected(firebaseStoreData.serviceSelected);
+      }
+      
+      if (firebaseStoreData.profileDetails) {
+        currentStore.setProfileDetails(firebaseStoreData.profileDetails);
+      }
+      
+      if (firebaseStoreData.serviceRunning !== undefined) {
+        currentStore.setServiceRunning(firebaseStoreData.serviceRunning);
+      }
+      
+      if (firebaseStoreData.isComplete !== undefined) {
+        currentStore.setIsComplete(firebaseStoreData.isComplete);
+      }
+      
+      // Update companion-specific properties
+      if (firebaseStoreData.companionProfileDetails) {
+        currentStore.setCompanionProfileDetails(firebaseStoreData.companionProfileDetails);
+      }
+      
+      if (firebaseStoreData.CompanionAcvitiyMonitor) {
+        currentStore.setCompanionAcvitiyMonitor(firebaseStoreData.CompanionAcvitiyMonitor);
+      }
+      
+      console.log('Successfully updated local store with Firebase data for session:', inputValue);
+      return true;
+    } else {
+      console.warn('Companion session not found in Firebase');
+      return false;
+    }
+  } catch (error) {
+    console.error('Error fetching and updating store data:', error);
+    return false;
+  }
 }
 
 
