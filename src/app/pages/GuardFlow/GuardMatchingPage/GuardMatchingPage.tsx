@@ -16,9 +16,9 @@ import { vocab } from '@/lib/vocab_constants';
 
 const GuardMatchingPage: React.FC = () => {
   // Reusable classes for the mode selection buttons, similar to the 'Start Scan' button style
-  const selectedButtonClasses = "border w-20 h-10 m-1 flex items-center justify-center bg-green-600 text-white text-sm rounded-md"; // Dark green background for selected button
-  const disabledButtonClasses = "w-20 h-10 m-1 flex items-center justify-center bg-gray-400 text-gray-700 text-sm rounded-md"; // Grey background for disabled buttons
-  const buttonClasses = "w-20 h-10 m-1 flex items-center justify-center bg-gray-800 text-white text-sm rounded-md";
+  const selectedButtonClasses = "border w-16 h-8 m-1 flex items-center justify-center bg-green-600 text-white text-xs rounded-md"; // Reduced by 20%
+  const disabledButtonClasses = "w-16 h-8 m-1 flex items-center justify-center bg-gray-400 text-gray-700 text-xs rounded-md"; // Reduced by 20%
+  const buttonClasses = "w-16 h-8 m-1 flex items-center justify-center bg-gray-800 text-white text-xs rounded-md"; // Reduced by 20%
   const qrCodeRef = useRef<string>('reader');
   const { getCompanionProfileDetails } = useCompanionStore();
   const html5Qrcode = useRef<Html5Qrcode | null>(null);
@@ -369,11 +369,11 @@ const GuardMatchingPage: React.FC = () => {
 
       <style>{`
       .mode-large-btn {
-        min-width: 90px !important;
-        min-height: 40px !important;
-        font-size: 1.5rem !important;
-        padding: 1rem 2rem !important;
-        margin: 0.5rem !important;
+        min-width: 72px !important;
+        min-height: 32px !important;
+        font-size: 1.2rem !important;
+        padding: 0.8rem 1.6rem !important;
+        margin: 0.4rem !important;
       }
     `}</style>
 
@@ -395,7 +395,7 @@ const GuardMatchingPage: React.FC = () => {
             padding: '0.5rem',
             borderRadius: '0.25rem',
             transition: 'background-color 0.2s, border-color 0.2s',
-            marginBottom: '1rem',
+            marginBottom: '0.25rem',
             width: '90%',
             maxWidth: '500px',
             backgroundColor:
@@ -448,11 +448,12 @@ const GuardMatchingPage: React.FC = () => {
       )}
 
       {/* Mode/Status display above companion_mode_selection_container */}
-      {!serviceContinue && <div id="mode_and_status_info_display" style={{ width: '90%', maxWidth: 500, margin: '0 auto 1.5rem auto', border: '2px solid #222', borderRadius: 10, overflow: 'hidden' }}>
-        <div style={{ background: '#111', color: '#fff', fontSize: '2rem', fontWeight: 700, padding: '1rem', textAlign: 'center' }}>
+      {!serviceContinue && 
+      <div id="mode_and_status_info_display" style={{ width: '90%', maxWidth: 500, margin: '0 auto 0.5rem auto', border: '2px solid #222', borderRadius: 10, overflow: 'hidden' }}>
+        <div style={{ background: '#111', color: '#fff', fontSize: '1.6rem', fontWeight: 700, padding: '0.75rem', textAlign: 'center' }}>
           Mode: {selectedMode || '-'}
         </div>
-        <div style={{ borderTop: '2px solid #222', background: '#fff', color: '#111', fontSize: '1.2rem', fontWeight: 500, padding: '0.75rem 1rem', textAlign: 'center' }}>
+        <div style={{ borderTop: '2px solid #222', background: '#fff', color: '#111', fontSize: '1rem', fontWeight: 500, padding: '0.5rem 1rem', textAlign: 'center' }}>
           Status: {companionCurrentStatus || '-'}
         </div>
       </div>}
@@ -460,7 +461,7 @@ const GuardMatchingPage: React.FC = () => {
       {/* The rest of the main content, including serviceContinue check, goes here */}
       {!serviceContinue && <div>
         <div id="companion_mode_selection_container"
-          style={{ marginTop: '20px', padding: '10px' }}>
+          style={{ marginTop: '10px', padding: '5px' }}>
                       <div id="modes_container" className="rounded-xl shadow-lg">
             <div className="border rounded-lg flex flex-wrap justify-center items-center p-2 mb-2">
               <button className={selectedMode === ACTIVITY_MODES.CAFE ? selectedButtonClasses : buttonClasses + ' mode-large-btn'}
@@ -521,7 +522,7 @@ const GuardMatchingPage: React.FC = () => {
 
         </div>
 
-        <div id="stopwatch_section" className="h-[40%] flex flex-col items-center justify-center border-gray-700 mt-4">
+        <div id="stopwatch_section" className="h-[40%] flex flex-col items-center justify-center border-gray-700 mt-1 mb-1">
           <StopWatch
             isRunning={true}
           />
