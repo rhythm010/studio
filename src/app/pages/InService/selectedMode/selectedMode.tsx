@@ -288,9 +288,10 @@ const selectedMode: React.FC = () => {
         <div key={key as string} className="flex flex-col items-center justify-center">
           <button
             id={`instruction_button_${key}`}
-            className={`rounded-full w-16 h-16 shadow-lg flex items-center justify-center ${
+            className={`rounded-full shadow-lg flex items-center justify-center ${
               isActive ? 'bg-green-500 hover:bg-green-600' : 'bg-white hover:bg-gray-200'
             }`}
+            style={{ width: '3.4rem', height: '3.4rem' }}
             onClick={() => clientInstructionLaunchHandler(instructionType)}
           >
             {INSTRUCTION_ICONS[instructionType] || INSTRUCTION_ICONS.DEFAULT}
@@ -309,7 +310,7 @@ const selectedMode: React.FC = () => {
         className="flex items-center justify-center shadow-lg rounded-lg mb-4 mx-4 bg-white"
         style={{ height: '30%', flexShrink: 0 }}
       >
-        <h2 className="text-2xl font-bold">
+        <h2 className="font-bold" style={{ fontSize: '1.2rem' }}>
           {getStatusText()}
         </h2>
       </div>
