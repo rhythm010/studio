@@ -21,6 +21,8 @@ const InService: React.FC = () => {
   const { openModal, closeModal } = useModal();
   const { isDevMode } = useCompanionStore();
   const setSessionId = useCompanionStore((state: any) => state.setSessionId);
+  const sessionId = useCompanionStore((state: any) => state.sessionId);
+
   const startTimer = () => {
     setIsRunning(true);
   };
@@ -88,6 +90,15 @@ const InService: React.FC = () => {
       }
     } catch (error) {
       console.error('Error connecting to session:', error);
+    }
+  };
+
+  // Handler for session restore from localStorage
+  const handleSessionRestore = async () => {
+    const restoredSessionId = localStorage.getItem('sessionId');
+    if (restoredSessionId) {
+      setManualSessionId(restoredSessionId);
+      await handleManualSessionIdSubmit();
     }
   };
 
@@ -161,23 +172,25 @@ const InService: React.FC = () => {
         />
       </div>
 
+      {/* Connection Status Section */}
+      <div className="flex flex-col items-center justify-center p-4">
+        <div className="text-center">
+          {sessionId ? (
+            <button className="mt-2 bg-green-500 text-white px-4 py-2 rounded-lg hover:bg-green-600">
+              Connected
+            </button>
+          ) : (
+            <button
+              onClick={handleSessionRestore}
+              className="mt-2 bg-blue-500 text-white px-4 py-2 rounded-lg hover:bg-blue-600"
+            >
+              Connect
+            </button>
+          )}
+        </div>
+      </div>
+
       <div id="action_section" className="flex items-center justify-evenly rounded-lg m-4 p-4 h-[10%] mb-20 mt-10">
-        {/* Three rounded buttons */}
-        {/* <div id="assist_button" className="flex flex-col items-center mx-2">
-          <button onClick={() => openModal()} 
-           className="rounded-full w-16 h-16 mb-1 shadow-md flex items-center justify-center">
-            <img src="/icons/icon_light_bulb.png" alt="Assist Icon" className="w-8 h-8" />
-          </button>
-          <span className="text-sm font-bold mt-4">{t("Assist")}</span>
-        </div> */}
-        {/* <div id="play_pause_button" className="flex flex-col items-center">
-          <button onClick={handleStartStop} className="rounded-full w-16 h-16 mb-1 flex items-center justify-center text-2xl shadow-md">
-            {isRunning ? (
-              <img src="/icons/icon_pause.png" alt="Pause Icon" className="w-8 h-8" />
-            ) : (<img src="/icons/icon_play.png" alt="Play Icon" className="w-8 h-8" />)}
-          </button>
-          <span className="text-sm font-bold mt-4">{isRunning ? t('timer_stop') : t('timer_start')}</span>
-        </div> */}
         <div id="end_service_button" className="flex flex-col items-center mx-2">
           {/* <button className="rounded-full w-16 h-16 border border-black mb-1"> */}
           <button

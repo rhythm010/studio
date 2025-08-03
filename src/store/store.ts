@@ -135,6 +135,7 @@ interface ClientActivityMonitor {
 interface CompanionStore {
   isDevMode: boolean;
   sessionId: string;
+  connectionStatus: 'connected' | 'not-connected';
   setIsDevMode: (isDev: boolean) => void; // Setter for isDevMode
   getIsDevMode: () => boolean; // Getter for isDevMode
   matchingId: string;
@@ -157,10 +158,9 @@ interface CompanionStore {
   setMatchingDone: (done: boolean) => void;
   setSessionId: (id: string) => void;
   getSessionId: () => string;
-  setDevSession: (isDev: boolean) => void;
+  setConnectionStatus: (status: 'connected' | 'not-connected') => void;
+  getConnectionStatus: () => 'connected' | 'not-connected';
   setMatchingId: (id: string) => void;
-  setClientSessionId: (id: string | null) => void;
-  getClientSessionId: () => string | null;
   setServiceSelected: (service: string) => void;
   reset: () => void;
   addFeedback: (feedback: FeedbackDetails) => void;
@@ -195,9 +195,8 @@ const useCompanionStore = create<CompanionStore>((set) => ({
   setIsDevMode: (isDev) => set({ isDevMode: isDev }), // Implement setter
   getIsDevMode: () => useCompanionStore.getState().isDevMode, // Implement getter
   sessionId: '',
+  connectionStatus: 'not-connected',
   matchingId: '',
-  dev_session: false, // Add the dev_session key with initial value
-  matchingDone: false,
   serviceSelected: '',
   profileDetails: {},
   serviceSelection: {
@@ -254,6 +253,12 @@ const useCompanionStore = create<CompanionStore>((set) => ({
     primaryCompanionName: '',
     secondaryCompanionName: '',
   },
+  clientCompanionDetails: {
+    primaryCompanionSessionId: '',
+    secondaryCompanionSessionId: '',
+    getPrimaryCompanionSessionId: () => useCompanionStore.getState().clientCompanionDetails.primaryCompanionSessionId,
+    getSecondaryCompanionSessionId: () => useCompanionStore.getState().clientCompanionDetails.secondaryCompanionSessionId,
+  },
   ClientActivityMonitor: { // Initialize the new property
     // Initialize sendClientMsgQueue as an empty object
     sendClientMsgQueue: {test:1},
@@ -261,7 +266,6 @@ const useCompanionStore = create<CompanionStore>((set) => ({
     modeTitle: "",
     currentStatus: ACTIVITY_STATUS.DEFAULT,
     currentMode: ACTIVITY_MODES.WITH_YOU,
-
     statusInfo: {
       QUEUE: {
         currentPosition: 2,
@@ -309,15 +313,32 @@ const useCompanionStore = create<CompanionStore>((set) => ({
       },
     },
   },
-  setSessionId: (id) => set({ sessionId: id }),
-  setDevSession: (isDev) => set({ dev_session: isDev }), // Add the setDevSession method
+  setSessionId: (id) => {
+    set({ sessionId: id });
+    // Store sessionId in localStorage
+    localStorage.setItem('sessionId', id);
+  },
+  getSessionId: () => useCompanionStore.getState().sessionId,
+  setConnectionStatus: (status) => set({ connectionStatus: status }),
+  getConnectionStatus: () => useCompanionStore.getState().connectionStatus,
   setMatchingDone: (done) => set({ matchingDone: done }),
-  getSessionId: () => useCompanionStore.getState().sessionId, // Add the getSessionId method
-  setServiceSelection: (selection) => set({ serviceSelection: selection }),
-  setClientSessionId: (id) => set(state => ({ companionProfileDetails: { ...state.companionProfileDetails, clientSessionId: id } })),
-  getClientSessionId: () => useCompanionStore.getState().companionProfileDetails.clientSessionId,
   setMatchingId: (id) => set({ matchingId: id }),
   setServiceSelected: (service) => set({ serviceSelected: service }),
+  setClientSessionId: (id) => set(state => ({ companionProfileDetails: { ...state.companionProfileDetails, clientSessionId: id } })),
+  getClientSessionId: () => useCompanionStore.getState().companionProfileDetails.clientSessionId,
+  setServiceSelection: (selection) => set({ serviceSelection: selection }),
+  setCurrentPosition: (position) => set(state => ({ 
+    ClientActivityMonitor: { 
+      ...state.ClientActivityMonitor, 
+      statusInfo: { 
+        ...state.ClientActivityMonitor.statusInfo, 
+        QUEUE: { 
+          ...state.ClientActivityMonitor.statusInfo.QUEUE, 
+          currentPosition: position 
+        } 
+      } 
+    } 
+  })),
   addFeedback: (feedback) =>
     set((state) => ({
       feedbackDetails: [...state.feedbackDetails, { ...feedback, details: feedback.details || '' }],
@@ -331,8 +352,6 @@ const useCompanionStore = create<CompanionStore>((set) => ({
   getServiceRunning: () => useCompanionStore.getState().serviceRunning,
   getIsComplete: () => useCompanionStore.getState().isComplete, // Implement getIsComplete
 
-  clientCompanionDetails: { primaryCompanionSessionId: '', secondaryCompanionSessionId: '' },
-  companionProfileDetails: { primaryCompanionName: null, secondaryCompanionName: null, clientSessionId: null, companionRole: '' },
   setCompanionProfileDetails: (details) =>
     set((state) => ({
       companionProfileDetails: { ...state.companionProfileDetails, ...details },
@@ -412,7 +431,6 @@ const useCompanionStore = create<CompanionStore>((set) => ({
     set((state) => ({
       ClientActivityMonitor: { ...state.ClientActivityMonitor, recieveClientMsgQueue: [...state.ClientActivityMonitor.recieveClientMsgQueue, message] },
     })),
-
 
   reset: () =>
     set({
