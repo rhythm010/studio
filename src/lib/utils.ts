@@ -120,7 +120,12 @@ export function extractDataFromStore(storeObject: any): any {
     if (Object.prototype.hasOwnProperty.call(storeObject, key)) {
       const value = storeObject[key];
       if (typeof value !== 'function') {
-        data[key] = value;
+        if (typeof value === 'object' && value !== null && !Array.isArray(value)) {
+          // Recursively filter nested objects
+          data[key] = extractDataFromStore(value);
+        } else {
+          data[key] = value;
+        }
       }
     }
   }
@@ -712,5 +717,3 @@ export async function handleManualCompanionSessionIdSubmit(inputValue: string) {
     return false;
   }
 }
-
-

@@ -25,7 +25,7 @@ const Login: React.FC = () => {
   const mobileInputRef = useRef<HTMLInputElement>(null);
   const submitButtonRef = useRef<HTMLButtonElement>(null);
 
-  const { setProfileDetails, setSessionId, setDevSession, setMatchingDone, ...storeState } = useCompanionStore();
+  const { setProfileDetails, setSessionId, setMatchingDone, ...storeState } = useCompanionStore();
 
   useEffect(() => {
     if (name) {
@@ -65,7 +65,6 @@ const Login: React.FC = () => {
       mobile,
     }); // Convert Math.random() to string and remove the decimal point
     setMatchingDone(false); // setting this value to default FALSE
-    setDevSession(IS_DEV_SESSION); // Set the dev_session value from the constant
     const now = new Date();
     const sessionId = `${now.getDate()}-${now.getMonth() + 1}-${now.getFullYear()}-${now.getHours()}-${now.getMinutes()}-Client`;
     
