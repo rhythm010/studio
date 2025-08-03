@@ -291,10 +291,6 @@ export async function updateValueInClient(updateObj: { path: string, val: any })
     const existingData = snapshot.val();
     console.log('Existing data at path:', existingData);
 
-    if(!existingData){
-      return;
-    }
-
     // Check if the existing data is an array
     if (Array.isArray(existingData)) {
       // If it's an array, append the new value

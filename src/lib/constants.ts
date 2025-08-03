@@ -66,7 +66,7 @@ export const MODE_DEFAULT_STATUS: Record<string, string> = {
 
 export const CLIENT_INSTRUCTION_MANUAL = {
     'WITH_YOU': {
-        // 'DEFAULT': 'DEFAULT',
+        'DEFAULT': 'DEFAULT',
         'QUEUE': 'QUEUE',
         'WAIT_OP': 'WAIT_OP',
     },
@@ -96,30 +96,35 @@ export const CLIENT_INSTRUCTION_OPTIONS = {
     WAIT_ITEM: [],
 }   
 
-export const CLIENT_MODE_STATUS_UI_MAP: Record<string, Record<string, { text: string; image?: string }>> = {
+export const CLIENT_MODE_STATUS_UI_MAP: Record<string, Record<string, { text: string; image?: string; secondaryDiv: { text: string } }>> = {
   WITH_YOU: {
-    DEFAULT: { text: 'We are moving with you' },
-    QUEUE: { text: 'Standing in Queue' },
-    WAIT_OP: { text: 'We are standing at a distance' },
-    QUEUE_CALL: { text: 'Your turn is next' },
+    DEFAULT: { text: 'We are moving with you', 
+      secondaryDiv: { 
+        text: 'Your companions are actively moving with you' 
+      },
+      image: '/images/with_you.png'
+    },
+    QUEUE: { text: 'Standing in Queue', secondaryDiv: { text: 'We will let you know when it is your turn' } },
+    WAIT_OP: { text: 'We are standing at a distance', secondaryDiv: { text: 'You can let us know if you need anything' } },
+    QUEUE_CALL: { text: 'Your turn is next', secondaryDiv: { text: 'Get ready, your turn is approaching' } },
   },
   CAFE: {
-    QUEUE: { text: 'We are in the queue' },
-    PAYMENT_CALL: { text: 'Please come and make payment' },
-    WAIT_ITEM: { text: 'Your order is being prepared' },
-    WAIT_OP: { text: 'Let us know when you want something' },
-    CLEAR_TABLE: { text: 'Table is being cleared' },
-    STAND_CLOSE: { text: 'We are standing close' },
+    QUEUE: { text: 'We are in the queue', secondaryDiv: { text: 'You will be notified to come and pay.' } },
+    PAYMENT_CALL: { text: 'Please come and make payment', secondaryDiv: { text: 'Just come and pay, we will bring items to you' } },
+    WAIT_ITEM: { text: 'Your order is being prepared', secondaryDiv: { text: 'We are waiting while your order is being prepared' } },
+    WAIT_OP: { text: 'You are in a cafe/restaurant', secondaryDiv: { text: 'We are waiting for your instructions' } },
+    CLEAR_TABLE: { text: 'Table is being cleared', secondaryDiv: { text: 'Your table is being prepared for you' } },
+    STAND_CLOSE: { text: 'We are standing close', secondaryDiv: { text: 'We are waiting for your instructions' } },
   },
   QUEUE: {
-    QUEUE: { text: 'You are in the main queue' },
+    QUEUE: { text: 'You are in the main queue', secondaryDiv: { text: 'Your companions are managing the queue for you' } },
   },
   STORE: {
-    QUEUE: { text: 'You are in the store queue' },
-    PAYMENT_CALL: { text: 'Please come for payment' },
-    WAIT_ITEM: { text: 'We are getting items ready for you' },
-    WAIT_OP: { text: 'Let us know if you need help in shopping' },
-    CLOSE_ASSIST: { text: 'Assisting you in shopping' },
+    QUEUE: { text: 'You are in the store queue', secondaryDiv: { text: 'Your companions are queuing for your shopping' } },
+    PAYMENT_CALL: { text: 'Please come for payment', secondaryDiv: { text: 'Payment counter is ready for you' } },
+    WAIT_ITEM: { text: 'We are getting items ready for you', secondaryDiv: { text: 'We are packing your items' } },
+    WAIT_OP: { text: 'Let us know if you need help in shopping', secondaryDiv: { text: 'Your companions are ready to assist with shopping' } },
+    CLOSE_ASSIST: { text: 'Assisting you in shopping', secondaryDiv: { text: 'We can call staff, hold items for you' } },
   },
 }; 
 
@@ -178,51 +183,66 @@ export const RECIEVE_COMPANION_MSG_TYPE_MAP: Record<string, string> = {
   // Add more mappings as needed
 };
 
-export const CLIENT_INSTRUCTION_CONTENT: Record<string, Record<string, { title: string; description: { text: string; image?: string } }>> = {
+export const CLIENT_INSTRUCTION_CONTENT: Record<string, Record<string, { title: string; description: { text: string; image?: string }; iconText: string }>> = {
   WITH_YOU: {
-    QUEUE: { 
-      title: 'Stand In Queue', 
-      description: { text: 'When we are here, you never have to stand in any queue' }
-    },
-    WAIT_OP: { 
-      title: 'Stand at a Distance', 
-      description: { text: 'Need Privacy or going for prayer ? We will stand and wait for you' }
-    },
+        QUEUE: { 
+          title: 'Stand In Queue', 
+          description: { text: 'When we are here, you never have to stand in any queue' },
+          iconText: 'Queue'
+        },
+        WAIT_OP: { 
+          title: 'Stand at a Distance', 
+          description: { text: 'Need Privacy or going for prayer ? We will stand and wait for you' },
+          iconText: 'Stand Guard'
+        },
+        DEFAULT: {
+          title: 'Moving with you',
+          description: { text: 'Companion will be moving with you, carrying your bags and making space for you' },
+          iconText: 'With me'
+        },
   },
   CAFE: {
     BRING_STAFF: { 
       title: 'Bring Staff', 
-      description: { text: 'We will present the staff to your table' }
+      description: { text: 'We will present the staff to your table' },
+      iconText: 'Bring Staff'
     },
     STAND_CLOSE: { 
       title: 'Stand Close By', 
-      description: { text: 'Let us give you that extra presence' }
+      description: { text: 'Let us give you that extra presence' },
+      iconText: 'Stand Close'
     },
     ORDER_CALL: { 
       title: 'Place order for me', 
-      description: { text: 'Just tell what you want, pay and relax. We will take care of the rest' }
+      description: { text: 'Just tell what you want, pay and relax. We will take care of the rest' },
+      iconText: 'Order'
     },
     I_AM_DONE: { 
       title: 'I am done', 
-      description: { text: 'Let us come and pick up your stuff' }
+      description: { text: 'Let us come and pick up your stuff' },
+      iconText: 'Done'
     },
   },
   STORE: {
     I_AM_DONE: { 
       title: 'I am done', 
-      description: { text: 'Let us come and get your items billed and packed' }
+      description: { text: 'Let us come and get your items billed and packed' },
+      iconText: 'Done'
     },
     CLOSE_ASSIST: { 
       title: 'Come help me', 
-      description: { text: 'One of us will come with you to hold any items that you want' }
+      description: { text: 'One of us will come with you to hold any items that you want' },
+      iconText: 'Assist'
     },
     BRING_STAFF: { 
       title: 'Call staff', 
-      description: { text: 'We will be calling staff for you' }
+      description: { text: 'We will be calling staff for you' },
+      iconText: 'Bring Staff'
     },
     WAIT_OP: { 
       title: 'Wait outside', 
-      description: { text: 'We will stand guard outside, waiting for your instructions' }
+      description: { text: 'We will stand guard outside, waiting for your instructions' },
+      iconText: 'Stand Guard'
     },
   },
 };   

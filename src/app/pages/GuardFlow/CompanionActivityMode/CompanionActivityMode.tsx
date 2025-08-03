@@ -13,7 +13,9 @@ const CompanionActivityMode: React.FC = () => {
     useCompanionStore.setState((state) => {
       const newPosition = state.CompanionAcvitiyMonitor.QUEUE.currentPosition + delta;
       const clampedPosition = Math.max(0, Math.min(15, newPosition)); // Ensure value is between 0 and 15
-      return {
+      
+      // Update local store
+      const updatedState = {
         ...state,
         CompanionAcvitiyMonitor: {
           ...state.CompanionAcvitiyMonitor,
@@ -22,7 +24,16 @@ const CompanionActivityMode: React.FC = () => {
             currentPosition: clampedPosition,
           },
         },
-      }});
+      };
+      
+      // Also update Firebase immediately
+      updateValueInClient({
+        path: storePaths.ClientActivityMonitor.statusInfo.QUEUE.currentPosition,
+        val: clampedPosition,
+      });
+      
+      return updatedState;
+    });
   };
 
   useEffect(() => {
@@ -30,7 +41,7 @@ const CompanionActivityMode: React.FC = () => {
       path: storePaths.ClientActivityMonitor.statusInfo.QUEUE.currentPosition,
       val: companionFlow.QUEUE.currentPosition,
     });
-  }, [companionFlow.QUEUE.currentPosition, updateValueInClient]);
+  }, [companionFlow.QUEUE.currentPosition]);
 
   const endQueue = () => {
     useCompanionStore.setState(state => ({

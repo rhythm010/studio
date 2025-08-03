@@ -5,8 +5,9 @@ import { useCompanionStore } from '@/store/store';
 import { database } from '@/lib/firebase'; // Assuming you have your firebase instance exported as 'database'
 import { ref, onValue, off } from 'firebase/database';
 import { storePaths, createClientInstructionProp, sendMsgToCompanion, listenToFirebaseKey, updateInSelfFirebase, updateValueInCompanion } from '@/lib/utils'; // Assuming storePaths and createClientInstructionProp are in utils.ts
-import { ACTIVITY_STATUS, CLIENT_INSTRUCTION_MANUAL, COMPANION_ROLES, INSTRUCTION_STATUS_UI_MAP, CLIENT_MODE_STATUS_UI_MAP, MSG_STATUS } from '@/lib/constants';
+import { CLIENT_INSTRUCTION_MANUAL, COMPANION_ROLES, INSTRUCTION_STATUS_UI_MAP, CLIENT_MODE_STATUS_UI_MAP, MSG_STATUS, CLIENT_INSTRUCTION_CONTENT } from '@/lib/constants';
 import ClientFeatureExplainer from '../ClientFeatureExplainer';
+import ClientStatusDataScreen from '../ClientStatusDataScreen';
 import { useModal } from '@/components/ui/Modal';
 
 const INSTRUCTION_ICONS: Record<string, JSX.Element> = {
@@ -213,10 +214,8 @@ const selectedMode: React.FC = () => {
   };
 
   const clientInstructionLaunchHandler = (instruction: string) => {
-    // Check if the instruction is already active
-    const isInstructionActive = (clientQueueObj.type === instruction && 
-                               (clientQueueObj.status === MSG_STATUS.UNREAD || clientQueueObj.status === MSG_STATUS.OPENED)) ||
-                               currentStatus === instruction;
+    // Check if instruction is already active
+    const isInstructionActive = currentStatus === instruction;
     
     // If instruction is already active, send DEFAULT instead
     const instructionToSend = isInstructionActive ? 'DEFAULT' : instruction;
@@ -227,6 +226,7 @@ const selectedMode: React.FC = () => {
         {...explainerProps}
         closeModal={closeModal}
         handleYes={() => activateCompanionInstruction(instructionToSend)}
+        isActive={isInstructionActive}
       />
     );
   };
@@ -251,31 +251,21 @@ const selectedMode: React.FC = () => {
     return CLIENT_MODE_STATUS_UI_MAP[currentMode]?.[currentStatus]?.text || currentStatus || 'Connecting with companions...';
   };
 
-  // Helper function to render queue position display
-  const renderQueuePositionDisplay = () => {
-    if (currentStatus !== ACTIVITY_STATUS.QUEUE && currentStatus !== ACTIVITY_STATUS.QUEUE_CALL) {
-      return null;
+  // Helper function to get secondary text for ClientStatusDataScreen
+  const getSecondaryDivText = () => {
+    if (isModeChanging) {
+      return CLIENT_MODE_STATUS_UI_MAP[currentMode]?.[currentStatus]?.secondaryDiv?.text || '';
     }
 
-    return (
-      <div
-        id="queue_position_container"
-        className="flex items-center justify-center border-2 border-black rounded-lg mb-4 mx-4 p-4"
-      >
-        {currentStatus === ACTIVITY_STATUS.QUEUE && (
-          <h3 className="text-lg font-semibold">
-            Current Position: {clientActivityMonitor.statusInfo?.QUEUE?.currentPosition || 0}
-          </h3>
-        )}
+    if (clientQueueObj.status && clientQueueObj.status !== MSG_STATUS.ACTIONED && INSTRUCTION_STATUS_UI_MAP[clientQueueObj.type]?.[clientQueueObj.status]) {
+      return null; // Return null when instruction is in progress and not completed
+    }
 
-        {currentStatus === ACTIVITY_STATUS.QUEUE_CALL && (
-          <h3 className="text-lg font-semibold">
-            Your turn is next
-          </h3>
-        )}
-      </div>
-    );
+    console.log('secondary div text', CLIENT_MODE_STATUS_UI_MAP[currentMode]?.[currentStatus]?.secondaryDiv?.text);
+
+    return CLIENT_MODE_STATUS_UI_MAP[currentMode]?.[currentStatus]?.secondaryDiv?.text || '';
   };
+
 
   // Helper function to render instruction buttons
   const renderInstructionButtons = () => {
@@ -291,18 +281,21 @@ const selectedMode: React.FC = () => {
       // Only the current status should be active, not multiple buttons
       const isActive = currentStatus === instructionType;
       
+      // Get the icon text from CLIENT_INSTRUCTION_CONTENT
+      const iconText = CLIENT_INSTRUCTION_CONTENT[currentMode]?.[instructionType]?.iconText || instructionType;
+      
       return (
         <div key={key as string} className="flex flex-col items-center justify-center">
           <button
             id={`instruction_button_${key}`}
-            className={`rounded-full w-10 h-10 shadow-lg flex items-center justify-center ${
+            className={`rounded-full w-16 h-16 shadow-lg flex items-center justify-center ${
               isActive ? 'bg-green-500 hover:bg-green-600' : 'bg-white hover:bg-gray-200'
             }`}
             onClick={() => clientInstructionLaunchHandler(instructionType)}
           >
             {INSTRUCTION_ICONS[instructionType] || INSTRUCTION_ICONS.DEFAULT}
           </button>
-          <span className="text-[0.7rem] font-bold text-center mt-3">{instructionType}</span>
+          <span className="text-sm font-light text-center mt-3">{iconText}</span>
         </div>
       );
     });
@@ -314,21 +307,27 @@ const selectedMode: React.FC = () => {
       <div
         id="status_text_container"
         className="flex items-center justify-center shadow-lg rounded-lg mb-4 mx-4 bg-white"
-        style={{ height: '30%' }}
+        style={{ height: '30%', flexShrink: 0 }}
       >
-        <h2 className="text-2xl font-bold">
+        <h2 className="text-3xl font-bold">
           {getStatusText()}
         </h2>
       </div>
 
       {/* Queue Position Display */}
-      {renderQueuePositionDisplay()}
+      <ClientStatusDataScreen 
+        currentStatus={currentStatus}
+        currentPosition={clientActivityMonitor.statusInfo?.QUEUE?.currentPosition || 0}
+        approxTime={clientActivityMonitor.statusInfo?.QUEUE?.approxTime || 0}
+        secondaryDivText={getSecondaryDivText()}
+        clientQueueObj={clientQueueObj}
+      />
 
-      {/* Bottom Section: Instruction Buttons (70% height) */}
+      {/* Bottom Section: Instruction Buttons (same height as other containers) */}
       <div
         id="instruction_buttons_container"
         className="flex flex-row items-center justify-center flex-wrap gap-8 shadow-lg rounded-lg mx-4 p-4 bg-white"
-        style={{ minHeight: '70%' }}
+        style={{ height: '50%', flexShrink: 0 }}
       >
         {renderInstructionButtons()}
       </div>
