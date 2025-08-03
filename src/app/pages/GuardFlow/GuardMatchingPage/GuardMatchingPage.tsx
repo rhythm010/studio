@@ -387,7 +387,7 @@ const GuardMatchingPage: React.FC = () => {
           }
           style={{
             position: 'absolute',
-            top: 80,
+            top: 90,
             left: '50%',
             transform: 'translateX(-50%)',
             zIndex: 1000,
@@ -508,7 +508,7 @@ const GuardMatchingPage: React.FC = () => {
                   <button
                     key={subMode}
                     className={selectedSubMode === subMode ? selectedButtonClasses : buttonClasses}
-                    style={{ minWidth: '120px', padding: '0.5rem 1.5rem', fontSize: '1rem', margin: '0.25rem' }}
+                    style={{ minWidth: '84px', padding: '0.35rem 1.05rem', fontSize: '0.7rem', margin: '0.175rem' }}
                     onClick={() => handleSubModeSelection(subMode)}
                   >
                     {subMode}

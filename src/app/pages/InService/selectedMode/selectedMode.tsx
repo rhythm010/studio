@@ -309,7 +309,7 @@ const selectedMode: React.FC = () => {
         className="flex items-center justify-center shadow-lg rounded-lg mb-4 mx-4 bg-white"
         style={{ height: '30%', flexShrink: 0 }}
       >
-        <h2 className="text-3xl font-bold">
+        <h2 className="text-2xl font-bold">
           {getStatusText()}
         </h2>
       </div>

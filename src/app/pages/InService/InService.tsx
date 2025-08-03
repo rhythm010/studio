@@ -166,7 +166,7 @@ const InService: React.FC = () => {
       <SelectedMode />
       </div>
   
-      <div id="stopwatch_section" className="h-[40%] flex flex-col items-center justify-center border-gray-700 mt-4">
+      <div id="stopwatch_section" className="h-[40%] flex flex-col items-center justify-center border-gray-700 mt-24">
         <StopWatch
           isRunning={isRunning}
         />
@@ -190,7 +190,7 @@ const InService: React.FC = () => {
         </div>
       </div>
 
-      <div id="action_section" className="flex items-center justify-evenly rounded-lg m-4 p-4 h-[10%] mb-20 mt-10">
+      <div id="action_section" className="flex items-center justify-evenly rounded-lg m-4 p-4 h-[10%] mb-10">
         <div id="end_service_button" className="flex flex-col items-center mx-2">
           {/* <button className="rounded-full w-16 h-16 border border-black mb-1"> */}
           <button
