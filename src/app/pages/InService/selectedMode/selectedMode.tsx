@@ -327,7 +327,7 @@ const selectedMode: React.FC = () => {
       {/* Bottom Section: Instruction Buttons (dynamic height) */}
       <div
         id="instruction_buttons_container"
-        className="flex flex-row items-center justify-center flex-wrap gap-8 shadow-lg rounded-lg mx-4 bg-white"
+        className="flex flex-row items-center justify-center flex-wrap gap-8 shadow-lg mb-[3rem] rounded-lg mx-4 bg-white"
         style={{ minHeight: '50%', flexShrink: 0, padding: '1rem 0.5rem 2rem 1rem' }}
       >
         {renderInstructionButtons()}

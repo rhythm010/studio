@@ -152,23 +152,23 @@ const InService: React.FC = () => {
       <SelectedMode />
       </div>
   
-      <div id="stopwatch_section" className="h-[40%] flex flex-col items-center justify-center border-gray-700 mt-24">
+      <div id="stopwatch_section" className="h-[50%] flex flex-col items-center justify-center border-gray-700 mt-16">
         <StopWatch
           isRunning={isRunning}
         />
       </div>
 
       {/* Connection Status Section */}
-      <div className="flex flex-col items-center justify-center p-4">
+      <div className="flex flex-col items-center justify-center p-2">
         <div className="text-center">
           {sessionId ? (
-            <button className="mt-2 bg-green-500 text-white px-4 py-2 rounded-lg hover:bg-green-600">
-              Connected
-            </button>
+                      <button className="mt-1 bg-green-500 text-white px-3 py-1.5 rounded-lg hover:bg-green-600 text-sm">
+            Connected
+          </button>
           ) : (
             <button
               onClick={handleSessionRestore}
-              className="mt-2 bg-blue-500 text-white px-4 py-2 rounded-lg hover:bg-blue-600"
+              className="mt-1 bg-blue-500 text-white px-3 py-1.5 rounded-lg hover:bg-blue-600 text-sm"
             >
               Connect
             </button>
@@ -176,18 +176,19 @@ const InService: React.FC = () => {
         </div>
       </div>
 
-      <div id="action_section" className="flex items-center justify-evenly rounded-lg m-4 p-4 h-[10%] mb-10">
+      <div id="action_section" className="flex items-center justify-evenly rounded-lg p-4 h-[10%] mb-4">
         <div id="end_service_button" className="flex flex-col items-center mx-2">
           {/* <button className="rounded-full w-16 h-16 border border-black mb-1"> */}
           <button
-            onClick={openEndServiceModal} className="rounded-full w-16 h-16 mb-1 flex items-center justify-center text-red-500 text-2xl shadow-md"
+            onClick={openEndServiceModal} className="rounded-full mb-1 flex items-center justify-center text-red-500 text-2xl shadow-md"
+            style={{ width: '2.8rem', height: '2.8rem' }}
           >
             {/* Red cross icon */}
-            <svg xmlns="http://www.w3.org/2000/svg" className="h-8 w-8" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
             </svg>
           </button>
-          <span className="text-sm font-bold mt-4">{t("end_service")}</span>
+          <span className="text-xs font-bold mt-2">{t("end_service")}</span>
         </div>
       </div>
 
