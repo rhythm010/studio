@@ -324,11 +324,11 @@ const selectedMode: React.FC = () => {
         clientQueueObj={clientQueueObj}
       />
 
-      {/* Bottom Section: Instruction Buttons (same height as other containers) */}
+      {/* Bottom Section: Instruction Buttons (dynamic height) */}
       <div
         id="instruction_buttons_container"
         className="flex flex-row items-center justify-center flex-wrap gap-8 shadow-lg rounded-lg mx-4 bg-white"
-        style={{ height: '50%', flexShrink: 0, padding: '1rem 0.5rem 2rem 1rem' }}
+        style={{ minHeight: '50%', flexShrink: 0, padding: '1rem 0.5rem 2rem 1rem' }}
       >
         {renderInstructionButtons()}
       </div>
