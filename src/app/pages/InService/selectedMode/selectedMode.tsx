@@ -310,7 +310,17 @@ const selectedMode: React.FC = () => {
         className="flex items-center justify-center shadow-lg rounded-lg mb-4 mx-4 bg-white"
         style={{ height: '30%', flexShrink: 0 }}
       >
-        <h2 className="font-bold" style={{ fontSize: '1.2rem' }}>
+        <h2 
+          className="font-bold text-center px-4" 
+          style={{ 
+            fontSize: '1.2rem',
+            wordWrap: 'break-word',
+            overflowWrap: 'break-word',
+            hyphens: 'auto',
+            maxWidth: '100%',
+            width: '100%'
+          }}
+        >
           {getStatusText()}
         </h2>
       </div>
