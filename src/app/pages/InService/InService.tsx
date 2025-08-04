@@ -57,20 +57,6 @@ const InService: React.FC = () => {
       currentStatus: 'DEFAULT',
     });
   }
-  const handleCancelInService = async () => {
-    // Create a random message
-    const randomMessage = {
-      id: Math.random().toString(36).substring(2, 15),
-      type: "text",
-      content: "This is a test message from InService page",
-      timestamp: Date.now(),
-    };
-
-    // Send the message to the client
-    // sendMsgToClient("test", randomMessage);
-    sendMsgToCompanion(randomMessage.type, {content: 'a value'}, 'PRIMARY' );
-    console.log("Sent a test message to the client.");
-  };
 
   // Handler for manual session ID input
   const handleManualSessionIdSubmit = async () => {
@@ -204,16 +190,6 @@ const InService: React.FC = () => {
           <span className="text-sm font-bold mt-4">{t("end_service")}</span>
         </div>
       </div>
-      {isDevMode && (
-        <button
-          id="cancel_in_service"
-          onClick={handleCancelInService} // Attach the click handler here
-          className="rounded-full w-16 h-16 mb-1 flex items-center justify-center text-red-500 text-2xl shadow-md"
-        >
-          {/* Cancel icon */}
-          Cancel 
-        </button>
-      )}
 
       {/* Manual Session ID Input Container (Dev Mode Only) */}
       {isDevMode && (

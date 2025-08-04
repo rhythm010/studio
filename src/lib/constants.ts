@@ -64,26 +64,84 @@ export const MODE_DEFAULT_STATUS: Record<string, string> = {
   [ACTIVITY_MODES.WITH_YOU]: ACTIVITY_STATUS.DEFAULT,
 };
 
-export const CLIENT_INSTRUCTION_MANUAL = {
-    'WITH_YOU': {
-        'DEFAULT': 'DEFAULT',
-        'QUEUE': 'QUEUE',
-        'WAIT_OP': 'WAIT_OP',
-    },
-    'CAFE': {
-        // 'WAIT_OP': 'WAIT_OP',
-        'BRING_STAFF': 'BRING_STAFF',
-        'STAND_CLOSE': 'STAND_CLOSE',
-        'ORDER_CALL': 'ORDER_CALL',
-        'I_AM_DONE': 'I_AM_DONE',
-    },
-    'STORE': {
-        'I_AM_DONE': 'I_AM_DONE',
-        'CLOSE_ASSIST': 'CLOSE_ASSIST',
-        'BRING_STAFF': 'BRING_STAFF',
-        'WAIT_OP': 'WAIT_OP',
-    },
+
+export const INSTRUCTION_LIST = {
+    'DEFAULT': 'DEFAULT',
+    'QUEUE': 'QUEUE',
+    'WAIT_OP': 'WAIT_OP',
+    'BRING_STAFF': 'BRING_STAFF',
+    'STAND_CLOSE': 'STAND_CLOSE',
+    'ORDER_CALL': 'ORDER_CALL',
+    'I_AM_DONE': 'I_AM_DONE',
+    'CLOSE_ASSIST': 'CLOSE_ASSIST',
+    'CLEAR_TABLE': 'CLEAR_TABLE',
+    'PAYMENT_CALL': 'PAYMENT_CALL',
+    'WAIT_ITEM': 'WAIT_ITEM',
 };
+
+export const CLIENT_INSTRUCTION_MANUAL = {
+  'WITH_YOU': {
+      [INSTRUCTION_LIST.DEFAULT]: 'DEFAULT',
+      [INSTRUCTION_LIST.QUEUE]: 'QUEUE',
+      [INSTRUCTION_LIST.WAIT_OP]: 'WAIT_OP',
+  },
+  'CAFE': {
+      // 'WAIT_OP': 'WAIT_OP',
+      [INSTRUCTION_LIST.BRING_STAFF]: 'BRING_STAFF',
+      [INSTRUCTION_LIST.STAND_CLOSE]: 'STAND_CLOSE',
+      [INSTRUCTION_LIST.ORDER_CALL]: 'ORDER_CALL',
+      [INSTRUCTION_LIST.I_AM_DONE]: 'I_AM_DONE',
+  },
+  'STORE': {
+      [INSTRUCTION_LIST.I_AM_DONE]: 'I_AM_DONE',
+      [INSTRUCTION_LIST.CLOSE_ASSIST]: 'CLOSE_ASSIST',
+      [INSTRUCTION_LIST.BRING_STAFF]: 'BRING_STAFF',
+      [INSTRUCTION_LIST.WAIT_OP]: 'WAIT_OP',
+  },
+};
+
+export const INSTRUCTION_STATUS_UI_MAP: Record<string, Record<string, { text: string; image?: string }>> = {
+  [INSTRUCTION_LIST.WAIT_OP]: {
+    UNREAD: { text: 'Standing instructions sent' }, // SENT
+    OPENED: { text: 'Companions have accepted instructions' }, // ACTIONED
+    ACTIONED: { text: 'Instructions completed' }, // COMPLETED
+  },
+  [INSTRUCTION_LIST.BRING_STAFF]: {
+    UNREAD: { text: 'Instructions sent to bring staff' },
+    OPENED: { text: 'Companions will now bring staff' },
+    ACTIONED: { text: 'Instructions completed' },
+  },
+  [INSTRUCTION_LIST.STAND_CLOSE]: {
+    UNREAD: { text: 'Instructions sent to stand close' },
+    OPENED: { text: 'Companion will now stand close to you' },
+    ACTIONED: { text: 'Instructions completed' },
+  },
+  [INSTRUCTION_LIST.ORDER_CALL]: {
+    UNREAD: { text: 'Instructions sent to order' },
+    OPENED: { text: 'Companions will now move' },
+    ACTIONED: { text: 'Instructions completed' },
+  },
+  [INSTRUCTION_LIST.I_AM_DONE]: {
+    UNREAD: { text: 'Companions will arrive shortly' },
+    OPENED: { text: 'Companion acknowledged you are done' },
+    ACTIONED: { text: 'Instructions completed' },
+  },
+  [INSTRUCTION_LIST.QUEUE]: {
+    UNREAD: { text: 'Instructions sent to join queue' },
+    OPENED: { text: 'Companions will now join queue' },
+    ACTIONED: { text: 'Instructions completed' },
+  },
+  [INSTRUCTION_LIST.DEFAULT]: {
+    UNREAD: { text: 'Default instruction sent' },
+    OPENED: { text: 'Default instruction actioned' },
+    ACTIONED: { text: 'Instructions completed' },
+  },
+  [INSTRUCTION_LIST.CLOSE_ASSIST]: {
+    UNREAD: { text: 'Calling Companion to you' },
+    OPENED: { text: 'Companions will come now' },
+    ACTIONED: { text: 'Instructions completed' },
+  },
+}; 
 
 export const CLIENT_INSTRUCTION_OPTIONS = {
     DEFAULT: [],
@@ -98,7 +156,7 @@ export const CLIENT_INSTRUCTION_OPTIONS = {
 
 export const CLIENT_MODE_STATUS_UI_MAP: Record<string, Record<string, { text: string; image?: string; secondaryDiv: { text: string } }>> = {
   WITH_YOU: {
-    DEFAULT: { text: 'We are moving with you', 
+    DEFAULT: { text: 'Moving in style', 
       secondaryDiv: { 
         text: 'Your companions are actively moving with you' 
       },
@@ -126,49 +184,6 @@ export const CLIENT_MODE_STATUS_UI_MAP: Record<string, Record<string, { text: st
     WAIT_OP: { text: 'Let us know if you need help in shopping', secondaryDiv: { text: 'Your companions are ready to assist with shopping' } },
     CLOSE_ASSIST: { text: 'Assisting you in shopping', secondaryDiv: { text: 'We can call staff, hold items for you' } },
   },
-}; 
-
-export const INSTRUCTION_STATUS_UI_MAP: Record<string, Record<string, { text: string; image?: string }>> = {
-  WAIT_OP: {
-    UNREAD: { text: 'Standing instructions sent' }, // SENT
-    OPENED: { text: 'Companions have accepted instructions' }, // ACTIONED
-    ACTIONED: { text: 'Instructions completed' }, // COMPLETED
-  },
-  BRING_STAFF: {
-    UNREAD: { text: 'Instructions sent to bring staff' },
-    OPENED: { text: 'Companions will now bring staff' },
-    ACTIONED: { text: 'Instructions completed' },
-  },
-  STAND_CLOSE: {
-    UNREAD: { text: 'Instructions sent to stand close' },
-    OPENED: { text: 'Companion will now stand close to you' },
-    ACTIONED: { text: 'Instructions completed' },
-  },
-  ORDER_CALL: {
-    UNREAD: { text: 'Instructions sent to order' },
-    OPENED: { text: 'Companions will now move' },
-    ACTIONED: { text: 'Instructions completed' },
-  },
-  I_AM_DONE: {
-    UNREAD: { text: 'Companions will arrive shortly' },
-    OPENED: { text: 'Companion acknowledged you are done' },
-    ACTIONED: { text: 'Instructions completed' },
-  },
-  QUEUE: {
-    UNREAD: { text: 'Instructions sent to join queue' },
-    OPENED: { text: 'Companions will now join queue' },
-    ACTIONED: { text: 'Instructions completed' },
-  },
-  DEFAULT: {
-    UNREAD: { text: 'Default instruction sent' },
-    OPENED: { text: 'Default instruction actioned' },
-    ACTIONED: { text: 'Instructions completed' },
-  },
-  CLOSE_ASSIST: {
-    UNREAD: { text: 'Calling Companion to you' },
-    OPENED: { text: 'Companions will come now' },
-    ACTIONED: { text: 'Instructions completed' },
-  },
 };     
 
 export const RECIEVE_COMPANION_MSG_TYPE_MAP: Record<string, string> = {
@@ -185,64 +200,123 @@ export const RECIEVE_COMPANION_MSG_TYPE_MAP: Record<string, string> = {
 
 export const CLIENT_INSTRUCTION_CONTENT: Record<string, Record<string, { title: string; description: { text: string; image?: string }; iconText: string }>> = {
   WITH_YOU: {
-        QUEUE: { 
+        [INSTRUCTION_LIST.QUEUE]: { 
           title: 'Stand In Queue', 
           description: { text: 'When we are here, you never have to stand in any queue' },
           iconText: 'Queue'
         },
-        WAIT_OP: { 
+        [INSTRUCTION_LIST.WAIT_OP]: { 
           title: 'Stand at a Distance', 
           description: { text: 'Need Privacy or going for prayer ? We will stand and wait for you' },
           iconText: 'Stand Guard'
         },
-        DEFAULT: {
+        [INSTRUCTION_LIST.DEFAULT]: {
           title: 'Moving with you',
           description: { text: 'Companion will be moving with you, carrying your bags and making space for you' },
           iconText: 'With me'
         },
   },
   CAFE: {
-    BRING_STAFF: { 
+    [INSTRUCTION_LIST.BRING_STAFF]: { 
       title: 'Bring Staff', 
       description: { text: 'We will present the staff to your table' },
       iconText: 'Bring Staff'
     },
-    STAND_CLOSE: { 
+    [INSTRUCTION_LIST.STAND_CLOSE]: { 
       title: 'Stand Close By', 
       description: { text: 'Let us give you that extra presence' },
       iconText: 'Stand Close'
     },
-    ORDER_CALL: { 
+    [INSTRUCTION_LIST.ORDER_CALL]: { 
       title: 'Place order for me', 
       description: { text: 'Just tell what you want, pay and relax. We will take care of the rest' },
       iconText: 'Order'
     },
-    I_AM_DONE: { 
+    [INSTRUCTION_LIST.I_AM_DONE]: { 
       title: 'I am done', 
       description: { text: 'Let us come and pick up your stuff' },
       iconText: 'Done'
     },
   },
   STORE: {
-    I_AM_DONE: { 
+    [INSTRUCTION_LIST.I_AM_DONE]: { 
       title: 'I am done', 
       description: { text: 'Let us come and get your items billed and packed' },
       iconText: 'Done'
     },
-    CLOSE_ASSIST: { 
+    [INSTRUCTION_LIST.CLOSE_ASSIST]: { 
       title: 'Come help me', 
       description: { text: 'One of us will come with you to hold any items that you want' },
       iconText: 'Assist'
     },
-    BRING_STAFF: { 
+    [INSTRUCTION_LIST.BRING_STAFF]: { 
       title: 'Call staff', 
       description: { text: 'We will be calling staff for you' },
       iconText: 'Bring Staff'
     },
-    WAIT_OP: { 
+    [INSTRUCTION_LIST.WAIT_OP]: { 
       title: 'Wait outside', 
       description: { text: 'We will stand guard outside, waiting for your instructions' },
       iconText: 'Stand Guard'
     },
   },
 };   
+
+export const COMPANION_SCREEN_MAPPER: Record<string, { modeText: string; statuses: Record<string, { textToDisplay: string }>; instructions: Record<string, { textToDisplay: string }> }> = {
+  [ACTIVITY_MODES.WITH_YOU]: {
+    modeText: 'With Client',
+    statuses: {
+      [ACTIVITY_STATUS.DEFAULT]: { textToDisplay: 'Moving with Client' },
+      [ACTIVITY_STATUS.QUEUE]: { textToDisplay: 'Standing in Queue' },
+      [ACTIVITY_STATUS.WAIT_OP]: { textToDisplay: 'Standing at Distance' },
+      [ACTIVITY_STATUS.QUEUE_CALL]: { textToDisplay: 'Next in Queue' },
+    },
+    instructions: {
+      [INSTRUCTION_LIST.DEFAULT]: { textToDisplay: 'Instruction: Walk with me' },
+      [INSTRUCTION_LIST.QUEUE]: { textToDisplay: 'Instruction: Queue here' },
+      [INSTRUCTION_LIST.WAIT_OP]: { textToDisplay: 'Instruction: Stand Guard' },
+    },
+  },
+  [ACTIVITY_MODES.CAFE]: {
+    modeText: 'Cafe',
+    statuses: {
+      [ACTIVITY_STATUS.QUEUE]: { textToDisplay: 'In Cafe Queue' },
+      [ACTIVITY_STATUS.PAYMENT_CALL]: { textToDisplay: 'Payment Ready' },
+      [ACTIVITY_STATUS.WAIT_ITEM]: { textToDisplay: 'Order Being Prepared' },
+      [ACTIVITY_STATUS.WAIT_OP]: { textToDisplay: 'Waiting for Instructions' },
+      [ACTIVITY_STATUS.CLEAR_TABLE]: { textToDisplay: 'Clearing Table' },
+      [ACTIVITY_STATUS.STAND_CLOSE]: { textToDisplay: 'Standing Close' },
+    },
+    instructions: {
+      [INSTRUCTION_LIST.BRING_STAFF]: { textToDisplay: 'Instruction: Bring Staff' },
+      [INSTRUCTION_LIST.STAND_CLOSE]: { textToDisplay: 'Instruction: Stand Close' },
+      [INSTRUCTION_LIST.ORDER_CALL]: { textToDisplay: 'Instruction: Order Call' },
+      [INSTRUCTION_LIST.I_AM_DONE]: { textToDisplay: 'Instruction: I am Done' },
+    },
+  },
+  [ACTIVITY_MODES.STORE]: {
+    modeText: 'Store',
+    statuses: {
+      [ACTIVITY_STATUS.QUEUE]: { textToDisplay: 'In Store Queue' },
+      [ACTIVITY_STATUS.PAYMENT_CALL]: { textToDisplay: 'Payment Counter Ready' },
+      [ACTIVITY_STATUS.WAIT_ITEM]: { textToDisplay: 'Getting Items Ready' },
+      [ACTIVITY_STATUS.WAIT_OP]: { textToDisplay: 'Ready to Assist Shopping' },
+      [ACTIVITY_STATUS.CLOSE_ASSIST]: { textToDisplay: 'Assisting in Shopping' },
+    },
+    instructions: {
+      [INSTRUCTION_LIST.I_AM_DONE]: { textToDisplay: 'Instruction: I am Done' },
+      [INSTRUCTION_LIST.CLOSE_ASSIST]: { textToDisplay: 'Instruction: Close Assist' },
+      [INSTRUCTION_LIST.BRING_STAFF]: { textToDisplay: 'Instruction: Bring Staff' },
+      [INSTRUCTION_LIST.WAIT_OP]: { textToDisplay: 'Instruction: Stand Guard' },
+    },
+  },
+  [ACTIVITY_MODES.QUEUE]: {
+    modeText: 'Queue',
+    statuses: {
+      [ACTIVITY_STATUS.QUEUE]: { textToDisplay: 'Managing Main Queue' },
+    },
+    instructions: {
+      [INSTRUCTION_LIST.QUEUE]: { textToDisplay: 'Queue instruction received' },
+    },
+  },
+};

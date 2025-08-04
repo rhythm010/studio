@@ -9,7 +9,7 @@ import { database } from '@/lib/firebase';
 import { useRouter } from 'next/navigation';
 import { useModal } from '@/components/ui/Modal';
 import CompanionActivityMode from '../CompanionActivityMode/CompanionActivityMode';
-import { ACTIVITY_MODES, ACTIVITY_STATUS, COMPANION_MODE_STATUS_LINKER, MSG_STATUS, MESSAGE_TYPES_TO_COMPANION, STATUS_BUTTON_LABELS, ACTIVITY_SUB_MODE_LINKER, MODE_DEFAULT_STATUS } from '@/lib/constants';
+import { ACTIVITY_MODES, ACTIVITY_STATUS, COMPANION_MODE_STATUS_LINKER, MSG_STATUS, MESSAGE_TYPES_TO_COMPANION, STATUS_BUTTON_LABELS, ACTIVITY_SUB_MODE_LINKER, MODE_DEFAULT_STATUS, COMPANION_SCREEN_MAPPER } from '@/lib/constants';
 import StopWatch from '../../InService/StopWatch';
 import ConfirmationModalContent from '@/components/ConfirmationModalContent';
 import { vocab } from '@/lib/vocab_constants';
@@ -383,7 +383,9 @@ const GuardMatchingPage: React.FC = () => {
           className={
             recieveCompanionMsgQueue.status === MSG_STATUS.UNREAD
               ? 'blink-urgent'
-              : ''
+              : recieveCompanionMsgQueue.status === MSG_STATUS.OPENED
+                ? 'blink-urgent'
+                : ''
           }
           style={{
             position: 'absolute',
@@ -402,7 +404,7 @@ const GuardMatchingPage: React.FC = () => {
               recieveCompanionMsgQueue.status === MSG_STATUS.UNREAD
                 ? '#ffe5e5' // light red
                 : recieveCompanionMsgQueue.status === MSG_STATUS.OPENED
-                  ? '#fff9e5' // less dark yellow
+                  ? 'rgb(241 220 150)' // custom yellow
                   : recieveCompanionMsgQueue.status === MSG_STATUS.ACTIONED
                     ? '#e5ffe5' // light green
                     : '#f9fafb', // subtle background
@@ -411,7 +413,7 @@ const GuardMatchingPage: React.FC = () => {
               recieveCompanionMsgQueue.status === MSG_STATUS.UNREAD
                 ? 'red'
                 : recieveCompanionMsgQueue.status === MSG_STATUS.OPENED
-                  ? '#bfa100' // dark yellow
+                  ? 'rgb(177 151 12)' // custom yellow border
                   : recieveCompanionMsgQueue.status === MSG_STATUS.ACTIONED
                     ? '#228B22' // dark green
                     : '#d1d5db', // default gray
@@ -421,7 +423,7 @@ const GuardMatchingPage: React.FC = () => {
               recieveCompanionMsgQueue.status === MSG_STATUS.UNREAD
                 ? '#ffe5e5'
                 : recieveCompanionMsgQueue.status === MSG_STATUS.OPENED
-                  ? '#fff9e5'
+                  ? 'rgb(241 220 150)'
                 : recieveCompanionMsgQueue.status === MSG_STATUS.ACTIONED
                   ? '#e5ffe5'
                 : '#f3f4f6';
@@ -431,7 +433,7 @@ const GuardMatchingPage: React.FC = () => {
               recieveCompanionMsgQueue.status === MSG_STATUS.UNREAD
                 ? '#ffe5e5'
                 : recieveCompanionMsgQueue.status === MSG_STATUS.OPENED
-                  ? '#fff9e5'
+                  ? 'rgb(241 220 150)'
                 : recieveCompanionMsgQueue.status === MSG_STATUS.ACTIONED
                   ? '#e5ffe5'
                 : '#f9fafb';
@@ -443,7 +445,32 @@ const GuardMatchingPage: React.FC = () => {
             <span className="urgent-icon" title="Urgent">&#9888;</span>
           )}
           {/* Display the message if it exists */}
-          <p>{recieveCompanionMsgQueue.type}</p>
+          <p style={{ 
+            textAlign: 'center', 
+            fontSize: '1.1rem',
+            margin: '0',
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            position: 'relative'
+          }}>
+            <span style={{ fontWeight: 'normal', color: '#666' }}>Instruction:&nbsp;&nbsp;</span>
+            <span style={{ fontWeight: 'bold' }}>
+              {COMPANION_SCREEN_MAPPER[selectedMode]?.instructions[recieveCompanionMsgQueue.type]?.textToDisplay?.replace('Instruction: ', '') || recieveCompanionMsgQueue.type}
+            </span>
+            {/* Green tick for ACTIONED status */}
+            {recieveCompanionMsgQueue.status === MSG_STATUS.ACTIONED && (
+              <span style={{
+                position: 'absolute',
+                right: '10px',
+                color: '#228B22',
+                fontSize: '1.2rem',
+                fontWeight: 'bold'
+              }}>
+                ✓
+              </span>
+            )}
+          </p>
         </div>
       )}
 
@@ -451,10 +478,10 @@ const GuardMatchingPage: React.FC = () => {
       {!serviceContinue && 
       <div id="mode_and_status_info_display" style={{ width: '90%', maxWidth: 500, margin: '0 auto 0.5rem auto', border: '2px solid #222', borderRadius: 10, overflow: 'hidden' }}>
         <div style={{ background: '#111', color: '#fff', fontSize: '1.6rem', fontWeight: 700, padding: '0.75rem', textAlign: 'center' }}>
-          Mode: {selectedMode || '-'}
+          Mode: {COMPANION_SCREEN_MAPPER[selectedMode]?.modeText || selectedMode || '-'}
         </div>
         <div style={{ borderTop: '2px solid #222', background: '#fff', color: '#111', fontSize: '1rem', fontWeight: 500, padding: '0.5rem 1rem', textAlign: 'center' }}>
-          Status: {companionCurrentStatus || '-'}
+          Status: {COMPANION_SCREEN_MAPPER[selectedMode]?.statuses[companionCurrentStatus]?.textToDisplay || companionCurrentStatus || '-'}
         </div>
       </div>}
 
