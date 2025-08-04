@@ -13,9 +13,11 @@ interface ConfirmationModalContentProps {
 const ConfirmationModalContent: React.FC<ConfirmationModalContentProps> = ({ text, title, onConfirm, onCancel, yesText, noText }) => {
   const { t } = useTranslation('common');
   return (
-    <div className="flex flex-col items-center justify-center p-6">
-      {title && <h2 className="text-xl font-bold mb-4">{title}</h2>}
-      <p className="mb-6 text-center text-lg">{text}</p>
+    <div className="flex flex-col items-center p-6 h-full">
+      <div className="flex flex-col items-center justify-center flex-1">
+        {title && <h2 className="text-xl font-bold mb-4">{title}</h2>}
+        <p className="text-center text-xl font-medium">{text}</p>
+      </div>
       <div className="flex space-x-4">
         {(yesText !== '') && (
           <button

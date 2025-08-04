@@ -10,7 +10,6 @@ import { useModal } from '@/components/ui/Modal';
 import { useRouter } from 'next/navigation'
 import { useCompanionStore } from '@/store/store';
 import React from 'react';
-import { listenToClientMessages } from '@/lib/utils';
 
 interface HeaderProps {
   showBack?: boolean;
@@ -43,10 +42,6 @@ const Header: React.FC<HeaderProps> = ({ showBack = true }) => {
     };
   }, [isMenuOpen]); // Depend on isMenuOpen state
 
-  useEffect(() => {
-    // listenToClientMessages();
-  }, []);
-
   const { i18n, t } = useTranslation('common');
 
   const store = useCompanionStore();
@@ -78,7 +73,7 @@ const Header: React.FC<HeaderProps> = ({ showBack = true }) => {
   };
 
   return (
-    <header className="bg-gray-800 shadow-lg h-16 w-full flex items-center justify-between">
+    <header className="bg-gray-800 shadow-lg h-16 w-full flex items-center justify-between" style={{ zIndex: 9999, position: 'fixed', top: 0, left: 0, right: 0 }}>
       {showBack && isDevMode && (
         <div>
           <Button onClick={handleModalOpen} className="bg-gray-800 hover:bg-gray-700" variant="default" size="sm">

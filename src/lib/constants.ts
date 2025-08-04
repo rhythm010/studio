@@ -262,7 +262,7 @@ export const CLIENT_INSTRUCTION_CONTENT: Record<string, Record<string, { title: 
   },
 };   
 
-export const COMPANION_SCREEN_MAPPER: Record<string, { modeText: string; statuses: Record<string, { textToDisplay: string }>; instructions: Record<string, { textToDisplay: string }> }> = {
+export const COMPANION_SCREEN_MAPPER: Record<string, { modeText: string; statuses: Record<string, { textToDisplay: string }>; instructions: Record<string, { textToDisplay: string; modalTexts: Record<string, string> }> }> = {
   [ACTIVITY_MODES.WITH_YOU]: {
     modeText: 'With Client',
     statuses: {
@@ -272,9 +272,30 @@ export const COMPANION_SCREEN_MAPPER: Record<string, { modeText: string; statuse
       [ACTIVITY_STATUS.QUEUE_CALL]: { textToDisplay: 'Next in Queue' },
     },
     instructions: {
-      [INSTRUCTION_LIST.DEFAULT]: { textToDisplay: 'Instruction: Walk with me' },
-      [INSTRUCTION_LIST.QUEUE]: { textToDisplay: 'Instruction: Queue here' },
-      [INSTRUCTION_LIST.WAIT_OP]: { textToDisplay: 'Instruction: Stand Guard' },
+      [INSTRUCTION_LIST.DEFAULT]: { 
+        textToDisplay: 'Instruction: Walk with me',
+        modalTexts: {
+          [MSG_STATUS.UNREAD]: 'Do you want to start walking with the client?',
+          [MSG_STATUS.OPENED]: 'You are in the middle of the action',
+          [MSG_STATUS.ACTIONED]: 'You have completed walking with the client'
+        }
+      },
+      [INSTRUCTION_LIST.QUEUE]: { 
+        textToDisplay: 'Instruction: Queue here',
+        modalTexts: {
+          [MSG_STATUS.UNREAD]: 'Do you want to start queuing for the client?',
+          [MSG_STATUS.OPENED]: 'You are in the middle of the action',
+          [MSG_STATUS.ACTIONED]: 'You have completed queuing for the client'
+        }
+      },
+      [INSTRUCTION_LIST.WAIT_OP]: { 
+        textToDisplay: 'Instruction: Stand Guard',
+        modalTexts: {
+          [MSG_STATUS.UNREAD]: 'Do you want to start standing guard for the client?',
+          [MSG_STATUS.OPENED]: 'You are in the middle of the action',
+          [MSG_STATUS.ACTIONED]: 'You have completed standing guard for the client'
+        }
+      },
     },
   },
   [ACTIVITY_MODES.CAFE]: {
@@ -288,10 +309,38 @@ export const COMPANION_SCREEN_MAPPER: Record<string, { modeText: string; statuse
       [ACTIVITY_STATUS.STAND_CLOSE]: { textToDisplay: 'Standing Close' },
     },
     instructions: {
-      [INSTRUCTION_LIST.BRING_STAFF]: { textToDisplay: 'Instruction: Bring Staff' },
-      [INSTRUCTION_LIST.STAND_CLOSE]: { textToDisplay: 'Instruction: Stand Close' },
-      [INSTRUCTION_LIST.ORDER_CALL]: { textToDisplay: 'Instruction: Order Call' },
-      [INSTRUCTION_LIST.I_AM_DONE]: { textToDisplay: 'Instruction: I am Done' },
+      [INSTRUCTION_LIST.BRING_STAFF]: { 
+        textToDisplay: 'Instruction: Bring Staff',
+        modalTexts: {
+          [MSG_STATUS.UNREAD]: 'Do you want to start bringing staff to the client?',
+          [MSG_STATUS.OPENED]: 'Do you want to start bringing staff to the client?',
+          [MSG_STATUS.ACTIONED]: 'You have completed bringing staff to the client'
+        }
+      },
+      [INSTRUCTION_LIST.STAND_CLOSE]: { 
+        textToDisplay: 'Instruction: Stand Close',
+        modalTexts: {
+          [MSG_STATUS.UNREAD]: 'Do you want to start standing close to the client?',
+          [MSG_STATUS.OPENED]: 'Do you want to start standing close to the client?',
+          [MSG_STATUS.ACTIONED]: 'You have completed standing close to the client'
+        }
+      },
+      [INSTRUCTION_LIST.ORDER_CALL]: { 
+        textToDisplay: 'Instruction: Order Call',
+        modalTexts: {
+          [MSG_STATUS.UNREAD]: 'Do you want to start calling the order for the client?',
+          [MSG_STATUS.OPENED]: 'Do you want to start calling the order for the client?',
+          [MSG_STATUS.ACTIONED]: 'You have completed calling the order for the client'
+        }
+      },
+      [INSTRUCTION_LIST.I_AM_DONE]: { 
+        textToDisplay: 'Instruction: I am Done',
+        modalTexts: {
+          [MSG_STATUS.UNREAD]: 'Do you want to start finishing service for the client?',
+          [MSG_STATUS.OPENED]: 'Do you want to start finishing service for the client?',
+          [MSG_STATUS.ACTIONED]: 'You have completed finishing service for the client'
+        }
+      },
     },
   },
   [ACTIVITY_MODES.STORE]: {
@@ -304,10 +353,38 @@ export const COMPANION_SCREEN_MAPPER: Record<string, { modeText: string; statuse
       [ACTIVITY_STATUS.CLOSE_ASSIST]: { textToDisplay: 'Assisting in Shopping' },
     },
     instructions: {
-      [INSTRUCTION_LIST.I_AM_DONE]: { textToDisplay: 'Instruction: I am Done' },
-      [INSTRUCTION_LIST.CLOSE_ASSIST]: { textToDisplay: 'Instruction: Close Assist' },
-      [INSTRUCTION_LIST.BRING_STAFF]: { textToDisplay: 'Instruction: Bring Staff' },
-      [INSTRUCTION_LIST.WAIT_OP]: { textToDisplay: 'Instruction: Stand Guard' },
+      [INSTRUCTION_LIST.I_AM_DONE]: { 
+        textToDisplay: 'Instruction: I am Done',
+        modalTexts: {
+          [MSG_STATUS.UNREAD]: 'Do you want to start finishing shopping for the client?',
+          [MSG_STATUS.OPENED]: 'Do you want to start finishing shopping for the client?',
+          [MSG_STATUS.ACTIONED]: 'You have completed finishing shopping for the client'
+        }
+      },
+      [INSTRUCTION_LIST.CLOSE_ASSIST]: { 
+        textToDisplay: 'Instruction: Close Assist',
+        modalTexts: {
+          [MSG_STATUS.UNREAD]: 'Do you want to start providing close assistance to the client?',
+          [MSG_STATUS.OPENED]: 'Do you want to start providing close assistance to the client?',
+          [MSG_STATUS.ACTIONED]: 'You have completed providing close assistance to the client'
+        }
+      },
+      [INSTRUCTION_LIST.BRING_STAFF]: { 
+        textToDisplay: 'Instruction: Bring Staff',
+        modalTexts: {
+          [MSG_STATUS.UNREAD]: 'Do you want to start bringing staff to the client?',
+          [MSG_STATUS.OPENED]: 'Do you want to start bringing staff to the client?',
+          [MSG_STATUS.ACTIONED]: 'You have completed bringing staff to the client'
+        }
+      },
+      [INSTRUCTION_LIST.WAIT_OP]: { 
+        textToDisplay: 'Instruction: Stand Guard',
+        modalTexts: {
+          [MSG_STATUS.UNREAD]: 'Do you want to start standing guard for the client?',
+          [MSG_STATUS.OPENED]: 'Do you want to start standing guard for the client?',
+          [MSG_STATUS.ACTIONED]: 'You have completed standing guard for the client'
+        }
+      },
     },
   },
   [ACTIVITY_MODES.QUEUE]: {
@@ -316,7 +393,14 @@ export const COMPANION_SCREEN_MAPPER: Record<string, { modeText: string; statuse
       [ACTIVITY_STATUS.QUEUE]: { textToDisplay: 'Managing Main Queue' },
     },
     instructions: {
-      [INSTRUCTION_LIST.QUEUE]: { textToDisplay: 'Queue instruction received' },
+      [INSTRUCTION_LIST.QUEUE]: { 
+        textToDisplay: 'Queue instruction received',
+        modalTexts: {
+          [MSG_STATUS.UNREAD]: 'Do you want to start managing the queue for the client?',
+          [MSG_STATUS.OPENED]: 'Do you want to start managing the queue for the client?',
+          [MSG_STATUS.ACTIONED]: 'You have completed managing the queue for the client'
+        }
+      },
     },
   },
 };

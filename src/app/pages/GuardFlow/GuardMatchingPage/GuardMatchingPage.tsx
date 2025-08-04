@@ -3,7 +3,7 @@
 import { useEffect, useState, useRef } from 'react';
 import { Html5Qrcode } from 'html5-qrcode';
 import { useCompanionStore } from '@/store/store'; // Import the store
-import { checkIfSessionExistsAndMatch, updateStoreInFirebase, updateCompanionSessionIdInClient, updateValueInClient, storePaths, updateInSelfFirebase, handleManualCompanionSessionIdSubmit } from '@/lib/utils'; // Import the utility method
+import { checkIfSessionExistsAndMatch, updateCompanionSessionIdInClient, updateValueInClient, storePaths, updateInSelfFirebase, handleManualCompanionSessionIdSubmit } from '@/lib/utils'; // Import the utility method
 import { ref, get } from 'firebase/database';
 import { database } from '@/lib/firebase';
 import { useRouter } from 'next/navigation';
@@ -271,11 +271,15 @@ const GuardMatchingPage: React.FC = () => {
 
   // Handler for clicking the client message container
   const handleClientMsgClick = () => {
+    // Get the modal text based on current mode and instruction type
+    const instructionData = COMPANION_SCREEN_MAPPER[selectedMode]?.instructions[recieveCompanionMsgQueue?.type];
+    const modalTexts = instructionData?.modalTexts;
+    
     // Determine which button to show based on current status
     if (recieveCompanionMsgQueue?.status === MSG_STATUS.ACTIONED) {
       openModal(
         <ConfirmationModalContent
-          text={"You have completed this instruction"}
+          text={modalTexts?.[MSG_STATUS.ACTIONED] || "You have completed this instruction"}
           yesText={undefined}
           noText={"Close"}
           onConfirm={closeModal}
@@ -294,8 +298,8 @@ const GuardMatchingPage: React.FC = () => {
       <ConfirmationModalContent
         text={
           yesText === 'START'
-            ? 'Do you want to start this message?'
-            : 'Mark this message as completed?'
+            ? modalTexts?.[MSG_STATUS.UNREAD] || 'Do you want to start this message?'
+            : modalTexts?.[MSG_STATUS.OPENED] || 'Mark this message as completed?'
         }
         yesText={yesText}
         onConfirm={() => handleClientMsgConfirmAction(nextStatus)}
