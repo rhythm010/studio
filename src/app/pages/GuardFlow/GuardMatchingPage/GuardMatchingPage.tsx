@@ -4,8 +4,6 @@ import { useEffect, useState, useRef } from 'react';
 import { Html5Qrcode } from 'html5-qrcode';
 import { useCompanionStore } from '@/store/store'; // Import the store
 import { checkIfSessionExistsAndMatch, updateCompanionSessionIdInClient, updateValueInClient, storePaths, updateInSelfFirebase, handleManualCompanionSessionIdSubmit } from '@/lib/utils'; // Import the utility method
-import { ref, get } from 'firebase/database';
-import { database } from '@/lib/firebase';
 import { useRouter } from 'next/navigation';
 import { useModal } from '@/components/ui/Modal';
 import CompanionActivityMode from '../CompanionActivityMode/CompanionActivityMode';
@@ -33,6 +31,7 @@ const GuardMatchingPage: React.FC = () => {
   } = useCompanionStore();
   const [manualSessionId, setManualSessionId] = useState(''); // State for manual client session ID input
   const manualCompanionSessionIdRef = useRef<HTMLInputElement>(null); // Ref for manual companion session ID input
+  const [isConnecting, setIsConnecting] = useState<boolean>(false); // State for loading during connection
   const router = useRouter();
   const companionRole = getCompanionProfileDetails().companionRole || 'Primary'; // Get the companion role
   // Get the selected mode from the store for conditional styling
@@ -114,13 +113,28 @@ const GuardMatchingPage: React.FC = () => {
 
   // Handler for manual companion session ID input
   const handleManualCompanionSessionIdSubmitLocal = async (inputValue: string) => {
-    const success = await handleManualCompanionSessionIdSubmit(inputValue);
-    if (success) {
-      // Clear input after successful connection
-      if (manualCompanionSessionIdRef.current) {
-        manualCompanionSessionIdRef.current.value = '';
+    setIsConnecting(true);
+    try {
+      const success = await handleManualCompanionSessionIdSubmit(inputValue);
+      if (success) {
+        // Clear input after successful connection
+        if (manualCompanionSessionIdRef.current) {
+          manualCompanionSessionIdRef.current.value = '';
+        }
+        scanSuccess();
       }
-      scanSuccess();
+    } catch (error) {
+      console.error('Error connecting to companion session:', error);
+    } finally {
+      setIsConnecting(false);
+    }
+  };
+
+  // Handler for companion session restore from localStorage
+  const handleCompanionSessionRestore = async () => {
+    const restoredCompanionSessionId = localStorage.getItem('companionSessionId');
+    if (restoredCompanionSessionId) {
+      await handleManualCompanionSessionIdSubmitLocal(restoredCompanionSessionId);
     }
   };
 
@@ -560,6 +574,36 @@ const GuardMatchingPage: React.FC = () => {
         </div>
       </div>}
 
+
+      {/* Companion Session Connection Status Section */}
+      <div className="flex flex-col items-center justify-center p-2 mt-4">
+        <div className="text-center">
+          {/* Display Companion Session ID in Dev Mode Only */}
+          {isDevMode && useCompanionStore.getState().getSessionId() && (
+            <div className="mb-2 text-xs text-gray-600 font-mono bg-gray-100 px-2 py-1 rounded">
+              {useCompanionStore.getState().getSessionId()}
+            </div>
+          )}
+          
+          {useCompanionStore.getState().getSessionId() ? (
+            <button className="mt-1 bg-green-500 text-white px-3 py-1.5 rounded-lg hover:bg-green-600 text-sm">
+              Connected
+            </button>
+          ) : (
+            <button
+              onClick={handleCompanionSessionRestore}
+              disabled={isConnecting}
+              className={`mt-1 px-3 py-1.5 rounded-lg text-sm ${
+                isConnecting 
+                  ? 'bg-gray-400 cursor-not-allowed' 
+                  : 'bg-blue-500 hover:bg-blue-600 text-white'
+              }`}
+            >
+              {isConnecting ? 'Connecting...' : 'Connect'}
+            </button>
+          )}
+        </div>
+      </div>
 
       {isDevMode && <div id="manual_clientsession_id_input_container" style={{ display: 'flex', alignItems: 'center', marginTop: '20px' }}>
         <input

@@ -717,3 +717,31 @@ export async function handleManualCompanionSessionIdSubmit(inputValue: string) {
     return false;
   }
 }
+
+export async function handleManualSessionIdSubmit(
+  manualSessionId: string,
+  setSessionId: (sessionId: string) => void,
+  setManualSessionId: (sessionId: string) => void,
+  setIsConnecting: (isConnecting: boolean) => void
+) {
+  if (!manualSessionId.trim()) {
+    console.warn('Please enter a session ID');
+    return;
+  }
+
+  setIsConnecting(true);
+  try {
+    const sessionExists = await checkIfSessionExistsAndMatch(manualSessionId);
+    if (sessionExists) {
+      setSessionId(manualSessionId);
+      console.log('Successfully connected to session:', manualSessionId);
+      setManualSessionId(''); // Clear input after successful connection
+    } else {
+      console.warn('Session not found or invalid');
+    }
+  } catch (error) {
+    console.error('Error connecting to session:', error);
+  } finally {
+    setIsConnecting(false);
+  }
+}

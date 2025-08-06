@@ -7,7 +7,7 @@ import { useTranslation } from 'react-i18next';
 import { useModal } from '../../../components/ui/Modal'; // Assuming useModal is exported from Modal.tsx
 import ConfirmationModalContent from '../../../components/ConfirmationModalContent'; // Import the new component
 import { useCompanionStore } from '../../../store/store';
-import { getStoreRef, updateStoreInFirebase, sendMsgToClient, sendMsgToCompanion, checkIfSessionExistsAndMatch, updateInSelfFirebase } from '../../../lib/utils';
+import { updateInSelfFirebase, handleManualSessionIdSubmit } from '../../../lib/utils';
 import { useRouter } from 'next/navigation'
 import { database } from '@/lib/firebase';
 
@@ -18,6 +18,7 @@ const InService: React.FC = () => {
   const [isRunning, setIsRunning] = useState<boolean>(false);
   const [firebaseCurrentMode, setFirebaseCurrentMode] = useState<string>("WITH_YOU");
   const [manualSessionId, setManualSessionId] = useState(''); // State for manual session ID input
+  const [isConnecting, setIsConnecting] = useState<boolean>(false); // State for loading during connection
   const { openModal, closeModal } = useModal();
   const { isDevMode } = useCompanionStore();
   const setSessionId = useCompanionStore((state: any) => state.setSessionId);
@@ -58,33 +59,14 @@ const InService: React.FC = () => {
     });
   }
 
-  // Handler for manual session ID input
-  const handleManualSessionIdSubmit = async () => {
-    if (!manualSessionId.trim()) {
-      console.warn('Please enter a session ID');
-      return;
-    }
 
-    try {
-      const sessionExists = await checkIfSessionExistsAndMatch(manualSessionId);
-      if (sessionExists) {
-        setSessionId(manualSessionId);
-        console.log('Successfully connected to session:', manualSessionId);
-        setManualSessionId(''); // Clear input after successful connection
-      } else {
-        console.warn('Session not found or invalid');
-      }
-    } catch (error) {
-      console.error('Error connecting to session:', error);
-    }
-  };
 
   // Handler for session restore from localStorage
   const handleSessionRestore = async () => {
-    const restoredSessionId = localStorage.getItem('sessionId');
+    const restoredSessionId = await localStorage.getItem('clientSessionId');
     if (restoredSessionId) {
       setManualSessionId(restoredSessionId);
-      await handleManualSessionIdSubmit();
+      await handleManualSessionIdSubmit(restoredSessionId, setSessionId, setManualSessionId, setIsConnecting);
     }
   };
 
@@ -161,6 +143,13 @@ const InService: React.FC = () => {
       {/* Connection Status Section */}
       <div className="flex flex-col items-center justify-center p-2">
         <div className="text-center">
+          {/* Display Session ID in Dev Mode */}
+          {isDevMode && sessionId && (
+            <div className="mb-2 text-xs text-gray-600 font-mono bg-gray-100 px-2 py-1 rounded">
+              {sessionId}
+            </div>
+          )}
+          
           {sessionId ? (
                       <button className="mt-1 bg-green-500 text-white px-3 py-1.5 rounded-lg hover:bg-green-600 text-sm">
             Connected
@@ -168,9 +157,14 @@ const InService: React.FC = () => {
           ) : (
             <button
               onClick={handleSessionRestore}
-              className="mt-1 bg-blue-500 text-white px-3 py-1.5 rounded-lg hover:bg-blue-600 text-sm"
+              disabled={isConnecting}
+              className={`mt-1 px-3 py-1.5 rounded-lg text-sm ${
+                isConnecting 
+                  ? 'bg-gray-400 cursor-not-allowed' 
+                  : 'bg-blue-500 hover:bg-blue-600 text-white'
+              }`}
             >
-              Connect
+              {isConnecting ? 'Connecting...' : 'Connect'}
             </button>
           )}
         </div>
@@ -209,17 +203,18 @@ const InService: React.FC = () => {
             }}
           />
           <button
-            onClick={handleManualSessionIdSubmit}
+            onClick={() => handleManualSessionIdSubmit(manualSessionId, setSessionId, setManualSessionId, setIsConnecting)}
+            disabled={isConnecting}
             style={{
-              backgroundColor: 'rgb(31 41 55 / var(--tw-bg-opacity, 1))',
+              backgroundColor: isConnecting ? 'rgb(156 163 175)' : 'rgb(31 41 55 / var(--tw-bg-opacity, 1))',
               color: 'white',
               padding: '0.5rem 1rem',
               borderRadius: '4px',
               border: 'none',
-              cursor: 'pointer'
+              cursor: isConnecting ? 'not-allowed' : 'pointer'
             }}
           >
-            Connect to Session
+            {isConnecting ? 'Connecting...' : 'Connect to Session'}
           </button>
         </div>
       )}

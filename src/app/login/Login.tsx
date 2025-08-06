@@ -74,6 +74,9 @@ const Login: React.FC = () => {
     }
     
     setSessionId(sessionId);
+    
+    // Store client session ID in localStorage
+    localStorage.setItem('clientSessionId', sessionId);
 
     try {
       updateStoreInFirebase();

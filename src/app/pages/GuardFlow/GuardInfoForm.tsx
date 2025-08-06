@@ -53,6 +53,9 @@ const GuardInfoForm: React.FC = () => {
     }
     
     setSessionId(sessionId);
+    
+    // Store companion session ID in localStorage
+    localStorage.setItem('companionSessionId', sessionId);
 
     // Get the entire store object
     const storeState = useCompanionStore.getState();
