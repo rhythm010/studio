@@ -151,9 +151,17 @@ const InService: React.FC = () => {
           )}
           
           {sessionId ? (
-                      <button className="mt-1 bg-green-500 text-white px-3 py-1.5 rounded-lg hover:bg-green-600 text-sm">
-            Connected
-          </button>
+                      <button 
+                        onClick={handleSessionRestore}
+                        disabled={isConnecting}
+                        className={`mt-1 px-3 py-1.5 rounded-lg text-sm ${
+                          isConnecting 
+                            ? 'bg-gray-400 cursor-not-allowed' 
+                            : 'bg-green-500 hover:bg-green-600 text-white'
+                        }`}
+                      >
+                        {isConnecting ? 'Refreshing...' : 'Refresh'}
+                      </button>
           ) : (
             <button
               onClick={handleSessionRestore}
