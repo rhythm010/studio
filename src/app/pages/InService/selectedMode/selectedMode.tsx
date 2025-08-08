@@ -11,26 +11,26 @@ import ClientStatusDataScreen from '../ClientStatusDataScreen';
 import { useModal } from '@/components/ui/Modal';
 
 const INSTRUCTION_ICONS: Record<string, JSX.Element> = {
-  WAIT_OP: (
-    <svg width="20" height="20" fill="none" viewBox="0 0 24 24" stroke="black"><circle cx="12" cy="12" r="9" strokeWidth="2"/><path d="M12 7v5l3 3" strokeWidth="2" strokeLinecap="round"/></svg>
-  ),
   QUEUE: (
-    <svg width="20" height="20" fill="none" viewBox="0 0 24 24" stroke="black"><circle cx="8" cy="8" r="3" strokeWidth="2"/><circle cx="16" cy="8" r="3" strokeWidth="2"/><circle cx="12" cy="16" r="3" strokeWidth="2"/></svg>
+    <img src="/icons/instructions/queue.png" alt="Queue" style={{ width: '20px', height: '20px' }} />
+  ),
+  WAIT_OP: (
+    <img src="/icons/instructions/security-guard.png" alt="Security Guard" style={{ width: '20px', height: '20px' }} />
   ),
   BRING_STAFF: (
-    <svg width="20" height="20" fill="none" viewBox="0 0 24 24" stroke="black"><circle cx="12" cy="7" r="4" strokeWidth="2"/><path d="M5 21v-2a7 7 0 0 1 14 0v2" strokeWidth="2"/></svg>
+    <img src="/icons/instructions/waiter.png" alt="Waiter" style={{ width: '20px', height: '20px' }} />
   ),
   STAND_CLOSE: (
-    <svg width="20" height="20" fill="none" viewBox="0 0 24 24" stroke="black"><circle cx="12" cy="8" r="4" strokeWidth="2"/><rect x="6" y="16" width="12" height="4" rx="2" strokeWidth="2"/></svg>
+    <img src="/icons/instructions/standing-man.png" alt="Standing Man" style={{ width: '20px', height: '20px' }} />
   ),
   ORDER_CALL: (
-    <svg width="20" height="20" fill="none" viewBox="0 0 24 24" stroke="black"><path d="M12 19v-6" strokeWidth="2"/><path d="M8 13h8" strokeWidth="2"/><circle cx="12" cy="7" r="4" strokeWidth="2"/></svg>
+    <img src="/icons/instructions/bell.png" alt="Bell" style={{ width: '20px', height: '20px' }} />
   ),
   I_AM_DONE: (
-    <svg width="20" height="20" fill="none" viewBox="0 0 24 24" stroke="black"><path d="M5 13l4 4L19 7" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/></svg>
+    <img src="/icons/instructions/checkmark.png" alt="Checkmark" style={{ width: '20px', height: '20px' }} />
   ),
   CLOSE_ASSIST: (
-    <svg width="20" height="20" fill="none" viewBox="0 0 24 24" stroke="black"><path d="M6 18L18 6M6 6l12 12" strokeWidth="2" strokeLinecap="round"/></svg>
+    <img src="/icons/instructions/shopping-bag.png" alt="Shopping Bag" style={{ width: '20px', height: '20px' }} />
   ),
   DEFAULT: (
     <svg width="20" height="20" fill="none" viewBox="0 0 24 24" stroke="black"><circle cx="12" cy="12" r="10" strokeWidth="2"/></svg>

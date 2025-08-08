@@ -233,14 +233,14 @@ export const CLIENT_INSTRUCTION_CONTENT: Record<string, Record<string, { title: 
       iconText: 'Order'
     },
     [INSTRUCTION_LIST.I_AM_DONE]: { 
-      title: 'I am done', 
+      title: 'You are Done ?', 
       description: { text: 'Let us come and pick up your stuff' },
       iconText: 'Done'
     },
   },
   STORE: {
     [INSTRUCTION_LIST.I_AM_DONE]: { 
-      title: 'I am done', 
+      title: 'You are Done ?', 
       description: { text: 'Let us come and get your items billed and packed' },
       iconText: 'Done'
     },
