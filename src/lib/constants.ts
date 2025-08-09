@@ -78,6 +78,7 @@ export const INSTRUCTION_LIST = {
     'PAYMENT_CALL': 'PAYMENT_CALL',
     'WAIT_ITEM': 'WAIT_ITEM',
     'PHOTO': 'PHOTO',
+    'CANCEL': 'CANCEL',
 };
 
 export const CLIENT_INSTRUCTION_MANUAL = {
@@ -85,6 +86,7 @@ export const CLIENT_INSTRUCTION_MANUAL = {
       [INSTRUCTION_LIST.DEFAULT]: 'DEFAULT',
       [INSTRUCTION_LIST.QUEUE]: 'QUEUE',
       [INSTRUCTION_LIST.WAIT_OP]: 'WAIT_OP',
+      // [INSTRUCTION_LIST.CANCEL]: 'CANCEL',
   },
   'CAFE': {
       // 'WAIT_OP': 'WAIT_OP',
@@ -93,12 +95,14 @@ export const CLIENT_INSTRUCTION_MANUAL = {
       [INSTRUCTION_LIST.ORDER_CALL]: 'ORDER_CALL',
       [INSTRUCTION_LIST.I_AM_DONE]: 'I_AM_DONE',
       [INSTRUCTION_LIST.PHOTO]: 'PHOTO',
+      // [INSTRUCTION_LIST.CANCEL]: 'CANCEL',
   },
   'STORE': {
       [INSTRUCTION_LIST.I_AM_DONE]: 'I_AM_DONE',
       [INSTRUCTION_LIST.CLOSE_ASSIST]: 'CLOSE_ASSIST',
       [INSTRUCTION_LIST.BRING_STAFF]: 'BRING_STAFF',
       [INSTRUCTION_LIST.WAIT_OP]: 'WAIT_OP',
+      // [INSTRUCTION_LIST.CANCEL]: 'CANCEL',
   },
 };
 
@@ -148,6 +152,11 @@ export const INSTRUCTION_STATUS_UI_MAP: Record<string, Record<string, { text: st
     OPENED: { text: 'Companion will take photo for you' },
     ACTIONED: { text: 'Photo completed' },
   },
+  [INSTRUCTION_LIST.CANCEL]: {
+    UNREAD: { text: 'Cancel instruction sent' },
+    OPENED: { text: 'Cancelling current instruction' },
+    ACTIONED: { text: 'Instruction cancelled' },
+  },
 };
 
 export const CLIENT_INSTRUCTION_OPTIONS = {
@@ -160,6 +169,7 @@ export const CLIENT_INSTRUCTION_OPTIONS = {
     PAYMENT_CALL: [],
     WAIT_ITEM: [],
     PHOTO: [],
+    CANCEL: [],
 }   
 
 export const CLIENT_MODE_STATUS_UI_MAP: Record<string, Record<string, { text: string; image?: string; secondaryDiv: { text: string } }>> = {
@@ -204,6 +214,7 @@ export const RECIEVE_COMPANION_MSG_TYPE_MAP: Record<string, string> = {
   DEFAULT: 'Default instruction sent.',
   CLOSE_ASSIST: 'Assistance will be closed soon.',
   PHOTO: 'Photo request received.',
+  CANCEL: 'Cancel instruction received.',
   // Add more mappings as needed
 };
 
@@ -223,6 +234,11 @@ export const CLIENT_INSTRUCTION_CONTENT: Record<string, Record<string, { title: 
           title: 'Moving with you',
           description: { text: 'Companion will be moving with you, carrying your bags and making space for you' },
           iconText: 'With me'
+        },
+        [INSTRUCTION_LIST.CANCEL]: {
+          title: 'Cancel Instruction',
+          description: { text: 'Cancel the current active instruction' },
+          iconText: 'Cancel'
         },
   },
   CAFE: {
@@ -251,6 +267,11 @@ export const CLIENT_INSTRUCTION_CONTENT: Record<string, Record<string, { title: 
       description: { text: 'We will take a photo for you' },
       iconText: 'Photo'
     },
+    [INSTRUCTION_LIST.CANCEL]: {
+      title: 'Cancel Instruction',
+      description: { text: 'Cancel the current active instruction' },
+      iconText: 'Cancel'
+    },
   },
   STORE: {
     [INSTRUCTION_LIST.I_AM_DONE]: { 
@@ -272,6 +293,11 @@ export const CLIENT_INSTRUCTION_CONTENT: Record<string, Record<string, { title: 
       title: 'Wait outside', 
       description: { text: 'We will stand guard outside, waiting for your instructions' },
       iconText: 'Stand Guard'
+    },
+    [INSTRUCTION_LIST.CANCEL]: {
+      title: 'Cancel Instruction',
+      description: { text: 'Cancel the current active instruction' },
+      iconText: 'Cancel'
     },
   },
 };   
@@ -308,6 +334,14 @@ export const COMPANION_SCREEN_MAPPER: Record<string, { modeText: string; statuse
           [MSG_STATUS.UNREAD]: 'Do you want to start standing guard for the client?',
           [MSG_STATUS.OPENED]: 'You are in the middle of the action',
           [MSG_STATUS.ACTIONED]: 'You have completed standing guard for the client'
+        }
+      },
+      [INSTRUCTION_LIST.CANCEL]: { 
+        textToDisplay: 'Instruction: Cancel',
+        modalTexts: {
+          [MSG_STATUS.UNREAD]: 'Do you want to cancel the current instruction?',
+          [MSG_STATUS.OPENED]: 'You are cancelling the current instruction',
+          [MSG_STATUS.ACTIONED]: 'You have cancelled the current instruction'
         }
       },
     },
@@ -363,6 +397,14 @@ export const COMPANION_SCREEN_MAPPER: Record<string, { modeText: string; statuse
           [MSG_STATUS.ACTIONED]: 'You have completed taking a photo for the client'
         }
       },
+      [INSTRUCTION_LIST.CANCEL]: { 
+        textToDisplay: 'Instruction: Cancel',
+        modalTexts: {
+          [MSG_STATUS.UNREAD]: 'Do you want to cancel the current instruction?',
+          [MSG_STATUS.OPENED]: 'You are cancelling the current instruction',
+          [MSG_STATUS.ACTIONED]: 'You have cancelled the current instruction'
+        }
+      },
     },
   },
   [ACTIVITY_MODES.STORE]: {
@@ -407,6 +449,14 @@ export const COMPANION_SCREEN_MAPPER: Record<string, { modeText: string; statuse
           [MSG_STATUS.ACTIONED]: 'You have completed standing guard for the client'
         }
       },
+      [INSTRUCTION_LIST.CANCEL]: { 
+        textToDisplay: 'Instruction: Cancel',
+        modalTexts: {
+          [MSG_STATUS.UNREAD]: 'Do you want to cancel the current instruction?',
+          [MSG_STATUS.OPENED]: 'You are cancelling the current instruction',
+          [MSG_STATUS.ACTIONED]: 'You have cancelled the current instruction'
+        }
+      },
     },
   },
   [ACTIVITY_MODES.QUEUE]: {
@@ -423,6 +473,14 @@ export const COMPANION_SCREEN_MAPPER: Record<string, { modeText: string; statuse
           [MSG_STATUS.ACTIONED]: 'You have completed managing the queue for the client'
         }
       },
+      [INSTRUCTION_LIST.CANCEL]: { 
+        textToDisplay: 'Instruction: Cancel',
+        modalTexts: {
+          [MSG_STATUS.UNREAD]: 'Do you want to cancel the current instruction?',
+          [MSG_STATUS.OPENED]: 'You are cancelling the current instruction',
+          [MSG_STATUS.ACTIONED]: 'You have cancelled the current instruction'
+        }
+      },
     },
   },
 };
@@ -436,5 +494,6 @@ export const INSTRUCTION_ICONS: Record<string, string> = {
   I_AM_DONE: '/icons/instructions/checkmark.png',
   CLOSE_ASSIST: '/icons/instructions/shopping-bag.png',
   PHOTO: '/icons/instructions/camera.png',
+  CANCEL: '/icons/instructions/cancel.png',
   DEFAULT: 'default', // This will be handled as an SVG in the component
 };

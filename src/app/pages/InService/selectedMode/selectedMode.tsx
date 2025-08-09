@@ -5,7 +5,7 @@ import { useCompanionStore } from '@/store/store';
 import { database } from '@/lib/firebase'; // Assuming you have your firebase instance exported as 'database'
 import { ref, onValue, off } from 'firebase/database';
 import { storePaths, createClientInstructionProp, sendMsgToCompanion, listenToFirebaseKey, updateInSelfFirebase, updateValueInCompanion } from '@/lib/utils'; // Assuming storePaths and createClientInstructionProp are in utils.ts
-import { CLIENT_INSTRUCTION_MANUAL, COMPANION_ROLES, INSTRUCTION_STATUS_UI_MAP, CLIENT_MODE_STATUS_UI_MAP, MSG_STATUS, CLIENT_INSTRUCTION_CONTENT, INSTRUCTION_ICONS } from '@/lib/constants';
+import { CLIENT_INSTRUCTION_MANUAL, COMPANION_ROLES, INSTRUCTION_STATUS_UI_MAP, CLIENT_MODE_STATUS_UI_MAP, MSG_STATUS, CLIENT_INSTRUCTION_CONTENT, INSTRUCTION_ICONS, INSTRUCTION_LIST } from '@/lib/constants';
 import ClientFeatureExplainer from '../ClientFeatureExplainer';
 import ClientStatusDataScreen from '../ClientStatusDataScreen';
 import { useModal } from '@/components/ui/Modal';
@@ -215,7 +215,7 @@ const selectedMode: React.FC = () => {
         {...explainerProps}
         closeModal={closeModal}
         instruction={instruction}
-        handleCancel={() => () => {}} 
+        handleCancel={() => activateCompanionInstruction(INSTRUCTION_LIST.CANCEL)}
         handleYes={() => activateCompanionInstruction(instruction)}
         activeInstruction={activeInstruction}
         currentStatus={currentStatus}

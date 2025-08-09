@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 
 interface ActiveInstruction {
   instruction?: string;
@@ -25,8 +25,22 @@ const ClientFeatureExplainer: React.FC<ClientFeatureExplainerProps> = ({
   instruction = '',
   activeInstruction = { instruction: '', status: '' },
 }) => {
+  const [showCancelConfirmation, setShowCancelConfirmation] = useState(false);
   const isCurrentInstructionActive = instruction === activeInstruction.instruction;
   const hasActiveInstruction = activeInstruction.instruction && activeInstruction.status;
+  
+  const handleCancelClick = () => {
+    setShowCancelConfirmation(true);
+  };
+
+  const handleCancelConfirm = () => {
+    handleCancel();
+    setShowCancelConfirmation(false);
+  };
+
+  const handleCancelDeny = () => {
+    setShowCancelConfirmation(false);
+  };
   
   return (
     <div className="w-full max-w-md bg-white rounded-lg shadow-lg flex flex-col h-[400px] min-h-[350px]">
@@ -36,23 +50,44 @@ const ClientFeatureExplainer: React.FC<ClientFeatureExplainerProps> = ({
           {/* Cancel Instruction Title */}
           <div className="flex items-center justify-center w-full" style={{ flex: '0 0 25%' }}>
             <span className="text-black text-2xl font-bold text-center w-full p-4">
-              Cancel {title}
+              {showCancelConfirmation ? 'Confirm Cancellation' : `Cancel ${title}`}
             </span>
           </div>
           {/* Cancel Instruction Description */}
           <div className="flex items-start justify-center w-full" style={{ flex: '1 1 75%'}}>
             <div className="w-full text-center p-4 text-lg">
-              <p className="font-light">Are you sure you want to cancel this instruction?</p>
+              {showCancelConfirmation ? (
+                <p className="font-light">Are you absolutely sure you want to cancel this instruction?</p>
+              ) : (
+                <p className="font-light">Are you sure you want to cancel this instruction?</p>
+              )}
             </div>
           </div>
-          {/* Cancel Button */}
+          {/* Cancel Buttons */}
           <div className="w-full">
-            <button
-              className="w-full bg-red-500 text-white py-3 text-lg font-semibold rounded-lg hover:bg-red-600 focus:outline-none"
-              onClick={handleCancel}
-            >
-              Cancel instruction
-            </button>
+            {showCancelConfirmation ? (
+              <div className="flex gap-2">
+                <button
+                  className="flex-1 bg-red-500 text-white py-3 text-lg font-semibold rounded-lg hover:bg-red-600 focus:outline-none"
+                  onClick={handleCancelConfirm}
+                >
+                  Yes, Cancel
+                </button>
+                <button
+                  className="flex-1 bg-gray-500 text-white py-3 text-lg font-semibold rounded-lg hover:bg-gray-600 focus:outline-none"
+                  onClick={handleCancelDeny}
+                >
+                  No, Keep
+                </button>
+              </div>
+            ) : (
+              <button
+                className="w-full bg-red-500 text-white py-3 text-lg font-semibold rounded-lg hover:bg-red-600 focus:outline-none"
+                onClick={handleCancelClick}
+              >
+                Cancel instruction
+              </button>
+            )}
           </div>
         </>
       ) : hasActiveInstruction ? (
