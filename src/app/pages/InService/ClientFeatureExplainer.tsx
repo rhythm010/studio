@@ -13,6 +13,7 @@ interface ClientFeatureExplainerProps {
   handleCancel?: () => void;
   instruction?: string;
   activeInstruction?: ActiveInstruction;
+  currentStatus?: string;
 }
 
 const ClientFeatureExplainer: React.FC<ClientFeatureExplainerProps> = ({
@@ -25,6 +26,7 @@ const ClientFeatureExplainer: React.FC<ClientFeatureExplainerProps> = ({
   activeInstruction = { instruction: '', status: '' },
 }) => {
   const isCurrentInstructionActive = instruction === activeInstruction.instruction;
+  const hasActiveInstruction = activeInstruction.instruction && activeInstruction.status;
   
   return (
     <div className="w-full max-w-md bg-white rounded-lg shadow-lg flex flex-col h-[400px] min-h-[350px]">
@@ -50,6 +52,36 @@ const ClientFeatureExplainer: React.FC<ClientFeatureExplainerProps> = ({
               onClick={handleCancel}
             >
               Cancel instruction
+            </button>
+          </div>
+        </>
+      ) : hasActiveInstruction ? (
+        // Existing Active Instruction Flow
+        <>
+          {/* Existing Active Instruction Title */}
+          <div className="flex items-center justify-center w-full" style={{ flex: '0 0 25%' }}>
+            <span className="text-black text-2xl font-bold text-center w-full p-4">
+              Instruction in Progress
+            </span>
+          </div>
+          {/* Existing Active Instruction Description */}
+          <div className="flex items-start justify-center w-full" style={{ flex: '1 1 75%'}}>
+            <div className="w-full text-center p-4 text-lg">
+              <p className="font-light">
+                There is already an active instruction: <strong>{activeInstruction.instruction}</strong>
+              </p>
+              <p className="font-light mt-2">
+                Please wait for the current instruction to complete before sending a new one.
+              </p>
+            </div>
+          </div>
+          {/* Close Button */}
+          <div className="w-full">
+            <button
+              className="w-full bg-gray-500 text-white py-3 text-lg font-semibold rounded-lg hover:bg-gray-600 focus:outline-none"
+              onClick={closeModal}
+            >
+              Close
             </button>
           </div>
         </>

@@ -205,7 +205,7 @@ const selectedMode: React.FC = () => {
 
   const clientInstructionLaunchHandler = (instruction: string) => {
     // Create activeInstruction object based on clientQueueObj only
-    const activeInstruction = (clientQueueObj.status === MSG_STATUS.UNREAD || clientQueueObj.status === MSG_STATUS.ACTIONED)
+    const activeInstruction = clientQueueObj.status !== MSG_STATUS.ACTIONED
       ? { instruction: clientQueueObj.type, status: clientQueueObj.status }
       : { instruction: '', status: '' };
     
@@ -218,6 +218,7 @@ const selectedMode: React.FC = () => {
         handleCancel={() => () => {}} 
         handleYes={() => activateCompanionInstruction(instruction)}
         activeInstruction={activeInstruction}
+        currentStatus={currentStatus}
       />
     );
   };
@@ -280,13 +281,29 @@ const selectedMode: React.FC = () => {
     }
 
     const instructionKeys = Object.keys(CLIENT_INSTRUCTION_MANUAL[currentMode]) as Array<keyof typeof CLIENT_INSTRUCTION_MANUAL[typeof currentMode]>;
+    const currentModeInstructions = Object.values(CLIENT_INSTRUCTION_MANUAL[currentMode] || {});
+    
+    // Determine which instruction should be active
+    let activeInstructionType = '';
+    
+    // Priority 1: Active instruction (if exists and belongs to current mode) - only UNREAD or OPENED
+    if (clientQueueObj.type && currentModeInstructions.includes(clientQueueObj.type) && 
+        [MSG_STATUS.UNREAD, MSG_STATUS.OPENED].includes(clientQueueObj.status)) {
+      activeInstructionType = clientQueueObj.type;
+    }
+    // Priority 2: Current status (if no active instruction and status matches current mode)
+    else if (currentStatus && currentModeInstructions.includes(currentStatus)) {
+      activeInstructionType = currentStatus;
+    } else {
+      activeInstructionType = '';
+    }
     
     return instructionKeys.map((key) => {
       const instructionType = (CLIENT_INSTRUCTION_MANUAL[currentMode] as Record<string, string>)[key as string];
+      const isActive = instructionType === activeInstructionType;
       
-      // Check if this instruction is currently active (type matches and status is UNREAD or ACTIONED)
-      const isActive = clientQueueObj.type === instructionType && 
-        (clientQueueObj.status === MSG_STATUS.UNREAD || clientQueueObj.status === MSG_STATUS.ACTIONED);
+      // Check if button should be disabled (WAIT_OP in STORE mode)
+      const isDisabled = currentMode === 'STORE' && instructionType === 'WAIT_OP';
       
       // Get the icon text from CLIENT_INSTRUCTION_CONTENT
       const iconText = CLIENT_INSTRUCTION_CONTENT[currentMode]?.[instructionType]?.iconText || instructionType;
@@ -296,10 +313,11 @@ const selectedMode: React.FC = () => {
           <button
             id={`instruction_button_${key}`}
             className={`rounded-full shadow-lg flex items-center justify-center ${
-              isActive ? 'bg-green-500 hover:bg-green-600' : 'bg-white hover:bg-gray-200'
+              isActive ? 'bg-green-500 hover:bg-green-600' : isDisabled ? 'bg-gray-300 cursor-not-allowed' : 'bg-white hover:bg-gray-200'
             }`}
             style={{ width: '3.4rem', height: '3.4rem' }}
-            onClick={() => clientInstructionLaunchHandler(instructionType)}
+            onClick={isDisabled ? undefined : () => clientInstructionLaunchHandler(instructionType)}
+            disabled={isDisabled}
           >
             {getInstructionIcon(instructionType)}
           </button>
