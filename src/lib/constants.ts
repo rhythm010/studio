@@ -77,6 +77,7 @@ export const INSTRUCTION_LIST = {
     'CLEAR_TABLE': 'CLEAR_TABLE',
     'PAYMENT_CALL': 'PAYMENT_CALL',
     'WAIT_ITEM': 'WAIT_ITEM',
+    'PHOTO': 'PHOTO',
 };
 
 export const CLIENT_INSTRUCTION_MANUAL = {
@@ -91,6 +92,7 @@ export const CLIENT_INSTRUCTION_MANUAL = {
       [INSTRUCTION_LIST.STAND_CLOSE]: 'STAND_CLOSE',
       [INSTRUCTION_LIST.ORDER_CALL]: 'ORDER_CALL',
       [INSTRUCTION_LIST.I_AM_DONE]: 'I_AM_DONE',
+      [INSTRUCTION_LIST.PHOTO]: 'PHOTO',
   },
   'STORE': {
       [INSTRUCTION_LIST.I_AM_DONE]: 'I_AM_DONE',
@@ -141,7 +143,12 @@ export const INSTRUCTION_STATUS_UI_MAP: Record<string, Record<string, { text: st
     OPENED: { text: 'Companions will come now' },
     ACTIONED: { text: 'Instructions completed' },
   },
-}; 
+  [INSTRUCTION_LIST.PHOTO]: {
+    UNREAD: { text: 'Photo request sent' },
+    OPENED: { text: 'Companion will take photo for you' },
+    ACTIONED: { text: 'Photo completed' },
+  },
+};
 
 export const CLIENT_INSTRUCTION_OPTIONS = {
     DEFAULT: [],
@@ -152,6 +159,7 @@ export const CLIENT_INSTRUCTION_OPTIONS = {
     ORDER_CALL: ['CANCEL'],
     PAYMENT_CALL: [],
     WAIT_ITEM: [],
+    PHOTO: [],
 }   
 
 export const CLIENT_MODE_STATUS_UI_MAP: Record<string, Record<string, { text: string; image?: string; secondaryDiv: { text: string } }>> = {
@@ -195,6 +203,7 @@ export const RECIEVE_COMPANION_MSG_TYPE_MAP: Record<string, string> = {
   QUEUE: 'You are in the queue.',
   DEFAULT: 'Default instruction sent.',
   CLOSE_ASSIST: 'Assistance will be closed soon.',
+  PHOTO: 'Photo request received.',
   // Add more mappings as needed
 };
 
@@ -236,6 +245,11 @@ export const CLIENT_INSTRUCTION_CONTENT: Record<string, Record<string, { title: 
       title: 'You are Done ?', 
       description: { text: 'Let us come and pick up your stuff' },
       iconText: 'Done'
+    },
+    [INSTRUCTION_LIST.PHOTO]: { 
+      title: 'Take Photo', 
+      description: { text: 'We will take a photo for you' },
+      iconText: 'Photo'
     },
   },
   STORE: {
@@ -341,6 +355,14 @@ export const COMPANION_SCREEN_MAPPER: Record<string, { modeText: string; statuse
           [MSG_STATUS.ACTIONED]: 'You have completed finishing service for the client'
         }
       },
+      [INSTRUCTION_LIST.PHOTO]: { 
+        textToDisplay: 'Instruction: Take Photo',
+        modalTexts: {
+          [MSG_STATUS.UNREAD]: 'Do you want to start taking a photo for the client?',
+          [MSG_STATUS.OPENED]: 'Do you want to start taking a photo for the client?',
+          [MSG_STATUS.ACTIONED]: 'You have completed taking a photo for the client'
+        }
+      },
     },
   },
   [ACTIVITY_MODES.STORE]: {
@@ -403,4 +425,16 @@ export const COMPANION_SCREEN_MAPPER: Record<string, { modeText: string; statuse
       },
     },
   },
+};
+
+export const INSTRUCTION_ICONS: Record<string, string> = {
+  QUEUE: '/icons/instructions/queue.png',
+  WAIT_OP: '/icons/instructions/security-guard.png',
+  BRING_STAFF: '/icons/instructions/waiter.png',
+  STAND_CLOSE: '/icons/instructions/standing-man.png',
+  ORDER_CALL: '/icons/instructions/bell.png',
+  I_AM_DONE: '/icons/instructions/checkmark.png',
+  CLOSE_ASSIST: '/icons/instructions/shopping-bag.png',
+  PHOTO: '/icons/instructions/camera.png',
+  DEFAULT: 'default', // This will be handled as an SVG in the component
 };

@@ -5,36 +5,26 @@ import { useCompanionStore } from '@/store/store';
 import { database } from '@/lib/firebase'; // Assuming you have your firebase instance exported as 'database'
 import { ref, onValue, off } from 'firebase/database';
 import { storePaths, createClientInstructionProp, sendMsgToCompanion, listenToFirebaseKey, updateInSelfFirebase, updateValueInCompanion } from '@/lib/utils'; // Assuming storePaths and createClientInstructionProp are in utils.ts
-import { CLIENT_INSTRUCTION_MANUAL, COMPANION_ROLES, INSTRUCTION_STATUS_UI_MAP, CLIENT_MODE_STATUS_UI_MAP, MSG_STATUS, CLIENT_INSTRUCTION_CONTENT } from '@/lib/constants';
+import { CLIENT_INSTRUCTION_MANUAL, COMPANION_ROLES, INSTRUCTION_STATUS_UI_MAP, CLIENT_MODE_STATUS_UI_MAP, MSG_STATUS, CLIENT_INSTRUCTION_CONTENT, INSTRUCTION_ICONS } from '@/lib/constants';
 import ClientFeatureExplainer from '../ClientFeatureExplainer';
 import ClientStatusDataScreen from '../ClientStatusDataScreen';
 import { useModal } from '@/components/ui/Modal';
 
-const INSTRUCTION_ICONS: Record<string, JSX.Element> = {
-  QUEUE: (
-    <img src="/icons/instructions/queue.png" alt="Queue" style={{ width: '20px', height: '20px' }} />
-  ),
-  WAIT_OP: (
-    <img src="/icons/instructions/security-guard.png" alt="Security Guard" style={{ width: '20px', height: '20px' }} />
-  ),
-  BRING_STAFF: (
-    <img src="/icons/instructions/waiter.png" alt="Waiter" style={{ width: '20px', height: '20px' }} />
-  ),
-  STAND_CLOSE: (
-    <img src="/icons/instructions/standing-man.png" alt="Standing Man" style={{ width: '20px', height: '20px' }} />
-  ),
-  ORDER_CALL: (
-    <img src="/icons/instructions/bell.png" alt="Bell" style={{ width: '20px', height: '20px' }} />
-  ),
-  I_AM_DONE: (
-    <img src="/icons/instructions/checkmark.png" alt="Checkmark" style={{ width: '20px', height: '20px' }} />
-  ),
-  CLOSE_ASSIST: (
-    <img src="/icons/instructions/shopping-bag.png" alt="Shopping Bag" style={{ width: '20px', height: '20px' }} />
-  ),
-  DEFAULT: (
-    <svg width="20" height="20" fill="none" viewBox="0 0 24 24" stroke="black"><circle cx="12" cy="12" r="10" strokeWidth="2"/></svg>
-  ),
+// Helper function to convert icon path to JSX element
+const getInstructionIcon = (instructionType: string): JSX.Element => {
+  const iconPath = INSTRUCTION_ICONS[instructionType];
+  
+  if (!iconPath || iconPath === 'default') {
+    return (
+      <svg width="20" height="20" fill="none" viewBox="0 0 24 24" stroke="black">
+        <circle cx="12" cy="12" r="10" strokeWidth="2"/>
+      </svg>
+    );
+  }
+  
+  return (
+    <img src={iconPath} alt={instructionType} style={{ width: '20px', height: '20px' }} />
+  );
 };
 
 const selectedMode: React.FC = () => {
@@ -294,7 +284,7 @@ const selectedMode: React.FC = () => {
             style={{ width: '3.4rem', height: '3.4rem' }}
             onClick={() => clientInstructionLaunchHandler(instructionType)}
           >
-            {INSTRUCTION_ICONS[instructionType] || INSTRUCTION_ICONS.DEFAULT}
+            {getInstructionIcon(instructionType)}
           </button>
           <span className="font-light text-center mt-2" style={{ fontSize: '0.8rem' }}>{iconText}</span>
         </div>
