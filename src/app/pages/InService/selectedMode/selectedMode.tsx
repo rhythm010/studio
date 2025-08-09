@@ -204,19 +204,20 @@ const selectedMode: React.FC = () => {
   };
 
   const clientInstructionLaunchHandler = (instruction: string) => {
-    // Check if instruction is already active
-    const isInstructionActive = currentStatus === instruction;
+    // Create activeInstruction object based on clientQueueObj only
+    const activeInstruction = (clientQueueObj.status === MSG_STATUS.UNREAD || clientQueueObj.status === MSG_STATUS.ACTIONED)
+      ? { instruction: clientQueueObj.type, status: clientQueueObj.status }
+      : { instruction: '', status: '' };
     
-    // If instruction is already active, send DEFAULT instead
-    const instructionToSend = isInstructionActive ? 'DEFAULT' : instruction;
-    
-    const explainerProps = createClientInstructionProp(instructionToSend);
+    const explainerProps = createClientInstructionProp(instruction);
     openModal(
       <ClientFeatureExplainer
         {...explainerProps}
         closeModal={closeModal}
-        handleYes={() => activateCompanionInstruction(instructionToSend)}
-        isActive={isInstructionActive}
+        instruction={instruction}
+        handleCancel={() => () => {}} 
+        handleYes={() => activateCompanionInstruction(instruction)}
+        activeInstruction={activeInstruction}
       />
     );
   };
@@ -256,6 +257,21 @@ const selectedMode: React.FC = () => {
     return CLIENT_MODE_STATUS_UI_MAP[currentMode]?.[currentStatus]?.secondaryDiv?.text || '';
   };
 
+  // Helper function to get instruction icon
+  const getInstructionIcon = (instructionType: string) => {
+    const iconPath = INSTRUCTION_ICONS[instructionType];
+    
+    if (iconPath && iconPath !== 'default') {
+      return <img src={iconPath} alt={instructionType} style={{ width: '20px', height: '20px' }} />;
+    }
+    
+    // Default SVG for unknown instructions
+    return (
+      <svg width="20" height="20" fill="none" viewBox="0 0 24 24" stroke="black">
+        <circle cx="12" cy="12" r="10" strokeWidth="2"/>
+      </svg>
+    );
+  };
 
   // Helper function to render instruction buttons
   const renderInstructionButtons = () => {
@@ -268,8 +284,9 @@ const selectedMode: React.FC = () => {
     return instructionKeys.map((key) => {
       const instructionType = (CLIENT_INSTRUCTION_MANUAL[currentMode] as Record<string, string>)[key as string];
       
-      // Only the current status should be active, not multiple buttons
-      const isActive = currentStatus === instructionType;
+      // Check if this instruction is currently active (type matches and status is UNREAD or ACTIONED)
+      const isActive = clientQueueObj.type === instructionType && 
+        (clientQueueObj.status === MSG_STATUS.UNREAD || clientQueueObj.status === MSG_STATUS.ACTIONED);
       
       // Get the icon text from CLIENT_INSTRUCTION_CONTENT
       const iconText = CLIENT_INSTRUCTION_CONTENT[currentMode]?.[instructionType]?.iconText || instructionType;
