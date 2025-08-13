@@ -96,7 +96,7 @@ export const CLIENT_INSTRUCTION_MANUAL = {
   },
   'STORE': {
       [INSTRUCTION_LIST.I_AM_DONE]: 'I_AM_DONE',
-      [INSTRUCTION_LIST.CLOSE_ASSIST]: 'CLOSE_ASSIST',
+      // [INSTRUCTION_LIST.CLOSE_ASSIST]: 'CLOSE_ASSIST',
       [INSTRUCTION_LIST.BRING_STAFF]: 'BRING_STAFF',
       [INSTRUCTION_LIST.WAIT_OP]: 'WAIT_OP',
       // [INSTRUCTION_LIST.CANCEL]: 'CANCEL',
@@ -213,86 +213,101 @@ export const RECIEVE_COMPANION_MSG_TYPE_MAP: Record<string, string> = {
   // Add more mappings as needed
 };
 
-export const CLIENT_INSTRUCTION_CONTENT: Record<string, Record<string, { title: string; description: { text: string; image?: string }; iconText: string }>> = {
+export const CLIENT_INSTRUCTION_CONTENT: Record<string, Record<string, { title: string; description: { text: string; image?: string }; iconText: string; iconImage?: string }>> = {
   WITH_YOU: {
         [INSTRUCTION_LIST.QUEUE]: { 
           title: 'Stand In Queue', 
           description: { text: 'When we are here, you never have to stand in any queue', image: '/images/instructions/QUEUE.png' },
-          iconText: 'Queue'
+          iconText: 'Queue',
+          iconImage: '/icons/instructions/queue.png'
         },
         [INSTRUCTION_LIST.WAIT_OP]: { 
           title: 'Stand at a Distance', 
           description: { text: 'Need Privacy or going for prayer ? We will stand and wait for you', image: '/images/instructions/WAIT_OP.png' },
-          iconText: 'Stand Guard'
+          iconText: 'Stand Guard',
+          iconImage: '/icons/instructions/security-guard.png'
         },
         [INSTRUCTION_LIST.DEFAULT]: {
           title: 'Moving with you',
           description: { text: 'Companion will be moving with you, carrying your bags and making space for you', image: '/images/instructions/I_AM_DONE.png' },
-          iconText: 'With me'
+          iconText: 'With me',
+          iconImage: '/icons/instructions/standing-man.png'
         },
         [INSTRUCTION_LIST.CANCEL]: {
           title: 'Cancel Instruction',
           description: { text: 'Cancel the current active instruction' },
-          iconText: 'Cancel'
+          iconText: 'Cancel',
+          iconImage: '/icons/cancel_mode.png'
         },
   },
   CAFE: {
     [INSTRUCTION_LIST.BRING_STAFF]: { 
       title: 'Bring Staff', 
       description: { text: 'We will present the staff to your table', image: '/images/instructions/BRING_STAFF.png' },
-      iconText: 'Bring Staff'
+      iconText: 'Bring Staff',
+      iconImage: '/icons/instructions/waiter.png'
     },
     [INSTRUCTION_LIST.STAND_CLOSE]: { 
       title: 'Stand Close By', 
       description: { text: 'Let us give you that extra presence', image: '/images/instructions/CLOSE_ASSIST.png' },
-      iconText: 'Stand Close'
+      iconText: 'Stand Close',
+      iconImage: '/icons/instructions/standing-man.png'
     },
     [INSTRUCTION_LIST.ORDER_CALL]: { 
       title: 'Place order for me', 
       description: { text: 'Just tell what you want, pay and relax. We will take care of the rest', image: '/images/instructions/ORDER_CALL.png' },
-      iconText: 'Order'
+      iconText: 'Order',
+      iconImage: '/icons/instructions/bell.png'
     },
     [INSTRUCTION_LIST.I_AM_DONE]: { 
       title: 'You are Done ?', 
       description: { text: 'Let us come and pick up your stuff', image: '/images/instructions/I_AM_DONE.png' },
-      iconText: 'Done'
+      iconText: 'Done',
+      iconImage: '/icons/instructions/checkmark.png'
     },
     [INSTRUCTION_LIST.PHOTO]: { 
       title: 'Take Photo', 
       description: { text: 'We will take a photo for you', image: '/images/instructions/PHOTO.png' },
-      iconText: 'Photo'
+      iconText: 'Photo',
+      iconImage: '/icons/instructions/camera.png'
     },
     [INSTRUCTION_LIST.CANCEL]: {
       title: 'Cancel Instruction',
       description: { text: 'Cancel the current active instruction' },
-      iconText: 'Cancel'
+      iconText: 'Cancel',
+      iconImage: '/icons/cancel_mode.png'
     },
   },
   STORE: {
     [INSTRUCTION_LIST.I_AM_DONE]: { 
       title: 'You are Done ?', 
       description: { text: 'Let us come and get your items billed and packed', image: '/images/instructions/I_AM_DONE.png' },
-      iconText: 'Done'
+      iconText: 'Done',
+      iconImage: '/icons/instructions/shopping-bag.png'
     },
     [INSTRUCTION_LIST.CLOSE_ASSIST]: { 
       title: 'Come help me', 
       description: { text: 'One of us will come with you to hold any items that you want', image: '/images/instructions/CLOSE_ASSIST.png' },
-      iconText: 'Assist'
+      iconText: 'Assist',
+      iconImage: '/icons/instructions/shopping-bag.png'
     },
     [INSTRUCTION_LIST.BRING_STAFF]: { 
       title: 'Call staff', 
       description: { text: 'We will be calling staff for you', image: '/images/instructions/BRING_STAFF.png' },
-      iconText: 'Bring Staff'
+      iconText: 'Bring Staff',
+      iconImage: '/icons/instructions/waiter.png'
     },
     [INSTRUCTION_LIST.WAIT_OP]: { 
       title: 'Wait outside', 
       description: { text: 'We will stand guard outside, waiting for your instructions' },
-      iconText: 'Stand Guard'
+      iconText: 'Stand Guard',
+      iconImage: '/icons/instructions/security-guard.png'
     },
     [INSTRUCTION_LIST.CANCEL]: {
       title: 'Cancel Instruction',
       description: { text: 'Cancel the current active instruction' },
-      iconText: 'Cancel'
+      iconText: 'Cancel',
+      iconImage: '/icons/cancel_mode.png'
     },
   },
 };   

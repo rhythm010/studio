@@ -47,12 +47,6 @@ const ClientFeatureExplainer: React.FC<ClientFeatureExplainerProps> = ({
       {isCurrentInstructionActive ? (
         // Cancel Instruction Flow
         <>
-          {/* Cancel Instruction Title */}
-          <div className="flex items-center justify-center w-full flex-shrink-0" style={{ minHeight: '50px' }}>
-            <span className="text-black text-xl font-bold text-center w-full px-2">
-              {showCancelConfirmation ? 'Confirm Cancellation' : `Cancel ${title}`}
-            </span>
-          </div>
           {/* Cancel Instruction Description */}
           <div className="flex items-start justify-center w-full flex-1 overflow-hidden">
             <div className="w-full text-center p-2 text-base">
@@ -93,12 +87,6 @@ const ClientFeatureExplainer: React.FC<ClientFeatureExplainerProps> = ({
       ) : hasActiveInstruction ? (
         // Existing Active Instruction Flow
         <>
-          {/* Existing Active Instruction Title */}
-          <div className="flex items-center justify-center w-full flex-shrink-0" style={{ minHeight: '50px' }}>
-            <span className="text-black text-xl font-bold text-center w-full px-2">
-              Instruction in Progress
-            </span>
-          </div>
           {/* Existing Active Instruction Description */}
           <div className="flex items-start justify-center w-full flex-1 overflow-hidden">
             <div className="w-full text-center p-2 text-base">
@@ -123,30 +111,29 @@ const ClientFeatureExplainer: React.FC<ClientFeatureExplainerProps> = ({
       ) : (
         // Normal Instruction Flow
         <>
-          {/* Normal Instruction Title */}
-          <div className="flex items-center justify-center w-full flex-shrink-0" style={{ minHeight: '50px' }}>
-            <span className="text-black text-xl font-bold text-center w-full px-2">
-              {title}
-            </span>
-          </div>
           {/* Normal Instruction Description */}
-          <div className="flex items-center justify-center w-full flex-1 overflow-hidden p-2">
-            <div className="w-full h-full flex items-center justify-center">
-              {description.image ? (
+          <div className="flex flex-col items-center justify-center w-full flex-1 overflow-hidden p-2">
+            {description.text && (
+              <div className="w-full text-center mb-4 -mt-2">
+                <div className="bg-gray-50 border border-gray-200 rounded-lg p-3">
+                  <p className="font-bold text-md text-gray-700">{description.text}</p>
+                </div>
+              </div>
+            )}
+            {description.image && (
+              <div className="w-full flex items-center justify-center flex-1">
                 <img 
                   src={description.image} 
                   alt="Instruction" 
-                  className="w-full h-full object-contain rounded-xl" 
+                  className="w-full object-contain rounded-xl" 
                   style={{ 
                     maxHeight: '280px',
                     maxWidth: '100%',
                     borderRadius: '12px'
                   }}
                 />
-              ) : (
-                <p className="font-light text-base text-center">{description.text}</p>
-              )}
-            </div>
+              </div>
+            )}
           </div>
           {/* Send Button */}
           <div className="w-full flex-shrink-0 p-2 pt-0">

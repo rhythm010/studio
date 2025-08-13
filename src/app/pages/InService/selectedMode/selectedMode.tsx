@@ -210,6 +210,17 @@ const selectedMode: React.FC = () => {
       : { instruction: '', status: '' };
     
     const explainerProps = createClientInstructionProp(instruction);
+    
+    // Determine modal title based on the scenario
+    let modalTitle = 'Instruction';
+    if (instruction === activeInstruction.instruction) {
+      modalTitle = 'Cancel Instruction';
+    } else if (activeInstruction.instruction && activeInstruction.status) {
+      modalTitle = 'Instruction in Progress';
+    } else {
+      modalTitle = explainerProps.title || 'Instruction';
+    }
+    
     openModal(
       <ClientFeatureExplainer
         {...explainerProps}
@@ -219,7 +230,8 @@ const selectedMode: React.FC = () => {
         handleYes={() => activateCompanionInstruction(instruction)}
         activeInstruction={activeInstruction}
         currentStatus={currentStatus}
-      />
+      />,
+      modalTitle
     );
   };
 
@@ -260,8 +272,15 @@ const selectedMode: React.FC = () => {
 
   // Helper function to get instruction icon
   const getInstructionIcon = (instructionType: string) => {
-    const iconPath = INSTRUCTION_ICONS[instructionType];
+    const modeInstructionContent = CLIENT_INSTRUCTION_CONTENT[currentMode];
+    const iconImage = modeInstructionContent?.[instructionType]?.iconImage;
     
+    if (iconImage) {
+      return <img src={iconImage} alt={instructionType} style={{ width: '20px', height: '20px' }} />;
+    }
+    
+    // Fallback to the global INSTRUCTION_ICONS mapping for any edge cases
+    const iconPath = INSTRUCTION_ICONS[instructionType];
     if (iconPath && iconPath !== 'default') {
       return <img src={iconPath} alt={instructionType} style={{ width: '20px', height: '20px' }} />;
     }
