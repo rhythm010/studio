@@ -824,3 +824,21 @@ export async function getClientChangePermission(changeKey: string, changeValue: 
     return false;
   }
 }
+
+// Prefetch instruction images for better performance
+export const prefetchInstructionImages = () => {
+  const instructionImages = [
+    '/images/instructions/BRING_STAFF.png',
+    '/images/instructions/CLOSE_ASSIST.png',
+    '/images/instructions/I_AM_DONE.png',
+    '/images/instructions/ORDER_CALL.png',
+    '/images/instructions/PHOTO.png',
+    '/images/instructions/QUEUE.png',
+    '/images/instructions/WAIT_OP.png'
+  ];
+
+  instructionImages.forEach(imagePath => {
+    const img = new Image();
+    img.src = imagePath;
+  });
+};

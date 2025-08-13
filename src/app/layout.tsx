@@ -13,7 +13,7 @@ import React, { useEffect } from 'react';
 import { useCompanionStore } from '@/store/store';
 import { database } from '@/lib/firebase';
 import { ref, onValue, off } from 'firebase/database';
-import { listenToCompaionRecieveQueue, storePaths } from '@/lib/utils';
+import { listenToCompaionRecieveQueue, storePaths, prefetchInstructionImages } from '@/lib/utils';
 import './globals.css';
 
 const roboto = Roboto({
@@ -55,7 +55,10 @@ const RootLayout: React.FC<{ children: React.ReactNode }> = ({
     }
   }, [sessionId]); // Re-run effect when sessionId changes
 
-  
+  useEffect(() => {
+    // Prefetch instruction images for better performance
+    prefetchInstructionImages();
+  }, []);
 
   return (
       <html lang='en' className={roboto.className}>
