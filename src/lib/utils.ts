@@ -37,10 +37,13 @@ export const storePaths = {
     clientSessionId: "companionProfileDetails/clientSessionId",
     companionRole: "companionProfileDetails/companionRole",
   },
- ClientCompanionDetails: {
- path: "clientCompanionDetails",
+  clientCompanionDetails: {
+    path: "clientCompanionDetails",
+    primaryCompanionSessionId: "clientCompanionDetails/primaryCompanionSessionId",
+    secondaryCompanionSessionId: "clientCompanionDetails/secondaryCompanionSessionId",
   },
   serviceRunning: "serviceRunning",
+  connectionStatus: "connectionStatus",
   companionQueueManage: {
     path: "companionQueueManage",
     queueActivated: "companionQueueManage/queueActivated",
@@ -59,7 +62,6 @@ export const storePaths = {
     modeTitle: "ClientActivityMonitor/modeTitle",
     currentMode: "ClientActivityMonitor/currentMode",
     currentStatus: "ClientActivityMonitor/currentStatus",
-
     statusInfo: {
       path: "ClientActivityMonitor/statusInfo",
       QUEUE: {
@@ -73,22 +75,47 @@ export const storePaths = {
         path: "ClientActivityMonitor/statusInfo/PAYMENT_CALL",
         active: "ClientActivityMonitor/statusInfo/PAYMENT_CALL/active",
         time: "ClientActivityMonitor/statusInfo/PAYMENT_CALL/time",
-        actionButtons: "ClientActivityMonitor/ClientActivityMonitor/statusInfo/PAYMENT_CALL/actionButtons",
+        actionButtons: "ClientActivityMonitor/statusInfo/PAYMENT_CALL/actionButtons",
       },
-      WAIT_ITEM: { path: "ClientActivityMonitor/statusInfo/WAIT_ITEM", active: "ClientActivityMonitor/statusInfo/WAIT_ITEM/active", time: "ClientActivityMonitor/statusInfo/WAIT_ITEM/time", actionButtons: "ClientActivityMonitor/statusInfo/WAIT_ITEM/actionButtons" },
-      WAIT_OP: { path: "ClientActivityMonitor/statusInfo/WAIT_OP", active: "ClientActivityMonitor/statusInfo/WAIT_OP/active", actionButtons: "ClientActivityMonitor/statusInfo/WAIT_OP/actionButtons" },
-      WITH_YOU: { path: "ClientActivityMonitor/statusInfo/WITH_YOU", active: "ClientActivityMonitor/statusInfo/WITH_YOU/active", actionButtons: "ClientActivityMonitor/statusInfo/WITH_YOU/actionButtons" },
+      WAIT_ITEM: { 
+        path: "ClientActivityMonitor/statusInfo/WAIT_ITEM", 
+        active: "ClientActivityMonitor/statusInfo/WAIT_ITEM/active", 
+        time: "ClientActivityMonitor/statusInfo/WAIT_ITEM/time", 
+        actionButtons: "ClientActivityMonitor/statusInfo/WAIT_ITEM/actionButtons" 
+      },
+      WAIT_OP: { 
+        path: "ClientActivityMonitor/statusInfo/WAIT_OP", 
+        active: "ClientActivityMonitor/statusInfo/WAIT_OP/active", 
+        actionButtons: "ClientActivityMonitor/statusInfo/WAIT_OP/actionButtons" 
+      },
+      WITH_YOU: { 
+        path: "ClientActivityMonitor/statusInfo/WITH_YOU", 
+        active: "ClientActivityMonitor/statusInfo/WITH_YOU/active", 
+        actionButtons: "ClientActivityMonitor/statusInfo/WITH_YOU/actionButtons" 
+      },
+      DEFAULT: {
+        path: "ClientActivityMonitor/statusInfo/DEFAULT",
+        active: "ClientActivityMonitor/statusInfo/DEFAULT/active",
+        actionButtons: "ClientActivityMonitor/statusInfo/DEFAULT/actionButtons",
+      },
     },
-    companionFlow: { path: "ClientActivityMonitor/companionFlow", selectedMode: "ClientActivityMonitor/companionFlow/selectedMode" },
+    companionFlow: { 
+      path: "ClientActivityMonitor/companionFlow", 
+      selectedMode: "ClientActivityMonitor/companionFlow/selectedMode" 
+    },
   },
   CompanionAcvitiyMonitor: {
     path: "CompanionAcvitiyMonitor",
- sendCompanionMsgQueue: "CompanionAcvitiyMonitor/sendCompanionMsgQueue",
- recieveCompanionMsgQueue: "CompanionAcvitiyMonitor/recieveCompanionMsgQueue",
+    sendCompanionMsgQueue: "CompanionAcvitiyMonitor/sendCompanionMsgQueue",
+    recieveCompanionMsgQueue: "CompanionAcvitiyMonitor/recieveCompanionMsgQueue",
     selectedMode: "CompanionAcvitiyMonitor/selectedMode",
     companionCurrentStatus: "CompanionAcvitiyMonitor/companionCurrentStatus",
     selectedSubMode: "CompanionAcvitiyMonitor/selectedSubMode",
-
+    QUEUE: {
+      path: "CompanionAcvitiyMonitor/QUEUE",
+      active: "CompanionAcvitiyMonitor/QUEUE/active",
+      currentPosition: "CompanionAcvitiyMonitor/QUEUE/currentPosition",
+    },
     PAYMENT_CALL: {
       path: "CompanionAcvitiyMonitor/PAYMENT_CALL",
       active: "CompanionAcvitiyMonitor/PAYMENT_CALL/active",
@@ -110,8 +137,6 @@ export const storePaths = {
       active: "CompanionAcvitiyMonitor/DEFAULT/active",
     },
   },
-  ClientMsgQueue: "ClientMsgQueue",
-  CompanionMsgQueue: "CompanionMsgQueue",
 };
 
 export function extractDataFromStore(storeObject: any): any {
@@ -119,13 +144,20 @@ export function extractDataFromStore(storeObject: any): any {
   for (const key in storeObject) {
     if (Object.prototype.hasOwnProperty.call(storeObject, key)) {
       const value = storeObject[key];
-      if (typeof value !== 'function') {
-        if (typeof value === 'object' && value !== null && !Array.isArray(value)) {
-          // Recursively filter nested objects
-          data[key] = extractDataFromStore(value);
-        } else {
-          data[key] = value;
+      // Skip functions and methods
+      if (typeof value === 'function') {
+        continue;
+      }
+      
+      if (typeof value === 'object' && value !== null && !Array.isArray(value)) {
+        // Recursively filter nested objects
+        const nestedData = extractDataFromStore(value);
+        // Only add if the nested object has data (not empty)
+        if (Object.keys(nestedData).length > 0) {
+          data[key] = nestedData;
         }
+      } else {
+        data[key] = value;
       }
     }
   }
@@ -425,7 +457,6 @@ export async function updateInSelfFirebase(path: string, val: any) {
   }
 }
 
-
 // Async function to send messages to the client
 
 function formMessageObj(messageType: string, messageData: object, messageSender:string) {
@@ -465,7 +496,6 @@ export async function sendMsgToClient(messageType: string, messageData: object) 
     console.error(`Error sending message to client ${clientSessionId}:`, error);
   }
 }
-
 
 export async function sendMsgToCompanion(messageType: string, messageData: object, companionRole:string) {
   if (!messageType) {
@@ -549,7 +579,7 @@ export async function listenToPrimaryCompanionMessages() {
   if (!clientSessionId) {
     console.error("Client session ID is not available. Cannot listen for messages.");
     // Return a no-op unsubscribe function
- return () => {};
+    return () => {};
   }
 
   // Construct the database reference to the recieveClientMsgQueue for this client session
@@ -598,7 +628,6 @@ export function listenToFirebaseKey(sessionId: string, keyPath: string, callback
   });
   return () => off(keyRef, 'value', listener as any);
 }
-
 
 export function createClientInstructionProp(instruction: string) {
   // Get the current mode from the store
@@ -743,5 +772,55 @@ export async function handleManualSessionIdSubmit(
     console.error('Error connecting to session:', error);
   } finally {
     setIsConnecting(false);
+  }
+}
+
+export async function getClientChangePermission(changeKey: string, changeValue: any) {
+  try {
+    // Get current session ID
+    const sessionId = useCompanionStore.getState().getSessionId();
+    if (!sessionId) {
+      console.warn('No session ID available for permission check');
+      return false;
+    }
+
+    // Get companion role from store
+    const companionRole = useCompanionStore.getState().getCompanionRole();
+    if (!companionRole) {
+      console.warn('No companion role available for permission check');
+      return false;
+    }
+
+    // Define role-based permissions for different keys
+    const primaryCompanionAllowed: Record<string, boolean> = {
+      // Client Activity Monitor
+      [storePaths.ClientActivityMonitor.currentMode]: true,
+    };
+
+    const secondaryCompanionAllowed: Record<string, boolean> = {
+    };
+
+    // Check permissions based on role
+    let hasPermission = false;
+    
+    if (companionRole.toUpperCase() === COMPANION_ROLES.PRIMARY) {
+      hasPermission = primaryCompanionAllowed[changeKey] || false;
+    } else if (companionRole.toUpperCase() === COMPANION_ROLES.SECONDARY) {
+      hasPermission = secondaryCompanionAllowed[changeKey] || false;
+    } else {
+      console.warn(`Unknown companion role: ${companionRole}`);
+      return false;
+    }
+
+    if (!hasPermission) {
+      console.warn(`Permission denied: ${companionRole} companion cannot modify key: ${changeKey}`);
+      return false;
+    }
+
+    console.log(`Permission granted for change: ${changeKey} = ${changeValue} by ${companionRole} companion`);
+    return true;
+  } catch (error) {
+    console.error('Error checking client change permission:', error);
+    return false;
   }
 }

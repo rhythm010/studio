@@ -16,7 +16,6 @@ export const ACTIVITY_STATUS = {
     'WAIT_ITEM':'WAIT_ITEM',
     'WAIT_OP':'WAIT_OP',
     'DEFAULT': 'DEFAULT',
-    'CLEAR_TABLE': 'CLEAR_TABLE',
     'STAND_CLOSE': 'STAND_CLOSE',
     'QUEUE_CALL': 'QUEUE_CALL',
     'CLOSE_ASSIST': 'CLOSE_ASSIST',
@@ -35,7 +34,6 @@ export const STATUS_BUTTON_LABELS = {
     [ACTIVITY_STATUS.WAIT_ITEM]: 'waiting for item',
     [ACTIVITY_STATUS.WAIT_OP]: 'waiting OP',
     [ACTIVITY_STATUS.DEFAULT]: 'Default',   
-    [ACTIVITY_STATUS.CLEAR_TABLE]: 'Clear Table',
     [ACTIVITY_STATUS.STAND_CLOSE]: 'Stand Close',
     [ACTIVITY_STATUS.QUEUE_CALL]: 'Queue Ends',
     [ACTIVITY_STATUS.CLOSE_ASSIST]: 'Close Assist',
@@ -74,7 +72,6 @@ export const INSTRUCTION_LIST = {
     'ORDER_CALL': 'ORDER_CALL',
     'I_AM_DONE': 'I_AM_DONE',
     'CLOSE_ASSIST': 'CLOSE_ASSIST',
-    'CLEAR_TABLE': 'CLEAR_TABLE',
     'PAYMENT_CALL': 'PAYMENT_CALL',
     'WAIT_ITEM': 'WAIT_ITEM',
     'PHOTO': 'PHOTO',
@@ -163,7 +160,6 @@ export const CLIENT_INSTRUCTION_OPTIONS = {
     DEFAULT: [],
     QUEUE: ['CANCEL'],
     WAIT_OP: ['CANCEL'],
-    CLEAR_TABLE: ['CANCEL'],
     STAND_CLOSE: ['CANCEL'],
     ORDER_CALL: ['CANCEL'],
     PAYMENT_CALL: [],
@@ -189,7 +185,6 @@ export const CLIENT_MODE_STATUS_UI_MAP: Record<string, Record<string, { text: st
     PAYMENT_CALL: { text: 'Please come and make payment', secondaryDiv: { text: 'Just come and pay, we will bring items to you' } },
     WAIT_ITEM: { text: 'Your order is being prepared', secondaryDiv: { text: 'We are waiting while your order is being prepared' } },
     WAIT_OP: { text: 'You are in a cafe/restaurant', secondaryDiv: { text: 'We are waiting for your instructions' } },
-    CLEAR_TABLE: { text: 'Table is being cleared', secondaryDiv: { text: 'Your table is being prepared for you' } },
     STAND_CLOSE: { text: 'We are standing close', secondaryDiv: { text: 'We are waiting for your instructions' } },
   },
   QUEUE: {
@@ -222,17 +217,17 @@ export const CLIENT_INSTRUCTION_CONTENT: Record<string, Record<string, { title: 
   WITH_YOU: {
         [INSTRUCTION_LIST.QUEUE]: { 
           title: 'Stand In Queue', 
-          description: { text: 'When we are here, you never have to stand in any queue' },
+          description: { text: 'When we are here, you never have to stand in any queue', image: '/images/instructions/QUEUE.png' },
           iconText: 'Queue'
         },
         [INSTRUCTION_LIST.WAIT_OP]: { 
           title: 'Stand at a Distance', 
-          description: { text: 'Need Privacy or going for prayer ? We will stand and wait for you' },
+          description: { text: 'Need Privacy or going for prayer ? We will stand and wait for you', image: '/images/instructions/WAIT_OP.png' },
           iconText: 'Stand Guard'
         },
         [INSTRUCTION_LIST.DEFAULT]: {
           title: 'Moving with you',
-          description: { text: 'Companion will be moving with you, carrying your bags and making space for you' },
+          description: { text: 'Companion will be moving with you, carrying your bags and making space for you', image: '/images/instructions/I_AM_DONE.png' },
           iconText: 'With me'
         },
         [INSTRUCTION_LIST.CANCEL]: {
@@ -244,27 +239,27 @@ export const CLIENT_INSTRUCTION_CONTENT: Record<string, Record<string, { title: 
   CAFE: {
     [INSTRUCTION_LIST.BRING_STAFF]: { 
       title: 'Bring Staff', 
-      description: { text: 'We will present the staff to your table' },
+      description: { text: 'We will present the staff to your table', image: '/images/instructions/BRING_STAFF.png' },
       iconText: 'Bring Staff'
     },
     [INSTRUCTION_LIST.STAND_CLOSE]: { 
       title: 'Stand Close By', 
-      description: { text: 'Let us give you that extra presence' },
+      description: { text: 'Let us give you that extra presence', image: '/images/instructions/CLOSE_ASSIST.png' },
       iconText: 'Stand Close'
     },
     [INSTRUCTION_LIST.ORDER_CALL]: { 
       title: 'Place order for me', 
-      description: { text: 'Just tell what you want, pay and relax. We will take care of the rest' },
+      description: { text: 'Just tell what you want, pay and relax. We will take care of the rest', image: '/images/instructions/ORDER_CALL.png' },
       iconText: 'Order'
     },
     [INSTRUCTION_LIST.I_AM_DONE]: { 
       title: 'You are Done ?', 
-      description: { text: 'Let us come and pick up your stuff' },
+      description: { text: 'Let us come and pick up your stuff', image: '/images/instructions/I_AM_DONE.png' },
       iconText: 'Done'
     },
     [INSTRUCTION_LIST.PHOTO]: { 
       title: 'Take Photo', 
-      description: { text: 'We will take a photo for you' },
+      description: { text: 'We will take a photo for you', image: '/images/instructions/PHOTO.png' },
       iconText: 'Photo'
     },
     [INSTRUCTION_LIST.CANCEL]: {
@@ -276,17 +271,17 @@ export const CLIENT_INSTRUCTION_CONTENT: Record<string, Record<string, { title: 
   STORE: {
     [INSTRUCTION_LIST.I_AM_DONE]: { 
       title: 'You are Done ?', 
-      description: { text: 'Let us come and get your items billed and packed' },
+      description: { text: 'Let us come and get your items billed and packed', image: '/images/instructions/I_AM_DONE.png' },
       iconText: 'Done'
     },
     [INSTRUCTION_LIST.CLOSE_ASSIST]: { 
       title: 'Come help me', 
-      description: { text: 'One of us will come with you to hold any items that you want' },
+      description: { text: 'One of us will come with you to hold any items that you want', image: '/images/instructions/CLOSE_ASSIST.png' },
       iconText: 'Assist'
     },
     [INSTRUCTION_LIST.BRING_STAFF]: { 
       title: 'Call staff', 
-      description: { text: 'We will be calling staff for you' },
+      description: { text: 'We will be calling staff for you', image: '/images/instructions/BRING_STAFF.png' },
       iconText: 'Bring Staff'
     },
     [INSTRUCTION_LIST.WAIT_OP]: { 
@@ -353,7 +348,6 @@ export const COMPANION_SCREEN_MAPPER: Record<string, { modeText: string; statuse
       [ACTIVITY_STATUS.PAYMENT_CALL]: { textToDisplay: 'Payment Ready' },
       [ACTIVITY_STATUS.WAIT_ITEM]: { textToDisplay: 'Order Being Prepared' },
       [ACTIVITY_STATUS.WAIT_OP]: { textToDisplay: 'Waiting for Instructions' },
-      [ACTIVITY_STATUS.CLEAR_TABLE]: { textToDisplay: 'Clearing Table' },
       [ACTIVITY_STATUS.STAND_CLOSE]: { textToDisplay: 'Standing Close' },
     },
     instructions: {
@@ -494,6 +488,5 @@ export const INSTRUCTION_ICONS: Record<string, string> = {
   I_AM_DONE: '/icons/instructions/checkmark.png',
   CLOSE_ASSIST: '/icons/instructions/shopping-bag.png',
   PHOTO: '/icons/instructions/camera.png',
-  CANCEL: '/icons/instructions/cancel.png',
   DEFAULT: 'default', // This will be handled as an SVG in the component
 };

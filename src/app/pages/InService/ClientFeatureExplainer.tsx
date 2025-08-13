@@ -43,19 +43,19 @@ const ClientFeatureExplainer: React.FC<ClientFeatureExplainerProps> = ({
   };
   
   return (
-    <div className="w-full max-w-md bg-white rounded-lg shadow-lg flex flex-col h-[400px] min-h-[350px]">
+    <div className="w-full max-w-md bg-white rounded-lg shadow-lg flex flex-col h-full max-h-[420px]">
       {isCurrentInstructionActive ? (
         // Cancel Instruction Flow
         <>
           {/* Cancel Instruction Title */}
-          <div className="flex items-center justify-center w-full" style={{ flex: '0 0 25%' }}>
-            <span className="text-black text-2xl font-bold text-center w-full p-4">
+          <div className="flex items-center justify-center w-full flex-shrink-0" style={{ minHeight: '50px' }}>
+            <span className="text-black text-xl font-bold text-center w-full px-2">
               {showCancelConfirmation ? 'Confirm Cancellation' : `Cancel ${title}`}
             </span>
           </div>
           {/* Cancel Instruction Description */}
-          <div className="flex items-start justify-center w-full" style={{ flex: '1 1 75%'}}>
-            <div className="w-full text-center p-4 text-lg">
+          <div className="flex items-start justify-center w-full flex-1 overflow-hidden">
+            <div className="w-full text-center p-2 text-base">
               {showCancelConfirmation ? (
                 <p className="font-light">Are you absolutely sure you want to cancel this instruction?</p>
               ) : (
@@ -64,17 +64,17 @@ const ClientFeatureExplainer: React.FC<ClientFeatureExplainerProps> = ({
             </div>
           </div>
           {/* Cancel Buttons */}
-          <div className="w-full">
+          <div className="w-full flex-shrink-0 p-2 pt-0">
             {showCancelConfirmation ? (
               <div className="flex gap-2">
                 <button
-                  className="flex-1 bg-red-500 text-white py-3 text-lg font-semibold rounded-lg hover:bg-red-600 focus:outline-none"
+                  className="flex-1 bg-red-500 text-white py-2 text-base font-semibold rounded-lg hover:bg-red-600 focus:outline-none"
                   onClick={handleCancelConfirm}
                 >
                   Yes, Cancel
                 </button>
                 <button
-                  className="flex-1 bg-gray-500 text-white py-3 text-lg font-semibold rounded-lg hover:bg-gray-600 focus:outline-none"
+                  className="flex-1 bg-gray-500 text-white py-2 text-base font-semibold rounded-lg hover:bg-gray-600 focus:outline-none"
                   onClick={handleCancelDeny}
                 >
                   No, Keep
@@ -82,7 +82,7 @@ const ClientFeatureExplainer: React.FC<ClientFeatureExplainerProps> = ({
               </div>
             ) : (
               <button
-                className="w-full bg-red-500 text-white py-3 text-lg font-semibold rounded-lg hover:bg-red-600 focus:outline-none"
+                className="w-full bg-red-500 text-white py-2 text-base font-semibold rounded-lg hover:bg-red-600 focus:outline-none"
                 onClick={handleCancelClick}
               >
                 Cancel instruction
@@ -94,14 +94,14 @@ const ClientFeatureExplainer: React.FC<ClientFeatureExplainerProps> = ({
         // Existing Active Instruction Flow
         <>
           {/* Existing Active Instruction Title */}
-          <div className="flex items-center justify-center w-full" style={{ flex: '0 0 25%' }}>
-            <span className="text-black text-2xl font-bold text-center w-full p-4">
+          <div className="flex items-center justify-center w-full flex-shrink-0" style={{ minHeight: '50px' }}>
+            <span className="text-black text-xl font-bold text-center w-full px-2">
               Instruction in Progress
             </span>
           </div>
           {/* Existing Active Instruction Description */}
-          <div className="flex items-start justify-center w-full" style={{ flex: '1 1 75%'}}>
-            <div className="w-full text-center p-4 text-lg">
+          <div className="flex items-start justify-center w-full flex-1 overflow-hidden">
+            <div className="w-full text-center p-2 text-base">
               <p className="font-light">
                 There is already an active instruction: <strong>{activeInstruction.instruction}</strong>
               </p>
@@ -111,9 +111,9 @@ const ClientFeatureExplainer: React.FC<ClientFeatureExplainerProps> = ({
             </div>
           </div>
           {/* Close Button */}
-          <div className="w-full">
+          <div className="w-full flex-shrink-0 p-2 pt-0">
             <button
-              className="w-full bg-gray-500 text-white py-3 text-lg font-semibold rounded-lg hover:bg-gray-600 focus:outline-none"
+              className="w-full bg-gray-500 text-white py-2 text-base font-semibold rounded-lg hover:bg-gray-600 focus:outline-none"
               onClick={closeModal}
             >
               Close
@@ -124,25 +124,34 @@ const ClientFeatureExplainer: React.FC<ClientFeatureExplainerProps> = ({
         // Normal Instruction Flow
         <>
           {/* Normal Instruction Title */}
-          <div className="flex items-center justify-center w-full" style={{ flex: '0 0 25%' }}>
-            <span className="text-black text-2xl font-bold text-center w-full p-4">
+          <div className="flex items-center justify-center w-full flex-shrink-0" style={{ minHeight: '50px' }}>
+            <span className="text-black text-xl font-bold text-center w-full px-2">
               {title}
             </span>
           </div>
           {/* Normal Instruction Description */}
-          <div className="flex items-start justify-center w-full" style={{ flex: '1 1 75%'}}>
-            <div className="w-full text-center p-4 text-lg">
+          <div className="flex items-center justify-center w-full flex-1 overflow-hidden p-2">
+            <div className="w-full h-full flex items-center justify-center">
               {description.image ? (
-                <img src={description.image} alt="Instruction" className="mx-auto max-w-full h-auto" />
+                <img 
+                  src={description.image} 
+                  alt="Instruction" 
+                  className="w-full h-full object-contain rounded-xl" 
+                  style={{ 
+                    maxHeight: '280px',
+                    maxWidth: '100%',
+                    borderRadius: '12px'
+                  }}
+                />
               ) : (
-                <p className="font-light">{description.text}</p>
+                <p className="font-light text-base text-center">{description.text}</p>
               )}
             </div>
           </div>
           {/* Send Button */}
-          <div className="w-full">
+          <div className="w-full flex-shrink-0 p-2 pt-0">
             <button
-              className="w-full bg-black text-white py-3 text-lg font-semibold rounded-lg hover:bg-gray-900 focus:outline-none"
+              className="w-full bg-black text-white py-2 text-base font-semibold rounded-lg hover:bg-gray-900 focus:outline-none"
               onClick={handleYes}
             >
               Send instruction

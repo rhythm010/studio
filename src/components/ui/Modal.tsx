@@ -59,8 +59,8 @@ export const Modal: React.FC<IModalProps> = ({ title }) => {
   const { modalContent, isModalOpen, closeModal } = useModal(); // Updated
   return (
     <Dialog open={isModalOpen}>
-      <DialogContent className={"w-[300px] min-h-[400px] rounded-lg"}>
-        <div className="flex justify-between items-center h-12 bg-gray-800 p-2 mb-4">
+      <DialogContent className={"w-[280px] min-h-[500px] rounded-lg"}>
+        <div className="flex justify-between items-center h-12 bg-gray-800 p-2 mb-2 rounded-t-lg">
           <div className="w-full flex justify-center">
           <DialogTitle className="text-lg font-bold text-white hidden">
             {title}
@@ -70,7 +70,7 @@ export const Modal: React.FC<IModalProps> = ({ title }) => {
             <X className="h-4 w-4 text-white" />
            </div>
         </div>
-        <div className="p-2">
+        <div className="p-1">
           {modalContent}
           </div>
       </DialogContent>

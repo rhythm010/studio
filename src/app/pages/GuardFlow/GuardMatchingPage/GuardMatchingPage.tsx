@@ -3,7 +3,7 @@
 import { useEffect, useState, useRef } from 'react';
 import { Html5Qrcode } from 'html5-qrcode';
 import { useCompanionStore } from '@/store/store'; // Import the store
-import { checkIfSessionExistsAndMatch, updateCompanionSessionIdInClient, updateValueInClient, storePaths, updateInSelfFirebase, handleManualCompanionSessionIdSubmit } from '@/lib/utils'; // Import the utility method
+import { checkIfSessionExistsAndMatch, updateCompanionSessionIdInClient, updateValueInClient, storePaths, updateInSelfFirebase, handleManualCompanionSessionIdSubmit, getClientChangePermission } from '@/lib/utils'; // Import the utility method
 import { useRouter } from 'next/navigation';
 import { useModal } from '@/components/ui/Modal';
 import CompanionActivityMode from '../CompanionActivityMode/CompanionActivityMode';
@@ -200,9 +200,20 @@ const GuardMatchingPage: React.FC = () => {
     setserviceContinue(false);
   };
 
-  const modeSelectionConfirmation = (mode: string) => {
+  const modeSelectionConfirmation = async (mode: string) => {
     console.log(`Mode selected: ${mode}`);
     const defaultStatus = MODE_DEFAULT_STATUS[mode];
+    
+    // Check permission before making client changes
+    const hasPermission = await getClientChangePermission(storePaths.ClientActivityMonitor.currentMode, mode);
+    if (!hasPermission) {
+      console.warn('Permission denied for mode selection. Only primary companions can modify client values.');
+      closeModal();
+      return;
+    }
+
+    console.log('hasPermission', hasPermission);
+
     useCompanionStore.getState().setCompanionAcvitiyMonitor({
       selectedMode: mode,
       companionCurrentStatus: defaultStatus,
@@ -492,6 +503,13 @@ const GuardMatchingPage: React.FC = () => {
         </div>
       )}
 
+      {'isDevMode' && (
+        <div style={{ width: '90%', maxWidth: 500, margin: '0 auto 0.5rem auto', border: '2px solid #333', borderRadius: 8, background: '#f0f0f0', padding: '0.5rem', textAlign: 'center' }}>
+          <span style={{ fontSize: '0.9rem', fontWeight: 600, color: '#333' }}>
+            Companion Role: <span style={{ color: '#007bff', fontWeight: 700 }}>{companionRole}</span>
+          </span>
+        </div>
+      )}
       {/* Mode/Status display above companion_mode_selection_container */}
       {!serviceContinue && 
       <div id="mode_and_status_info_display" style={{ width: '90%', maxWidth: 500, margin: '0 auto 0.5rem auto', border: '2px solid #222', borderRadius: 10, overflow: 'hidden' }}>

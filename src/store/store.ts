@@ -1,5 +1,7 @@
 import { ACTIVITY_STATUS, ACTIVITY_MODES, MSG_STATUS } from '@/lib/constants';
 import { create } from 'zustand';
+import { updateInSelfFirebase } from '@/lib/utils';
+import { storePaths } from '@/lib/utils';
 
 interface ProfileDetails {
   [key: string]: any;
@@ -178,6 +180,8 @@ interface CompanionStore {
   getClientCompanionDetails: () => ClientCompanionDetails;
   setCompanionRole: (role: string) => void;
   getCompanionRole: () => string;
+  setClientSessionId: (id: string) => void;
+  getClientSessionId: () => string | null;
   getPrimaryCompanionSessionId: () => string | null; // Getter for primaryCompanionSessionId
   getSecondaryCompanionSessionId: () => string | null; // Getter for secondaryCompanionSessionId
   setCompanionRestaurantManage: (details: Partial<CompanionRestaurantManage>) => void; // Add setter
@@ -368,7 +372,11 @@ const useCompanionStore = create<CompanionStore>((set) => ({
         useCompanionStore.getState().clientCompanionDetails.secondaryCompanionSessionId,
     })),
   getClientCompanionDetails: () => useCompanionStore.getState().clientCompanionDetails,
-  setCompanionRole: (role) => set(state => ({ companionProfileDetails: { ...state.companionProfileDetails, companionRole: role } })),
+  setCompanionRole: (role) => {
+    set(state => ({ companionProfileDetails: { ...state.companionProfileDetails, companionRole: role } }));
+    // Update Firebase with the new companion role
+    updateInSelfFirebase(storePaths.companionProfileDetails.companionRole, role);
+  },
   getCompanionRole: () => useCompanionStore.getState().companionProfileDetails.companionRole,
   // Implement the new getters and setters for companionRestaurantManage
   setCompanionRestaurantManage: (details) =>

@@ -1,8 +1,8 @@
 # Contributing to Companion Studio
 
-> **Coding Standards (Must Read!)**
+> **Coding Standards (Must Read and folloq!)**
 > - **NEVER OVER ENGINEER. Always write mimimum and clean code to perform a task.** Do not make changes at places which are out of scope of prompt
-> - **only touch part of the code which is under the scope of the prompt**
+> - **only touch part of the code which is under the scope of the prompt and DO NOT try to fix issues without asking**
 > - **Break down complex logic.** If a line or block is hard to follow, split it into smaller, named parts or helper functions.
 > - **Double-check your logic.** Review your implementation at least twice to ensure correctness and clarity.
 > - **Ask for clarification where needed.** If you are ever unsure about a requirement or prompt, ask before proceeding.
