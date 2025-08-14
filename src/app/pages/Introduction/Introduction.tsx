@@ -2,6 +2,7 @@
 import React, { useState, useRef, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import { useTranslation } from 'react-i18next';
+import { INTRODUCTION_CONTENT } from '@/lib/constants';
 
 const Introduction = () => {
   const LOADING_TIME_SECONDS = 3;
@@ -14,15 +15,14 @@ const Introduction = () => {
   const [progress, setProgress] = useState(0);
   const [isLoading, setIsLoading] = useState(true);
   const { t } = useTranslation('common');
-  const images = ['Image 1', 'Image 2', 'Image 3'];
   const sliderRef = useRef<HTMLDivElement>(null);
 
   const handleNext = () => {
-    setCurrentImage((prev) => (prev + 1) % images.length);
+    setCurrentImage((prev) => (prev + 1) % INTRODUCTION_CONTENT.length);
   };
 
   const handlePrev = () => {
-    setCurrentImage((prev) => (prev - 1 + images.length) % images.length);
+    setCurrentImage((prev) => (prev - 1 + INTRODUCTION_CONTENT.length) % INTRODUCTION_CONTENT.length);
   };
 
   const handleAgreeClick = () => {
@@ -54,9 +54,9 @@ const Introduction = () => {
     return () => {
       setProgress(0); // Reset progress if not on the last image
     }
-  }, [currentImage, images.length]);
+  }, [currentImage, INTRODUCTION_CONTENT.length]);
   useEffect(() => {
-    if (currentImage === images.length - 1 || hasReachedImage3) {
+    if (currentImage === INTRODUCTION_CONTENT.length - 1 || hasReachedImage3) {
       setIsAgreed(true);
       setHasReachedImage3(true);
     } else {
@@ -64,7 +64,7 @@ const Introduction = () => {
     }
   }, [currentImage]);
 
-  const buttonText = currentImage < images.length - 1 ? t('introductionNextButton') : t('introductionAgreeButton');
+  const buttonText = currentImage < INTRODUCTION_CONTENT.length - 1 ? t('introductionNextButton') : t('introductionAgreeButton');
 
   const handleButtonClick = () => {
     if (buttonText === 'Next') handleNext();
@@ -76,7 +76,7 @@ const Introduction = () => {
       <div className="flex flex-col items-center mb-8"> {/* New container for image and dots */}
         <div
           id="image-section"
-          className="w-96 h-64 overflow-hidden relative mx-auto"
+          className="w-96 h-[540px] overflow-hidden relative mx-auto"
           onTouchStart={(event) => setTouchStartX(event.touches[0].clientX)}
           onTouchEnd={(event) => {
             const touchEndX = event.changedTouches[0].clientX;
@@ -89,23 +89,37 @@ const Introduction = () => {
           }}
         > {/* Removed mb-8 from this div */}
           <div id="image-section" ref={sliderRef} className="flex transition-transform duration-500">
-            {images.map((image, index) => (
+            {INTRODUCTION_CONTENT.map((content, index) => (
               <div
                 key={index}
-                className="w-96 h-64 border border-black flex items-center justify-center text-2xl shrink-0"
+                className="w-96 h-[540px] border border-black flex items-center justify-center text-2xl shrink-0"
               >
-                {image}
+                {content.image.startsWith('/') ? (
+                  <img 
+                    src={content.image} 
+                    alt={`Introduction ${index + 1}`}
+                    className="w-full h-full object-cover"
+                  />
+                ) : (
+                  content.image
+                )}
               </div>
             ))}
           </div>
         </div>
         <div className="flex justify-center mt-4"> {/* Removed mb-8 from this div */}
-          {images.map((_, index) => (
+          {INTRODUCTION_CONTENT.map((_, index) => (
             <span
               key={index}
               className={`dot h-2 w-2 mx-1 rounded-full ${index === currentImage ? 'bg-gray-800' : 'bg-gray-400'}`}
             ></span>
           ))}
+        </div>
+        {/* Introduction Text */}
+        <div className="text-center mt-6 px-4">
+          <h2 className="text-xl font-semibold text-gray-800">
+            {INTRODUCTION_CONTENT[currentImage].text}
+          </h2>
         </div>
       </div> {/* Closing the new container */}
       <div className="fixed bottom-0 left-0 right-0 flex flex-col items-center mb-4 px-4 w-full">
@@ -123,7 +137,7 @@ const Introduction = () => {
         <div
           onClick={() => {
             if (!isLoading) {
-              if (currentImage < images.length - 1) handleNext();
+              if (currentImage < INTRODUCTION_CONTENT.length - 1) handleNext();
               else handleAgreeClick();
             }
           }}

@@ -307,7 +307,7 @@ export const CLIENT_INSTRUCTION_CONTENT: Record<string, Record<string, { title: 
       title: 'Call staff', 
       description: { text: 'We will be calling staff for you', image: '/images/instructions/BRING_STAFF.png' },
       iconText: 'Bring Staff',
-      iconImage: '/icons/instructions/waiter.png',
+      iconImage: '/icons/instructions/BRING_STAFF_STORE.png',
       sendBtnText: 'Send instruction'
     },
     [INSTRUCTION_LIST.WAIT_OP]: { 
@@ -520,3 +520,18 @@ export const INSTRUCTION_ICONS: Record<string, string> = {
   PHOTO: '/icons/instructions/camera.png',
   DEFAULT: 'default', // This will be handled as an SVG in the component
 };
+
+export const INTRODUCTION_CONTENT = [
+  {
+    image: '/images/introduction/INTRODUCTION_1.png',
+    text: 'Welcome to Companion Service'
+  },
+  {
+    image: '/images/introduction/INTRODUCTION_2.png',
+    text: 'Your personal assistance companion'
+  },
+  {
+    image: '/images/introduction/INTRODUCTION_3.png',
+    text: 'Ready to help you anytime'
+  }
+];
