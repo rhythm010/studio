@@ -641,7 +641,8 @@ export function createClientInstructionProp(instruction: string) {
   if (instructionContent) {
     return { 
       title: instructionContent.title, 
-      description: instructionContent.description 
+      description: instructionContent.description,
+      sendBtnText: instructionContent.sendBtnText
     };
   }
   

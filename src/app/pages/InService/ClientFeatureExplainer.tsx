@@ -8,6 +8,7 @@ interface ActiveInstruction {
 interface ClientFeatureExplainerProps {
   title?: string;
   description?: { text?: string; image?: string };
+  sendBtnText?: string;
   handleYes?: () => void;
   closeModal?: () => void;
   handleCancel?: () => void;
@@ -19,6 +20,7 @@ interface ClientFeatureExplainerProps {
 const ClientFeatureExplainer: React.FC<ClientFeatureExplainerProps> = ({
   title = 'Instruction Title',
   description = { text: 'Instruction details go here.' },
+  sendBtnText = 'Send instruction',
   handleYes = () => {},
   closeModal = () => {},
   handleCancel = () => {},
@@ -141,7 +143,7 @@ const ClientFeatureExplainer: React.FC<ClientFeatureExplainerProps> = ({
               className="w-full bg-black text-white py-2 text-base font-semibold rounded-lg hover:bg-gray-900 focus:outline-none"
               onClick={handleYes}
             >
-              Send instruction
+              {sendBtnText}
             </button>
           </div>
         </>

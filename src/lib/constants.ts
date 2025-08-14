@@ -213,31 +213,35 @@ export const RECIEVE_COMPANION_MSG_TYPE_MAP: Record<string, string> = {
   // Add more mappings as needed
 };
 
-export const CLIENT_INSTRUCTION_CONTENT: Record<string, Record<string, { title: string; description: { text: string; image?: string }; iconText: string; iconImage?: string }>> = {
+export const CLIENT_INSTRUCTION_CONTENT: Record<string, Record<string, { title: string; description: { text: string; image?: string }; iconText: string; iconImage?: string; sendBtnText: string }>> = {
   WITH_YOU: {
         [INSTRUCTION_LIST.QUEUE]: { 
           title: 'Stand In Queue', 
           description: { text: 'When we are here, you never have to stand in any queue', image: '/images/instructions/QUEUE.png' },
           iconText: 'Queue',
-          iconImage: '/icons/instructions/queue.png'
+          iconImage: '/icons/instructions/queue.png',
+          sendBtnText: 'Send instruction'
         },
         [INSTRUCTION_LIST.WAIT_OP]: { 
           title: 'Stand at a Distance', 
           description: { text: 'Need Privacy or going for prayer ? We will stand and wait for you', image: '/images/instructions/WAIT_OP.png' },
           iconText: 'Stand Guard',
-          iconImage: '/icons/instructions/security-guard.png'
+          iconImage: '/icons/instructions/security-guard.png',
+          sendBtnText: 'Send instruction'
         },
         [INSTRUCTION_LIST.DEFAULT]: {
           title: 'Moving with you',
           description: { text: 'Companion will be moving with you, carrying your bags and making space for you', image: '/images/instructions/I_AM_DONE.png' },
           iconText: 'With me',
-          iconImage: '/icons/instructions/standing-man.png'
+          iconImage: '/icons/instructions/standing-man.png',
+          sendBtnText: 'Send instruction'
         },
         [INSTRUCTION_LIST.CANCEL]: {
           title: 'Cancel Instruction',
           description: { text: 'Cancel the current active instruction' },
           iconText: 'Cancel',
-          iconImage: '/icons/cancel_mode.png'
+          iconImage: '/icons/cancel_mode.png',
+          sendBtnText: 'Send instruction'
         },
   },
   CAFE: {
@@ -245,37 +249,43 @@ export const CLIENT_INSTRUCTION_CONTENT: Record<string, Record<string, { title: 
       title: 'Bring Staff', 
       description: { text: 'We will present the staff to your table', image: '/images/instructions/BRING_STAFF.png' },
       iconText: 'Bring Staff',
-      iconImage: '/icons/instructions/waiter.png'
+      iconImage: '/icons/instructions/waiter.png',
+      sendBtnText: 'Send instruction'
     },
     [INSTRUCTION_LIST.STAND_CLOSE]: { 
       title: 'Stand Close By', 
       description: { text: 'Let us give you that extra presence', image: '/images/instructions/CLOSE_ASSIST.png' },
       iconText: 'Stand Close',
-      iconImage: '/icons/instructions/standing-man.png'
+      iconImage: '/icons/instructions/standing-man.png',
+      sendBtnText: 'Send instruction'
     },
     [INSTRUCTION_LIST.ORDER_CALL]: { 
       title: 'Place order for me', 
       description: { text: 'Just tell what you want, pay and relax. We will take care of the rest', image: '/images/instructions/ORDER_CALL.png' },
       iconText: 'Order',
-      iconImage: '/icons/instructions/bell.png'
+      iconImage: '/icons/instructions/bell.png',
+      sendBtnText: 'Send instruction'
     },
     [INSTRUCTION_LIST.I_AM_DONE]: { 
       title: 'You are Done ?', 
       description: { text: 'Let us come and pick up your stuff', image: '/images/instructions/I_AM_DONE.png' },
       iconText: 'Done',
-      iconImage: '/icons/instructions/checkmark.png'
+      iconImage: '/icons/instructions/checkmark.png',
+      sendBtnText: 'Send instruction'
     },
     [INSTRUCTION_LIST.PHOTO]: { 
       title: 'Take Photo', 
       description: { text: 'We will take a photo for you', image: '/images/instructions/PHOTO.png' },
       iconText: 'Photo',
-      iconImage: '/icons/instructions/camera.png'
+      iconImage: '/icons/instructions/camera.png',
+      sendBtnText: 'Send instruction'
     },
     [INSTRUCTION_LIST.CANCEL]: {
       title: 'Cancel Instruction',
       description: { text: 'Cancel the current active instruction' },
       iconText: 'Cancel',
-      iconImage: '/icons/cancel_mode.png'
+      iconImage: '/icons/cancel_mode.png',
+      sendBtnText: 'Send instruction'
     },
   },
   STORE: {
@@ -283,31 +293,36 @@ export const CLIENT_INSTRUCTION_CONTENT: Record<string, Record<string, { title: 
       title: 'You are Done ?', 
       description: { text: 'Let us come and get your items billed and packed', image: '/images/instructions/I_AM_DONE.png' },
       iconText: 'Done',
-      iconImage: '/icons/instructions/shopping-bag.png'
+      iconImage: '/icons/instructions/shopping-bag.png',
+      sendBtnText: 'Send instruction'
     },
     [INSTRUCTION_LIST.CLOSE_ASSIST]: { 
       title: 'Come help me', 
       description: { text: 'One of us will come with you to hold any items that you want', image: '/images/instructions/CLOSE_ASSIST.png' },
       iconText: 'Assist',
-      iconImage: '/icons/instructions/shopping-bag.png'
+      iconImage: '/icons/instructions/shopping-bag.png',
+      sendBtnText: 'Send instruction'
     },
     [INSTRUCTION_LIST.BRING_STAFF]: { 
       title: 'Call staff', 
       description: { text: 'We will be calling staff for you', image: '/images/instructions/BRING_STAFF.png' },
       iconText: 'Bring Staff',
-      iconImage: '/icons/instructions/waiter.png'
+      iconImage: '/icons/instructions/waiter.png',
+      sendBtnText: 'Send instruction'
     },
     [INSTRUCTION_LIST.WAIT_OP]: { 
       title: 'Wait outside', 
       description: { text: 'We will stand guard outside, waiting for your instructions' },
       iconText: 'Stand Guard',
-      iconImage: '/icons/instructions/security-guard.png'
+      iconImage: '/icons/instructions/security-guard.png',
+      sendBtnText: 'Send instruction'
     },
     [INSTRUCTION_LIST.CANCEL]: {
       title: 'Cancel Instruction',
       description: { text: 'Cancel the current active instruction' },
       iconText: 'Cancel',
-      iconImage: '/icons/cancel_mode.png'
+      iconImage: '/icons/cancel_mode.png',
+      sendBtnText: 'Send instruction'
     },
   },
 };   
