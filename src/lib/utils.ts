@@ -678,6 +678,46 @@ export function getInstructionStatusText(instructionObj: any): string {
   return statusText || 'Unknown instruction status';
 }
 
+/**
+ * Prefetch a group of images for better performance
+ * @param imageUrls Array of image URLs to prefetch
+ * @returns Promise that resolves when all images are loaded
+ */
+export async function prefetchImages(imageUrls: string[]): Promise<void> {
+  if (!imageUrls?.length) return;
+
+  const loadImage = (url: string): Promise<void> => {
+    return new Promise((resolve) => {
+      if (!url.startsWith('/')) {
+        resolve();
+        return;
+      }
+
+      const img = new Image();
+      img.onload = () => resolve();
+      img.onerror = () => {
+        console.warn(`Failed to preload image: ${url}`);
+        resolve(); // Don't block other images
+      };
+      img.src = url;
+    });
+  };
+
+  await Promise.all(imageUrls.map(loadImage));
+}
+
+/**
+ * Prefetch images from content objects that have an 'image' property
+ * @param contentArray Array of objects with 'image' property
+ * @returns Promise that resolves when all images are loaded
+ */
+export async function prefetchImagesFromContent<T extends { image: string }>(
+  contentArray: T[]
+): Promise<void> {
+  const imageUrls = contentArray.map(content => content.image);
+  return prefetchImages(imageUrls);
+}
+
 export async function handleManualCompanionSessionIdSubmit(inputValue: string) {
   if (!inputValue.trim()) {
     console.warn('Please enter a companion session ID');

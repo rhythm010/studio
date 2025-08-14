@@ -3,6 +3,7 @@ import React, { useState, useRef, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import { useTranslation } from 'react-i18next';
 import { INTRODUCTION_CONTENT } from '@/lib/constants';
+import { prefetchImagesFromContent } from '@/lib/utils';
 
 const Introduction = () => {
   const LOADING_TIME_SECONDS = 3;
@@ -15,6 +16,7 @@ const Introduction = () => {
   const [progress, setProgress] = useState(0);
   const [isLoading, setIsLoading] = useState(true);
   const [showSkipButton, setShowSkipButton] = useState<boolean>(false);
+  const [imagesLoaded, setImagesLoaded] = useState<boolean>(false);
   const { t } = useTranslation('common');
   const sliderRef = useRef<HTMLDivElement>(null);
 
@@ -44,6 +46,21 @@ const Introduction = () => {
     if (hasSeenIntroduction === 'true') {
       setShowSkipButton(true);
     }
+  }, []);
+
+  // Prefetch all introduction images
+  useEffect(() => {
+    const loadImages = async () => {
+      try {
+        await prefetchImagesFromContent(INTRODUCTION_CONTENT);
+        setImagesLoaded(true);
+      } catch (error) {
+        console.error('Error preloading introduction images:', error);
+        setImagesLoaded(true); // Set to true anyway to prevent blocking
+      }
+    };
+
+    loadImages();
   }, []);
 
   useEffect(() => {
@@ -100,7 +117,19 @@ const Introduction = () => {
           Skip
         </button>
       )}
-      <div className="flex flex-col items-center mb-8"> {/* New container for image and dots */}
+      
+      {/* Loading indicator while images are being prefetched */}
+      {!imagesLoaded && (
+        <div className="flex flex-col items-center justify-center h-full">
+          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-gray-800 mb-4"></div>
+          <p className="text-gray-600 text-lg">Loading introduction...</p>
+        </div>
+      )}
+      
+      {/* Main content - only show when images are loaded */}
+      {imagesLoaded && (
+        <>
+        <div className="flex flex-col items-center mb-8"> {/* New container for image and dots */}
         <div
           id="image-section"
           className="w-96 h-[540px] overflow-hidden relative mx-auto"
@@ -176,6 +205,8 @@ const Introduction = () => {
 
         </div>
       </div>
+      </>
+      )}
     </div>
   );
 };
