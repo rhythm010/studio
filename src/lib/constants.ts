@@ -527,11 +527,19 @@ export const INTRODUCTION_CONTENT = [
     text: 'Welcome to Companion Service'
   },
   {
-    image: '/images/introduction/INTRODUCTION_2.png',
-    text: 'Your personal assistance companion'
+    image: '/images/introduction/MOVING_1.png',
+    text: 'We move with you everywhere'
   },
   {
-    image: '/images/introduction/INTRODUCTION_3.png',
-    text: 'Ready to help you anytime'
+    image: '/images/introduction/COFFEE_AND_STORE.png',
+    text: 'Assist you at cafes and stores'
+  },
+  {
+    image: '/images/introduction/USING_APP.png',
+    text: 'Simple and easy to use'
+  },
+  {
+    image: '/images/introduction/DO_NOT.png',
+    text: 'Important safety guidelines'
   }
 ];

@@ -14,6 +14,7 @@ const Introduction = () => {
   const [touchStartX, setTouchStartX] = useState<number | null>(null);
   const [progress, setProgress] = useState(0);
   const [isLoading, setIsLoading] = useState(true);
+  const [showSkipButton, setShowSkipButton] = useState<boolean>(false);
   const { t } = useTranslation('common');
   const sliderRef = useRef<HTMLDivElement>(null);
 
@@ -26,8 +27,24 @@ const Introduction = () => {
   };
 
   const handleAgreeClick = () => {
+    // Mark that user has seen introduction
+    localStorage.setItem('hasSeenIntroduction', 'true');
     router.push('/landing');
   }
+
+  const handleSkip = () => {
+    // Mark that user has seen introduction and skip to landing
+    localStorage.setItem('hasSeenIntroduction', 'true');
+    router.push('/landing');
+  }
+
+  // Check if user has seen introduction before
+  useEffect(() => {
+    const hasSeenIntroduction = localStorage.getItem('hasSeenIntroduction');
+    if (hasSeenIntroduction === 'true') {
+      setShowSkipButton(true);
+    }
+  }, []);
 
   useEffect(() => {
     if (sliderRef.current) {
@@ -72,7 +89,17 @@ const Introduction = () => {
   };
 
   return (
-    <div className="flex flex-col items-center justify-center h-screen bg-gray-100 px-4 pt-4 overflow-x-hidden"> {/* Changed justify-between to justify-center */}
+    <div className="flex flex-col items-center justify-center h-screen bg-gray-100 px-4 pt-4 overflow-x-hidden relative"> {/* Changed justify-between to justify-center and added relative */}
+      {/* Skip Button */}
+      {showSkipButton && (
+        <button
+          onClick={handleSkip}
+          className="absolute right-4 bg-gray-800 text-white rounded-md text-sm font-semibold hover:bg-gray-900 focus:outline-none z-10"
+          style={{ top: '16%', padding: '0.5rem 1rem' }}
+        >
+          Skip
+        </button>
+      )}
       <div className="flex flex-col items-center mb-8"> {/* New container for image and dots */}
         <div
           id="image-section"

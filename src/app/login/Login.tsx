@@ -59,6 +59,10 @@ const Login: React.FC = () => {
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
+    
+    // Clear introduction localStorage when user logs in again
+    localStorage.removeItem('hasSeenIntroduction');
+    
     setProfileDetails({
       name,
       email,
