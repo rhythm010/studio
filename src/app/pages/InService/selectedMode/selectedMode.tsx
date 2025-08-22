@@ -200,7 +200,8 @@ const selectedMode: React.FC = () => {
     setSendClientMsgQueue(msgObj); // local store first step - CLIENT - 1
     updateInSelfFirebase(storePaths.ClientActivityMonitor.sendClientMsgQueue, msgObj); // firebase update step - CLIENT - 2
     // Pass the instruction as the message type to sendMsgToCompanion
-    sendMsgToCompanion(instruction, {}, COMPANION_ROLES.PRIMARY); // UPDATE IN COMPANION - 3
+    // The middleware will automatically determine which companion(s) to send to based on instruction type and mode
+    sendMsgToCompanion(instruction, {}, undefined, currentMode); // UPDATE IN COMPANION - 3
   };
 
   const clientInstructionLaunchHandler = (instruction: string) => {

@@ -4,7 +4,7 @@ import { database } from "@/lib/firebase";
 import { useCompanionStore } from '@/store/store';
 import { ref, update, remove, get, child, DatabaseReference, onValue, off } from "firebase/database";
 import { twMerge } from "tailwind-merge"
-import { COMPANION_ROLES, MSG_STATUS, CLIENT_INSTRUCTION_MANUAL, INSTRUCTION_STATUS_UI_MAP, CLIENT_INSTRUCTION_CONTENT } from "./constants";
+import { COMPANION_ROLES, COMPANION_ROLE_ROUTING, MSG_STATUS, CLIENT_INSTRUCTION_MANUAL, INSTRUCTION_STATUS_UI_MAP, CLIENT_INSTRUCTION_CONTENT, INSTRUCTION_LIST } from "./constants";
 
 export function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs))
@@ -472,32 +472,45 @@ function formMessageObj(messageType: string, messageData: object, messageSender:
   return msgObj;
 }
 
-export async function sendMsgToClient(messageType: string, messageData: object) {
-  if (!messageType) {
-    console.error("Message type is null or undefined. Cannot send message to client.");
-    return;
+
+/**
+ * Determines which companion(s) should receive a specific instruction type based on mode and instruction
+ * @param instructionType - The type of instruction to be sent
+ * @param mode - The current activity mode (WITH_YOU, CAFE, STORE, QUEUE)
+ * @returns Array of companion roles that should receive the instruction
+ */
+function determineCompanionRecipients(instructionType: string, mode?: string): string[] {
+  // Helper function to get routing from constant
+  const getRouting = (mode: string, instruction: string): string | null => {
+    const modeRouting = COMPANION_ROLE_ROUTING[mode as keyof typeof COMPANION_ROLE_ROUTING];
+    return modeRouting ? modeRouting[instruction as any] || null : null;
+  };
+
+  // Check mode-specific routing from constant
+  if (mode) {
+    const routing = getRouting(mode, instructionType);
+    if (routing) {
+      if (routing === 'both') return [COMPANION_ROLES.PRIMARY, COMPANION_ROLES.SECONDARY];
+      if (routing === 'primary') return [COMPANION_ROLES.PRIMARY];
+      if (routing === 'secondary') {
+        return useCompanionStore.getState().getSecondaryCompanionSessionId() 
+          ? [COMPANION_ROLES.SECONDARY] 
+          : [COMPANION_ROLES.PRIMARY];
+      }
+    }
   }
-  
-  if (!messageData) {
-    console.error("Message data is null or undefined. Cannot send message to client.");
-    return;
-  }
-  
-  const messageObj = formMessageObj(messageType, messageData, 'CLIENT');
-  const clientSessionId = useCompanionStore.getState().getClientSessionId();
-  if (!clientSessionId) {
-    console.error("Client session ID is not available. Cannot send message.");
-    return;
-  }
-  try {
-    console.log(`Sending message to client ${clientSessionId}:`, messageObj);
-    updateValueInClient({ path:storePaths.ClientActivityMonitor.recieveClientMsgQueue , val: messageObj});
-  } catch (error) {
-    console.error(`Error sending message to client ${clientSessionId}:`, error);
-  }
+
+  return [COMPANION_ROLES.PRIMARY];
 }
 
-export async function sendMsgToCompanion(messageType: string, messageData: object, companionRole:string) {
+/**
+ * Middleware method that intelligently decides which companion(s) to send instructions to
+ * @param messageType - The type of instruction/message
+ * @param messageData - Additional data for the message
+ * @param companionRole - Optional specific companion role (if not provided, will be determined automatically)
+ * @param mode - Optional current activity mode for mode-based routing
+ */
+export async function sendMsgToCompanion(messageType: string, messageData: object, companionRole?: string, mode?: string) {
   if (!messageType) {
     console.error("Message type is null or undefined. Cannot send message to companion.");
     return;
@@ -508,23 +521,51 @@ export async function sendMsgToCompanion(messageType: string, messageData: objec
     return;
   }
   
+  // If companionRole is provided, use it directly (backward compatibility)
+  if (companionRole) {
+    await sendToSpecificCompanion(messageType, messageData, companionRole);
+    return;
+  }
+  
+  // Determine which companion(s) should receive this instruction
+  const recipientRoles = determineCompanionRecipients(messageType, mode);
+  
+  // Send message to all determined recipients
+  for (const role of recipientRoles) {
+    await sendToSpecificCompanion(messageType, messageData, role);
+  }
+}
+
+/**
+ * Helper function to send message to a specific companion
+ * @param messageType - The type of instruction/message
+ * @param messageData - Additional data for the message
+ * @param companionRole - The specific companion role to send to
+ */
+async function sendToSpecificCompanion(messageType: string, messageData: object, companionRole: string) {
   if (!companionRole) {
     console.error("Companion role is null or undefined. Cannot send message to companion.");
     return;
   }
   
   const messageObj = formMessageObj(messageType, messageData, 'COMPANION');
-  const companionSessionId = companionRole === COMPANION_ROLES.PRIMARY ? useCompanionStore.getState().getPrimaryCompanionSessionId():
-                          useCompanionStore.getState().getSecondaryCompanionSessionId() ;
+  const companionSessionId = companionRole === COMPANION_ROLES.PRIMARY 
+    ? useCompanionStore.getState().getPrimaryCompanionSessionId()
+    : useCompanionStore.getState().getSecondaryCompanionSessionId();
+    
   if (!companionSessionId) {
-    console.error("Client session ID is not available. Cannot send message.");
+    console.error(`Companion session ID for ${companionRole} is not available. Cannot send message.`);
     return;
   }
+  
   try {
-    console.log(`Sending message to client ${companionSessionId}:`, messageObj);
-    updateValueInCompanion({ path:storePaths.CompanionAcvitiyMonitor.recieveCompanionMsgQueue , val: messageObj}, companionRole);
+    console.log(`Sending message to ${companionRole} companion ${companionSessionId}:`, messageObj);
+    updateValueInCompanion({ 
+      path: storePaths.CompanionAcvitiyMonitor.recieveCompanionMsgQueue, 
+      val: messageObj
+    }, companionRole);
   } catch (error) {
-    console.error(`Error sending message to client ${companionSessionId}:`, error);
+    console.error(`Error sending message to ${companionRole} companion ${companionSessionId}:`, error);
   }
 }
 
