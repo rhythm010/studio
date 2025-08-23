@@ -670,6 +670,34 @@ export function listenToFirebaseKey(sessionId: string, keyPath: string, callback
   return () => off(keyRef, 'value', listener as any);
 }
 
+/**
+ * Get client data from Firebase and watch for changes
+ * @param storePath - The path to the data in client's Firebase database (e.g., 'ClientActivityMonitor/currentMode')
+ * @param onDataChange - Function to call when data changes
+ * @returns Object with current data value and unsubscribe function
+ */
+export function getClientData(storePath: string, onDataChange: (data: any) => void): { data: any; unsubscribe: () => void } {
+  const clientSessionId = useCompanionStore.getState().getClientSessionId();
+  
+  if (!clientSessionId || !storePath) {
+    console.error("Client session ID or store path not available");
+    return { data: null, unsubscribe: () => {} };
+  }
+  
+  const dataRef = ref(database, `storeObjects/${clientSessionId}/${storePath}`);
+  
+  // Get current value
+  let currentData: any = null;
+  
+  // Set up listener that calls onDataChange whenever data changes
+  const unsubscribe = onValue(dataRef, (snapshot) => {
+    currentData = snapshot.val();
+    onDataChange(currentData);
+  });
+  
+  return { data: currentData, unsubscribe };
+}
+
 export function createClientInstructionProp(instruction: string) {
   // Get the current mode from the store
   const currentStore = useCompanionStore.getState();

@@ -3,7 +3,7 @@
 import { useEffect, useState, useRef } from 'react';
 import { Html5Qrcode } from 'html5-qrcode';
 import { useCompanionStore } from '@/store/store'; // Import the store
-import { checkIfSessionExistsAndMatch, updateCompanionSessionIdInClient, updateValueInClient, storePaths, updateInSelfFirebase, handleManualCompanionSessionIdSubmit, getClientChangePermission } from '@/lib/utils'; // Import the utility method
+import { checkIfSessionExistsAndMatch, updateCompanionSessionIdInClient, updateValueInClient, storePaths, updateInSelfFirebase, handleManualCompanionSessionIdSubmit, getClientChangePermission, getClientData } from '@/lib/utils'; // Import the utility method
 import { useRouter } from 'next/navigation';
 import { useModal } from '@/components/ui/Modal';
 import CompanionActivityMode from '../CompanionActivityMode/CompanionActivityMode';
@@ -32,8 +32,10 @@ const GuardMatchingPage: React.FC = () => {
   const [manualSessionId, setManualSessionId] = useState(''); // State for manual client session ID input
   const manualCompanionSessionIdRef = useRef<HTMLInputElement>(null); // Ref for manual companion session ID input
   const [isConnecting, setIsConnecting] = useState<boolean>(false); // State for loading during connection
+  const [selectedModeForSecondary, setSelectedModeForSecondary] = useState<string>(''); // State for secondary companion to track client's current mode
   const router = useRouter();
   const companionRole = getCompanionProfileDetails().companionRole || 'Primary'; // Get the companion role
+  const clientSessionId = useCompanionStore((state) => state.getClientSessionId()); // Reactive client session ID
   // Get the selected mode from the store for conditional styling
   // Get the selected mode and current status from the store for conditional styling
   const { selectedMode, companionCurrentStatus, recieveCompanionMsgQueue } = useCompanionStore((state) => state.CompanionAcvitiyMonitor);
@@ -56,6 +58,23 @@ const GuardMatchingPage: React.FC = () => {
       }
     };
   }, []);
+
+  // Listen to client's currentMode for secondary companions
+  useEffect(() => {
+    console.log('reading client session id and companion role', clientSessionId, companionRole);
+    if (companionRole === 'secondary' && clientSessionId) {
+      console.log('Listening to client\'s currentMode for secondary companions');
+      const { data, unsubscribe } = getClientData(
+        storePaths.ClientActivityMonitor.currentMode,
+        (newMode: string) => setSelectedModeForSecondary(newMode || '')
+      );
+      
+      // Set initial value
+      setSelectedModeForSecondary(data || '');
+      
+      return unsubscribe;
+    }
+  }, [companionRole, clientSessionId]);
 
   // Add blinking animation style for urgent messages and urgent icon style
   useEffect(() => {
@@ -205,14 +224,14 @@ const GuardMatchingPage: React.FC = () => {
     const defaultStatus = MODE_DEFAULT_STATUS[mode];
     
     // Check permission before making client changes
-    const hasPermission = await getClientChangePermission(storePaths.ClientActivityMonitor.currentMode, mode);
-    if (!hasPermission) {
-      console.warn('Permission denied for mode selection. Only primary companions can modify client values.');
-      closeModal();
-      return;
-    }
+    // const hasPermission = await getClientChangePermission(storePaths.ClientActivityMonitor.currentMode, mode);
+    // if (!hasPermission) {
+    //   console.warn('Permission denied for mode selection. Only primary companions can modify client values.');
+    //   closeModal();
+    //   return;
+    // }
 
-    console.log('hasPermission', hasPermission);
+    // console.log('hasPermission', hasPermission);
 
     useCompanionStore.getState().setCompanionAcvitiyMonitor({
       selectedMode: mode,
@@ -600,6 +619,20 @@ const GuardMatchingPage: React.FC = () => {
           {isDevMode && useCompanionStore.getState().getSessionId() && (
             <div className="mb-2 text-xs text-gray-600 font-mono bg-gray-100 px-2 py-1 rounded">
               {useCompanionStore.getState().getSessionId()}
+            </div>
+          )}
+          
+          {/* Display Client Session ID in Dev Mode Only */}
+          {isDevMode && useCompanionStore.getState().getClientSessionId() && (
+            <div className="mb-2 text-xs text-gray-600 font-mono bg-gray-100 px-2 py-1 rounded">
+              Client: {useCompanionStore.getState().getClientSessionId()}
+            </div>
+          )}
+          
+          {/* Display Client's Current Mode for Secondary Companions */}
+          {isDevMode && (
+            <div className="mb-2 text-xs text-gray-600 font-mono bg-blue-100 px-2 py-1 rounded">
+              Client Mode: {selectedModeForSecondary}
             </div>
           )}
           
