@@ -28,7 +28,7 @@ export const COMPANION_MODE_STATUS_LINKER = {
    'STORE': ['QUEUE','PAYMENT_CALL','WAIT_ITEM','WAIT_OP', 'CLOSE_ASSIST'],
 }
 
-export const STATUS_BUTTON_LABELS = {
+export const COMPANION_STATUS_BUTTON_LABELS = {
     [ACTIVITY_STATUS.QUEUE]: 'Queue',
     [ACTIVITY_STATUS.PAYMENT_CALL]: 'Payment',
     [ACTIVITY_STATUS.WAIT_ITEM]: 'waiting for item',
@@ -37,6 +37,12 @@ export const STATUS_BUTTON_LABELS = {
     [ACTIVITY_STATUS.STAND_CLOSE]: 'Stand Close',
     [ACTIVITY_STATUS.QUEUE_CALL]: 'Queue Ends',
     [ACTIVITY_STATUS.CLOSE_ASSIST]: 'Close Assist',
+};
+
+export const COMPANION_MODE_BUTTON_LABELS = {
+    [ACTIVITY_MODES.CAFE]: 'Cafe',
+    [ACTIVITY_MODES.STORE]: 'Store',
+    [ACTIVITY_MODES.WITH_YOU]: 'With Client',
 };
 
 export const COMPANION_ROLES = {

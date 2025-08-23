@@ -7,16 +7,21 @@ import { checkIfSessionExistsAndMatch, updateCompanionSessionIdInClient, updateV
 import { useRouter } from 'next/navigation';
 import { useModal } from '@/components/ui/Modal';
 import CompanionActivityMode from '../CompanionActivityMode/CompanionActivityMode';
-import { ACTIVITY_MODES, ACTIVITY_STATUS, COMPANION_MODE_STATUS_LINKER, MSG_STATUS, MESSAGE_TYPES_TO_COMPANION, STATUS_BUTTON_LABELS, ACTIVITY_SUB_MODE_LINKER, MODE_DEFAULT_STATUS, COMPANION_SCREEN_MAPPER } from '@/lib/constants';
+import { ACTIVITY_MODES, ACTIVITY_STATUS, COMPANION_MODE_STATUS_LINKER, MSG_STATUS, MESSAGE_TYPES_TO_COMPANION, COMPANION_STATUS_BUTTON_LABELS, COMPANION_MODE_BUTTON_LABELS, ACTIVITY_SUB_MODE_LINKER, MODE_DEFAULT_STATUS, COMPANION_SCREEN_MAPPER } from '@/lib/constants';
 import StopWatch from '../../InService/StopWatch';
 import ConfirmationModalContent from '@/components/ConfirmationModalContent';
 import { vocab } from '@/lib/vocab_constants';
 
 const GuardMatchingPage: React.FC = () => {
   // Reusable classes for the mode selection buttons, similar to the 'Start Scan' button style
-  const selectedButtonClasses = "border flex items-center justify-center bg-green-600 text-white text-sm rounded-md py-3 px-4"; // Larger buttons for status container
-  const disabledButtonClasses = "flex items-center justify-center bg-gray-400 text-gray-700 text-sm rounded-md py-3 px-4"; // Larger buttons for status container
-  const buttonClasses = "flex items-center justify-center bg-gray-800 text-white text-sm rounded-md py-3 px-4"; // Larger buttons for status container
+  const selectedButtonClasses = "border flex items-center justify-center bg-green-600 text-white text-sm rounded-md py-3 px-4 min-w-[72px] min-h-[32px] text-[1.2rem] py-[0.8rem] px-[1.6rem] m-[0.4rem]"; // Larger buttons for status container
+  const disabledButtonClasses = "border flex items-center justify-center bg-gray-400 text-gray-700 text-sm rounded-md py-3 px-4"; // Larger buttons for status container
+  const buttonClasses = "border flex items-center justify-center bg-gray-800 text-white text-sm rounded-md py-3 px-4 min-w-[72px] min-h-[32px] text-[1.2rem] py-[0.8rem] px-[1.6rem] m-[0.4rem]"; // Larger buttons for status container
+  
+  // Status container button classes (10% smaller than mode buttons)
+  const statusSelectedButtonClasses = "border flex items-center justify-center bg-green-600 text-white text-sm rounded-md py-2.5 px-3.5"; // 10% larger than previous status buttons
+  const statusDisabledButtonClasses = "border flex items-center justify-center bg-gray-400 text-gray-700 text-sm rounded-md py-2.5 px-3.5"; // 10% larger than previous status buttons
+  const statusButtonClasses = "border flex items-center justify-center bg-gray-800 text-white text-sm rounded-md py-2.5 px-3.5"; // 10% larger than previous status buttons
   const qrCodeRef = useRef<string>('reader');
   const { getCompanionProfileDetails } = useCompanionStore();
   const html5Qrcode = useRef<Html5Qrcode | null>(null);
@@ -342,7 +347,7 @@ const GuardMatchingPage: React.FC = () => {
   // Helper function to determine button class based on selected mode/status
   const getStatusButtonClass = (status: string, currentStatus: string | null, selectedMode: string | null) => {
     const isDisabled = !COMPANION_MODE_STATUS_LINKER[selectedMode as keyof typeof COMPANION_MODE_STATUS_LINKER]?.includes(status);
-    return isDisabled ? disabledButtonClasses : (status === currentStatus ? selectedButtonClasses : buttonClasses);
+    return isDisabled ? statusDisabledButtonClasses : (status === currentStatus ? statusSelectedButtonClasses : statusButtonClasses);
   };
 
   // Handler for clicking the client message container
@@ -556,23 +561,23 @@ const GuardMatchingPage: React.FC = () => {
 
       {'isDevMode' && (
         <div id="companion_role_display" style={{ width: '90%', maxWidth: 500, margin: '0 auto 0.5rem auto', border: '1px solid #333', borderRadius: 8, background: '#f0f0f0', padding: '0.5rem', textAlign: 'center' }}>
-          <div style={{ fontSize: '1rem', fontWeight: 300, color: '#333', textAlign: 'center' }}>
+          <div style={{ fontSize: '0.8rem', fontWeight: 300, color: '#333', textAlign: 'center' }}>
             YOUR ROLE
           </div>
-          <div style={{ fontSize: '1.8rem', fontWeight: 700, color: '#007bff', textAlign: 'center', marginTop: '0.25rem' }}>
+          <div style={{ fontSize: '1.44rem', fontWeight: 700, color: '#007bff', textAlign: 'center', marginTop: '0.25rem' }}>
             {companionRole.toUpperCase()}
           </div>
         </div>
       )}
       {/* Mode/Status display above companion_mode_selection_container */}
       {!serviceContinue && 
-      <div id="mode_and_status_info_display" style={{ width: '90%', maxWidth: 500, margin: '0 auto 0.5rem auto', border: '1px solid #222', borderRadius: 10, background: '#f0f0f0', padding: '0.5rem', textAlign: 'center' }}>
-        <div style={{ fontSize: '1rem', fontWeight: 300, color: '#333', textAlign: 'center' }}>
-          {isPrimary ? 'MODE SELECTED' : 'YOUR STATUS'}
-        </div>
-        <div style={{ fontSize: '1.8rem', fontWeight: 700, color: 'red', textAlign: 'center', marginTop: '0.25rem' }}>
-          {isPrimary ? (COMPANION_SCREEN_MAPPER[selectedMode]?.modeText || selectedMode || '-') : (COMPANION_SCREEN_MAPPER[selectedMode]?.statuses[companionCurrentStatus]?.textToDisplay || companionCurrentStatus || '-')}
-        </div>
+              <div id="mode_and_status_info_display" style={{ width: '90%', maxWidth: 500, margin: '0 auto 0.5rem auto', border: '1px solid #222', borderRadius: 10, background: '#f0f0f0', padding: '0.5rem', textAlign: 'center' }}>
+          <div style={{ fontSize: '0.8rem', fontWeight: 300, color: '#333', textAlign: 'center' }}>
+            {isPrimary ? 'MODE SELECTED' : 'YOUR STATUS'}
+          </div>
+          <div style={{ fontSize: '1.44rem', fontWeight: 700, color: 'red', textAlign: 'center', marginTop: '0.25rem' }}>
+            {isPrimary ? (COMPANION_SCREEN_MAPPER[selectedMode]?.modeText || selectedMode || '-') : (COMPANION_SCREEN_MAPPER[selectedMode]?.statuses[companionCurrentStatus]?.textToDisplay || companionCurrentStatus || '-')}
+          </div>
         {isPrimary && (
           <>
             {/* <div style={{ fontSize: '1rem', fontWeight: 300, color: '#333', textAlign: 'center', marginTop: '0.5rem' }}>
@@ -593,26 +598,26 @@ const GuardMatchingPage: React.FC = () => {
           {(isPrimary || isDevMode) && (
             <div id="modes_container" className="rounded-xl shadow-lg">
               <div className="border rounded-lg flex flex-wrap justify-center items-center p-2 mb-2">
-                <button className={selectedMode === ACTIVITY_MODES.CAFE ? selectedButtonClasses : buttonClasses + ' mode-large-btn'}
+                <button className={selectedMode === ACTIVITY_MODES.CAFE ? selectedButtonClasses : buttonClasses}
                   onClick={() => handleModeSelection(ACTIVITY_MODES.CAFE)}>
-                  Cafe
+                  {COMPANION_MODE_BUTTON_LABELS[ACTIVITY_MODES.CAFE]}
                 </button>
-                <button className={selectedMode === ACTIVITY_MODES.STORE ? selectedButtonClasses : buttonClasses + ' mode-large-btn'}
+                <button className={selectedMode === ACTIVITY_MODES.STORE ? selectedButtonClasses : buttonClasses}
                   onClick={() => handleModeSelection(ACTIVITY_MODES.STORE)}>
-                  Store
+                  {COMPANION_MODE_BUTTON_LABELS[ACTIVITY_MODES.STORE]}
                 </button>
-                <button className={selectedMode === ACTIVITY_MODES.WITH_YOU ? selectedButtonClasses : buttonClasses + ' mode-large-btn'}
+                <button className={selectedMode === ACTIVITY_MODES.WITH_YOU ? selectedButtonClasses : buttonClasses}
                   onClick={() => handleModeSelection(ACTIVITY_MODES.WITH_YOU)}
                 >
-                  With client
+                  {COMPANION_MODE_BUTTON_LABELS[ACTIVITY_MODES.WITH_YOU]}
                 </button>
               </div>
             </div>
           )}
           {/* Status Container - hidden for primary companions in production */}
           {(!isPrimary || isDevMode) && (
-            <div id="status_container" className="rounded-xl shadow-lg w-full">
-              <div className="border rounded-lg grid grid-cols-2 gap-3 p-3 w-full">
+            <div id="status_container" className="rounded-xl shadow-lg w-full" style={{ width: '100%' }}>
+              <div className="border rounded-lg grid grid-cols-2 gap-3 p-3 w-full" style={{ width: '100%' }}>
                 {/* Only render status buttons allowed for the selected mode */}
                 {COMPANION_MODE_STATUS_LINKER[selectedMode as keyof typeof COMPANION_MODE_STATUS_LINKER]?.map((status: string) => (
                   <button
@@ -620,7 +625,7 @@ const GuardMatchingPage: React.FC = () => {
                     className={getStatusButtonClass(status, companionCurrentStatus, selectedMode)}
                     onClick={() => handleStatusSelection(status)}
                   >
-                    {STATUS_BUTTON_LABELS[status]}
+                    {COMPANION_STATUS_BUTTON_LABELS[status]}
                   </button>
                 ))}
               </div>
