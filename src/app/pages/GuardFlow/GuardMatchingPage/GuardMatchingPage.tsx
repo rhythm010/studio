@@ -32,16 +32,30 @@ const GuardMatchingPage: React.FC = () => {
   const [manualSessionId, setManualSessionId] = useState(''); // State for manual client session ID input
   const manualCompanionSessionIdRef = useRef<HTMLInputElement>(null); // Ref for manual companion session ID input
   const [isConnecting, setIsConnecting] = useState<boolean>(false); // State for loading during connection
-  const [selectedModeForSecondary, setSelectedModeForSecondary] = useState<string>(''); // State for secondary companion to track client's current mode
   const router = useRouter();
   const companionRole = getCompanionProfileDetails().companionRole || 'Primary'; // Get the companion role
   const clientSessionId = useCompanionStore((state) => state.getClientSessionId()); // Reactive client session ID
   // Get the selected mode from the store for conditional styling
   // Get the selected mode and current status from the store for conditional styling
   const { selectedMode, companionCurrentStatus, recieveCompanionMsgQueue } = useCompanionStore((state) => state.CompanionAcvitiyMonitor);
+  const [selectedModeForSecondary, setSelectedModeForSecondary] = useState<string>(''); // State for secondary companion to track client's current mode
+
   const companionActivityStatus = useCompanionStore.getState().CompanionAcvitiyMonitor.companionCurrentStatus;
   const setSelectedSubMode = useCompanionStore((state) => state.setSelectedSubMode);
   const selectedSubMode = useCompanionStore((state) => state.getSelectedSubMode());
+  
+  // Common overlay styles for disabled containers
+  const overlayStyles = {
+    position: 'absolute' as const,
+    top: 0,
+    left: 0,
+    right: 0,
+    bottom: 0,
+    backgroundColor: 'rgba(255, 255, 255, 0.7)',
+    zIndex: 10,
+    pointerEvents: 'auto' as const,
+    borderRadius: '0.75rem'
+  };
 
   useEffect(() => {
     // Create an instance of Html5Qrcode
@@ -66,11 +80,18 @@ const GuardMatchingPage: React.FC = () => {
       console.log('Listening to client\'s currentMode for secondary companions');
       const { data, unsubscribe } = getClientData(
         storePaths.ClientActivityMonitor.currentMode,
-        (newMode: string) => setSelectedModeForSecondary(newMode || '')
+        (newMode: string) => {
+          setSelectedModeForSecondary(newMode || '');
+          // Update selectedMode in store for secondary companions
+          modeSelectionConfirmationLocalUpdate(newMode);
+        }
       );
       
       // Set initial value
-      setSelectedModeForSecondary(data || '');
+      const initialMode = data || '';
+      setSelectedModeForSecondary(initialMode);
+      // Update selectedMode in store with initial value for secondary companions
+      modeSelectionConfirmationLocalUpdate(initialMode);
       
       return unsubscribe;
     }
@@ -233,10 +254,12 @@ const GuardMatchingPage: React.FC = () => {
 
     // console.log('hasPermission', hasPermission);
 
-    useCompanionStore.getState().setCompanionAcvitiyMonitor({
-      selectedMode: mode,
-      companionCurrentStatus: defaultStatus,
-    });
+    // useCompanionStore.getState().setCompanionAcvitiyMonitor({
+    //   selectedMode: mode,
+    //   companionCurrentStatus: defaultStatus,
+    // });
+
+    modeSelectionConfirmationLocalUpdate(mode);
 
     updateValueInClient({
       path: storePaths.ClientActivityMonitor.currentMode,
@@ -251,6 +274,14 @@ const GuardMatchingPage: React.FC = () => {
     updateInSelfFirebase(storePaths.CompanionAcvitiyMonitor.companionCurrentStatus, defaultStatus);
 
     closeModal();
+  }
+
+  const modeSelectionConfirmationLocalUpdate = async (mode: string) => {
+    const defaultStatus = MODE_DEFAULT_STATUS[mode];
+    useCompanionStore.getState().setCompanionAcvitiyMonitor({
+      selectedMode: mode,
+      companionCurrentStatus: defaultStatus,
+    });
   }
 
   // Common click handler for mode selection buttons
@@ -544,7 +575,11 @@ const GuardMatchingPage: React.FC = () => {
       {!serviceContinue && <div>
         <div id="companion_mode_selection_container"
           style={{ marginTop: '10px', padding: '5px' }}>
-                      <div id="modes_container" className="rounded-xl shadow-lg">
+          <div id="modes_container" className="rounded-xl shadow-lg" style={{ position: 'relative' }}>
+            {/* Half transparent overlay for secondary companions - hidden in dev mode */}
+            {companionRole === 'secondary' && !isDevMode && (
+              <div style={overlayStyles} />
+            )}
             <div className="border rounded-lg flex flex-wrap justify-center items-center p-2 mb-2">
               <button className={selectedMode === ACTIVITY_MODES.CAFE ? selectedButtonClasses : buttonClasses + ' mode-large-btn'}
                 onClick={() => handleModeSelection(ACTIVITY_MODES.CAFE)}>
@@ -562,7 +597,10 @@ const GuardMatchingPage: React.FC = () => {
             </div>
           </div>
           <div id="status_container" className="rounded-xl shadow-lg" style={{ position: 'relative' }}>
-
+            {/* Half transparent overlay for primary companions - hidden in dev mode */}
+            {companionRole === 'Primary' && !isDevMode && (
+              <div style={overlayStyles} />
+            )}
             <div className="border rounded-lg flex flex-wrap p-2">
               {/* Only render status buttons allowed for the selected mode */}
               {COMPANION_MODE_STATUS_LINKER[selectedMode as keyof typeof COMPANION_MODE_STATUS_LINKER]?.map((status: string) => (
@@ -584,7 +622,11 @@ const GuardMatchingPage: React.FC = () => {
 
           {/* Sub Mode Selection Container */}
           {selectedMode && ACTIVITY_SUB_MODE_LINKER[selectedMode as keyof typeof ACTIVITY_SUB_MODE_LINKER] && ACTIVITY_SUB_MODE_LINKER[selectedMode as keyof typeof ACTIVITY_SUB_MODE_LINKER].length > 0 && (
-            <div id="companion_sub_mode_selection_container" className="rounded-xl shadow-lg mt-4">
+            <div id="companion_sub_mode_selection_container" className="rounded-xl shadow-lg mt-4" style={{ position: 'relative' }}>
+              {/* Half transparent overlay for secondary companions - hidden in dev mode */}
+              {companionRole === 'secondary' && !isDevMode && (
+                <div style={overlayStyles} />
+              )}
               <div className="border rounded-lg flex flex-wrap justify-center items-center p-2 mb-2">
                 {ACTIVITY_SUB_MODE_LINKER[selectedMode as keyof typeof ACTIVITY_SUB_MODE_LINKER].map((subMode: string) => (
                   <button
