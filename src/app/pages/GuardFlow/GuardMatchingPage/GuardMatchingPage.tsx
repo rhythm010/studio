@@ -34,6 +34,7 @@ const GuardMatchingPage: React.FC = () => {
   const [isConnecting, setIsConnecting] = useState<boolean>(false); // State for loading during connection
   const router = useRouter();
   const companionRole = getCompanionProfileDetails().companionRole || 'Primary'; // Get the companion role
+  const isPrimary = companionRole === 'Primary'; // Boolean for primary companion check
   const clientSessionId = useCompanionStore((state) => state.getClientSessionId()); // Reactive client session ID
   // Get the selected mode from the store for conditional styling
   // Get the selected mode and current status from the store for conditional styling
@@ -76,7 +77,7 @@ const GuardMatchingPage: React.FC = () => {
   // Listen to client's currentMode for secondary companions
   useEffect(() => {
     console.log('reading client session id and companion role', clientSessionId, companionRole);
-    if (companionRole === 'secondary' && clientSessionId) {
+    if (!isPrimary && clientSessionId) {
       console.log('Listening to client\'s currentMode for secondary companions');
       const { data, unsubscribe } = getClientData(
         storePaths.ClientActivityMonitor.currentMode,
@@ -575,58 +576,51 @@ const GuardMatchingPage: React.FC = () => {
       {!serviceContinue && <div>
         <div id="companion_mode_selection_container"
           style={{ marginTop: '10px', padding: '5px' }}>
-          <div id="modes_container" className="rounded-xl shadow-lg" style={{ position: 'relative' }}>
-            {/* Half transparent overlay for secondary companions - hidden in dev mode */}
-            {companionRole === 'secondary' && !isDevMode && (
-              <div style={overlayStyles} />
-            )}
-            <div className="border rounded-lg flex flex-wrap justify-center items-center p-2 mb-2">
-              <button className={selectedMode === ACTIVITY_MODES.CAFE ? selectedButtonClasses : buttonClasses + ' mode-large-btn'}
-                onClick={() => handleModeSelection(ACTIVITY_MODES.CAFE)}>
-                Cafe
-              </button>
-              <button className={selectedMode === ACTIVITY_MODES.STORE ? selectedButtonClasses : buttonClasses + ' mode-large-btn'}
-                onClick={() => handleModeSelection(ACTIVITY_MODES.STORE)}>
-                Store
-              </button>
-              <button className={selectedMode === ACTIVITY_MODES.WITH_YOU ? selectedButtonClasses : buttonClasses + ' mode-large-btn'}
-                onClick={() => handleModeSelection(ACTIVITY_MODES.WITH_YOU)}
-              >
-                With client
-              </button>
-            </div>
-          </div>
-          <div id="status_container" className="rounded-xl shadow-lg" style={{ position: 'relative' }}>
-            {/* Half transparent overlay for primary companions - hidden in dev mode */}
-            {companionRole === 'Primary' && !isDevMode && (
-              <div style={overlayStyles} />
-            )}
-            <div className="border rounded-lg flex flex-wrap p-2">
-              {/* Only render status buttons allowed for the selected mode */}
-              {COMPANION_MODE_STATUS_LINKER[selectedMode as keyof typeof COMPANION_MODE_STATUS_LINKER]?.map((status: string) => (
-                <button
-                  key={status}
-                  className={getStatusButtonClass(status, companionCurrentStatus, selectedMode)}
-                  onClick={() => handleStatusSelection(status)}
-                >
-                  {STATUS_BUTTON_LABELS[status]}
+          {/* Modes Container - hidden for secondary companions in production */}
+          {(isPrimary || isDevMode) && (
+            <div id="modes_container" className="rounded-xl shadow-lg">
+              <div className="border rounded-lg flex flex-wrap justify-center items-center p-2 mb-2">
+                <button className={selectedMode === ACTIVITY_MODES.CAFE ? selectedButtonClasses : buttonClasses + ' mode-large-btn'}
+                  onClick={() => handleModeSelection(ACTIVITY_MODES.CAFE)}>
+                  Cafe
                 </button>
-              ))}
+                <button className={selectedMode === ACTIVITY_MODES.STORE ? selectedButtonClasses : buttonClasses + ' mode-large-btn'}
+                  onClick={() => handleModeSelection(ACTIVITY_MODES.STORE)}>
+                  Store
+                </button>
+                <button className={selectedMode === ACTIVITY_MODES.WITH_YOU ? selectedButtonClasses : buttonClasses + ' mode-large-btn'}
+                  onClick={() => handleModeSelection(ACTIVITY_MODES.WITH_YOU)}
+                >
+                  With client
+                </button>
+              </div>
             </div>
-
-          </div>
+          )}
+          {/* Status Container - hidden for primary companions in production */}
+          {(!isPrimary || isDevMode) && (
+            <div id="status_container" className="rounded-xl shadow-lg">
+              <div className="border rounded-lg flex flex-wrap p-2">
+                {/* Only render status buttons allowed for the selected mode */}
+                {COMPANION_MODE_STATUS_LINKER[selectedMode as keyof typeof COMPANION_MODE_STATUS_LINKER]?.map((status: string) => (
+                  <button
+                    key={status}
+                    className={getStatusButtonClass(status, companionCurrentStatus, selectedMode)}
+                    onClick={() => handleStatusSelection(status)}
+                  >
+                    {STATUS_BUTTON_LABELS[status]}
+                  </button>
+                ))}
+              </div>
+            </div>
+          )}
           
           <div id="mode_and_status_info" >
             {companionActivityStatus === ACTIVITY_STATUS.QUEUE && <CompanionActivityMode />}
           </div>
 
-          {/* Sub Mode Selection Container */}
-          {selectedMode && ACTIVITY_SUB_MODE_LINKER[selectedMode as keyof typeof ACTIVITY_SUB_MODE_LINKER] && ACTIVITY_SUB_MODE_LINKER[selectedMode as keyof typeof ACTIVITY_SUB_MODE_LINKER].length > 0 && (
-            <div id="companion_sub_mode_selection_container" className="rounded-xl shadow-lg mt-4" style={{ position: 'relative' }}>
-              {/* Half transparent overlay for secondary companions - hidden in dev mode */}
-              {companionRole === 'secondary' && !isDevMode && (
-                <div style={overlayStyles} />
-              )}
+          {/* Sub Mode Selection Container - hidden for secondary companions in production */}
+          {selectedMode && ACTIVITY_SUB_MODE_LINKER[selectedMode as keyof typeof ACTIVITY_SUB_MODE_LINKER] && ACTIVITY_SUB_MODE_LINKER[selectedMode as keyof typeof ACTIVITY_SUB_MODE_LINKER].length > 0 && (isPrimary || isDevMode) && (
+            <div id="companion_sub_mode_selection_container" className="rounded-xl shadow-lg mt-4">
               <div className="border rounded-lg flex flex-wrap justify-center items-center p-2 mb-2">
                 {ACTIVITY_SUB_MODE_LINKER[selectedMode as keyof typeof ACTIVITY_SUB_MODE_LINKER].map((subMode: string) => (
                   <button
