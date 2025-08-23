@@ -14,9 +14,9 @@ import { vocab } from '@/lib/vocab_constants';
 
 const GuardMatchingPage: React.FC = () => {
   // Reusable classes for the mode selection buttons, similar to the 'Start Scan' button style
-  const selectedButtonClasses = "border w-16 h-8 m-1 flex items-center justify-center bg-green-600 text-white text-xs rounded-md"; // Reduced by 20%
-  const disabledButtonClasses = "w-16 h-8 m-1 flex items-center justify-center bg-gray-400 text-gray-700 text-xs rounded-md"; // Reduced by 20%
-  const buttonClasses = "w-16 h-8 m-1 flex items-center justify-center bg-gray-800 text-white text-xs rounded-md"; // Reduced by 20%
+  const selectedButtonClasses = "border flex items-center justify-center bg-green-600 text-white text-sm rounded-md py-3 px-4"; // Larger buttons for status container
+  const disabledButtonClasses = "flex items-center justify-center bg-gray-400 text-gray-700 text-sm rounded-md py-3 px-4"; // Larger buttons for status container
+  const buttonClasses = "flex items-center justify-center bg-gray-800 text-white text-sm rounded-md py-3 px-4"; // Larger buttons for status container
   const qrCodeRef = useRef<string>('reader');
   const { getCompanionProfileDetails } = useCompanionStore();
   const html5Qrcode = useRef<Html5Qrcode | null>(null);
@@ -575,7 +575,7 @@ const GuardMatchingPage: React.FC = () => {
       {/* The rest of the main content, including serviceContinue check, goes here */}
       {!serviceContinue && <div>
         <div id="companion_mode_selection_container"
-          style={{ marginTop: '10px', padding: '5px' }}>
+          style={{ marginTop: '10px', padding: '5px', width: '100%' }}>
           {/* Modes Container - hidden for secondary companions in production */}
           {(isPrimary || isDevMode) && (
             <div id="modes_container" className="rounded-xl shadow-lg">
@@ -598,8 +598,8 @@ const GuardMatchingPage: React.FC = () => {
           )}
           {/* Status Container - hidden for primary companions in production */}
           {(!isPrimary || isDevMode) && (
-            <div id="status_container" className="rounded-xl shadow-lg">
-              <div className="border rounded-lg flex flex-wrap p-2">
+            <div id="status_container" className="rounded-xl shadow-lg w-full">
+              <div className="border rounded-lg grid grid-cols-2 gap-3 p-3 w-full">
                 {/* Only render status buttons allowed for the selected mode */}
                 {COMPANION_MODE_STATUS_LINKER[selectedMode as keyof typeof COMPANION_MODE_STATUS_LINKER]?.map((status: string) => (
                   <button
