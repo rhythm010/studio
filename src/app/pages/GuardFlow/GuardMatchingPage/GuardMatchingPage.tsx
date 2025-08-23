@@ -555,21 +555,34 @@ const GuardMatchingPage: React.FC = () => {
       )}
 
       {'isDevMode' && (
-        <div style={{ width: '90%', maxWidth: 500, margin: '0 auto 0.5rem auto', border: '2px solid #333', borderRadius: 8, background: '#f0f0f0', padding: '0.5rem', textAlign: 'center' }}>
-          <span style={{ fontSize: '0.9rem', fontWeight: 600, color: '#333' }}>
-            Companion Role: <span style={{ color: '#007bff', fontWeight: 700 }}>{companionRole}</span>
-          </span>
+        <div id="companion_role_display" style={{ width: '90%', maxWidth: 500, margin: '0 auto 0.5rem auto', border: '1px solid #333', borderRadius: 8, background: '#f0f0f0', padding: '0.5rem', textAlign: 'center' }}>
+          <div style={{ fontSize: '1rem', fontWeight: 300, color: '#333', textAlign: 'center' }}>
+            YOUR ROLE
+          </div>
+          <div style={{ fontSize: '1.8rem', fontWeight: 700, color: '#007bff', textAlign: 'center', marginTop: '0.25rem' }}>
+            {companionRole.toUpperCase()}
+          </div>
         </div>
       )}
       {/* Mode/Status display above companion_mode_selection_container */}
       {!serviceContinue && 
-      <div id="mode_and_status_info_display" style={{ width: '90%', maxWidth: 500, margin: '0 auto 0.5rem auto', border: '2px solid #222', borderRadius: 10, overflow: 'hidden' }}>
-        <div style={{ background: '#111', color: '#fff', fontSize: '1.6rem', fontWeight: 700, padding: '0.75rem', textAlign: 'center' }}>
-          Mode: {COMPANION_SCREEN_MAPPER[selectedMode]?.modeText || selectedMode || '-'}
+      <div id="mode_and_status_info_display" style={{ width: '90%', maxWidth: 500, margin: '0 auto 0.5rem auto', border: '1px solid #222', borderRadius: 10, background: '#f0f0f0', padding: '0.5rem', textAlign: 'center' }}>
+        <div style={{ fontSize: '1rem', fontWeight: 300, color: '#333', textAlign: 'center' }}>
+          {isPrimary ? 'MODE SELECTED' : 'YOUR STATUS'}
         </div>
-        <div style={{ borderTop: '2px solid #222', background: '#fff', color: '#111', fontSize: '1rem', fontWeight: 500, padding: '0.5rem 1rem', textAlign: 'center' }}>
-          Status: {COMPANION_SCREEN_MAPPER[selectedMode]?.statuses[companionCurrentStatus]?.textToDisplay || companionCurrentStatus || '-'}
+        <div style={{ fontSize: '1.8rem', fontWeight: 700, color: 'red', textAlign: 'center', marginTop: '0.25rem' }}>
+          {isPrimary ? (COMPANION_SCREEN_MAPPER[selectedMode]?.modeText || selectedMode || '-') : (COMPANION_SCREEN_MAPPER[selectedMode]?.statuses[companionCurrentStatus]?.textToDisplay || companionCurrentStatus || '-')}
         </div>
+        {isPrimary && (
+          <>
+            {/* <div style={{ fontSize: '1rem', fontWeight: 300, color: '#333', textAlign: 'center', marginTop: '0.5rem' }}>
+              STATUS
+            </div> */}
+            {/* <div style={{ fontSize: '1.8rem', fontWeight: 700, color: '#007bff', textAlign: 'center', marginTop: '0.25rem' }}>
+              {COMPANION_SCREEN_MAPPER[selectedMode]?.statuses[companionCurrentStatus]?.textToDisplay || companionCurrentStatus || '-'}
+            </div> */}
+          </>
+        )}
       </div>}
 
       {/* The rest of the main content, including serviceContinue check, goes here */}
