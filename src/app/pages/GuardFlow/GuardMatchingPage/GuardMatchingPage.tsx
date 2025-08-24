@@ -334,7 +334,7 @@ const GuardMatchingPage: React.FC = () => {
     }
     openModal(
       <ConfirmationModalContent
-        text={`You have not received instructions for ${status}, Are you sure you want to proceed?`} // Customize the confirmation text
+        text={COMPANION_SCREEN_MAPPER[selectedMode]?.statuses[status]?.textInsideModal || `You have not received instructions for ${status}, Are you sure you want to proceed?`} // Use constant text
         onConfirm={() => handleStatusSelectionConfirm(status)}
         onCancel={() => {
           console.log(`User cancelled status selection for ${status}`);
@@ -539,7 +539,7 @@ const GuardMatchingPage: React.FC = () => {
             justifyContent: 'center',
             position: 'relative'
           }}>
-            <span style={{ fontWeight: 'normal', color: '#666' }}>Instruction:&nbsp;&nbsp;</span>
+            {/* <span style={{ fontWeight: 'normal', color: '#666' }}>Instruction:&nbsp;&nbsp;</span> */}
             <span style={{ fontWeight: 'bold' }}>
               {COMPANION_SCREEN_MAPPER[selectedMode]?.instructions[recieveCompanionMsgQueue.type]?.textToDisplay?.replace('Instruction: ', '') || recieveCompanionMsgQueue.type}
             </span>
