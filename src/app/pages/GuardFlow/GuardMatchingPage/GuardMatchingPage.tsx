@@ -575,7 +575,7 @@ const GuardMatchingPage: React.FC = () => {
           <div style={{ fontSize: '0.8rem', fontWeight: 300, color: '#333', textAlign: 'center' }}>
             {isPrimary ? 'MODE SELECTED' : 'YOUR STATUS'}
           </div>
-          <div style={{ fontSize: '1.44rem', fontWeight: 700, color: 'red', textAlign: 'center', marginTop: '0.25rem' }}>
+                      <div id="mode_and_status_info_display_text" style={{ fontSize: '1.152rem', fontWeight: 700, color: 'red', textAlign: 'center', marginTop: '0.25rem' }}>
             {isPrimary ? (COMPANION_SCREEN_MAPPER[selectedMode]?.modeText || selectedMode || '-') : (COMPANION_SCREEN_MAPPER[selectedMode]?.statuses[companionCurrentStatus]?.textToDisplay || companionCurrentStatus || '-')}
           </div>
         {isPrimary && (
