@@ -120,19 +120,22 @@ export const COMPANION_ROLE_ROUTING = {
   [ACTIVITY_MODES.WITH_YOU]: {
       [INSTRUCTION_LIST.DEFAULT]: SECONDARY_PRIMARY_BOTH.BOTH,
       [INSTRUCTION_LIST.QUEUE]: SECONDARY_PRIMARY_BOTH.SECONDARY, 
-      [INSTRUCTION_LIST.WAIT_OP]: SECONDARY_PRIMARY_BOTH.BOTH
+      [INSTRUCTION_LIST.WAIT_OP]: SECONDARY_PRIMARY_BOTH.BOTH,
+      [INSTRUCTION_LIST.CANCEL]: SECONDARY_PRIMARY_BOTH.BOTH,
   },
   [ACTIVITY_MODES.CAFE]: {
       [INSTRUCTION_LIST.BRING_STAFF]: SECONDARY_PRIMARY_BOTH.SECONDARY,
       [INSTRUCTION_LIST.STAND_CLOSE]: SECONDARY_PRIMARY_BOTH.BOTH,
       [INSTRUCTION_LIST.ORDER_CALL]: SECONDARY_PRIMARY_BOTH.SECONDARY,
       [INSTRUCTION_LIST.I_AM_DONE]: SECONDARY_PRIMARY_BOTH.BOTH,
-      [INSTRUCTION_LIST.PHOTO]: SECONDARY_PRIMARY_BOTH.SECONDARY
+      [INSTRUCTION_LIST.PHOTO]: SECONDARY_PRIMARY_BOTH.SECONDARY,
+      [INSTRUCTION_LIST.CANCEL]: SECONDARY_PRIMARY_BOTH.BOTH,
   },
   [ACTIVITY_MODES.STORE]: {
       [INSTRUCTION_LIST.I_AM_DONE]: SECONDARY_PRIMARY_BOTH.BOTH,
       [INSTRUCTION_LIST.BRING_STAFF]: SECONDARY_PRIMARY_BOTH.PRIMARY,
-      [INSTRUCTION_LIST.WAIT_OP]: SECONDARY_PRIMARY_BOTH.BOTH
+      [INSTRUCTION_LIST.WAIT_OP]: SECONDARY_PRIMARY_BOTH.BOTH,
+      [INSTRUCTION_LIST.CANCEL]: SECONDARY_PRIMARY_BOTH.BOTH,
   },
   [ACTIVITY_MODES.QUEUE]: {
       [INSTRUCTION_LIST.QUEUE]: SECONDARY_PRIMARY_BOTH.SECONDARY
@@ -381,10 +384,10 @@ export const COMPANION_SCREEN_MAPPER: Record<string, { modeText: string; statuse
         }
       },
       [INSTRUCTION_LIST.QUEUE]: { 
-        textToDisplay: 'Instruction: Queue here',
+        textToDisplay: 'Instruction: Join the Queue',
         modalTexts: {
-          [MSG_STATUS.UNREAD]: 'Do you want to start queuing for the client?',
-          [MSG_STATUS.OPENED]: 'You are in the middle of the action',
+          [MSG_STATUS.UNREAD]: 'Press START and join the Queue',
+          [MSG_STATUS.OPENED]: 'Press COMPLETED once you are in Queue. Change STATUS to QUEUE after that',
           [MSG_STATUS.ACTIONED]: 'You have completed queuing for the client'
         }
       },
@@ -399,9 +402,9 @@ export const COMPANION_SCREEN_MAPPER: Record<string, { modeText: string; statuse
       [INSTRUCTION_LIST.CANCEL]: { 
         textToDisplay: 'Instruction: Cancel',
         modalTexts: {
-          [MSG_STATUS.UNREAD]: 'Do you want to cancel the current instruction?',
-          [MSG_STATUS.OPENED]: 'You are cancelling the current instruction',
-          [MSG_STATUS.ACTIONED]: 'You have cancelled the current instruction'
+          [MSG_STATUS.UNREAD]: 'The client wants to CANCEL the insturction. Press START and go back to Client.',
+          [MSG_STATUS.OPENED]: 'Press COMPLETED once you have cancelled. Change STATUS to DEFAULT after that',
+          [MSG_STATUS.ACTIONED]: 'No Action needed now, '
         }
       },
     },

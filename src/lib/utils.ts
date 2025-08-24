@@ -489,6 +489,7 @@ function determineCompanionRecipients(instructionType: string, mode?: string): s
   // Check mode-specific routing from constant
   if (mode) {
     const routing = getRouting(mode, instructionType);
+    console.log('routing', routing);
     if (routing) {
       if (routing === 'both') return [COMPANION_ROLES.PRIMARY, COMPANION_ROLES.SECONDARY];
       if (routing === 'primary') return [COMPANION_ROLES.PRIMARY];

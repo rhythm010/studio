@@ -113,6 +113,8 @@ const selectedMode: React.FC = () => {
       }
       
       setCurrentMode(modeValue);
+      // to reset the instructino object in clientQueueObj
+      setClientQueueObj({});
       
       // Update currentMode in local store's ClientActivityMonitor
       const currentStore = useCompanionStore.getState();

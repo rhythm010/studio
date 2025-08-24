@@ -637,7 +637,7 @@ const GuardMatchingPage: React.FC = () => {
           </div>
 
           {/* Sub Mode Selection Container - hidden for secondary companions in production */}
-          {selectedMode && ACTIVITY_SUB_MODE_LINKER[selectedMode as keyof typeof ACTIVITY_SUB_MODE_LINKER] && ACTIVITY_SUB_MODE_LINKER[selectedMode as keyof typeof ACTIVITY_SUB_MODE_LINKER].length > 0 && (isPrimary || isDevMode) && (
+          {/* {selectedMode && ACTIVITY_SUB_MODE_LINKER[selectedMode as keyof typeof ACTIVITY_SUB_MODE_LINKER] && ACTIVITY_SUB_MODE_LINKER[selectedMode as keyof typeof ACTIVITY_SUB_MODE_LINKER].length > 0 && (isPrimary || isDevMode) && (
             <div id="companion_sub_mode_selection_container" className="rounded-xl shadow-lg mt-4">
               <div className="border rounded-lg flex flex-wrap justify-center items-center p-2 mb-2">
                 {ACTIVITY_SUB_MODE_LINKER[selectedMode as keyof typeof ACTIVITY_SUB_MODE_LINKER].map((subMode: string) => (
@@ -652,7 +652,7 @@ const GuardMatchingPage: React.FC = () => {
                 ))}
               </div>
             </div>
-          )}
+          )} */}
           
 
 
